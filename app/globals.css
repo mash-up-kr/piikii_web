@@ -1,76 +1,313 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
 
-  @layer base {
-    :root {
-      --background: 0 0% 100%;
-      --foreground: 222.2 84% 4.9%;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
-      --card: 0 0% 100%;
-      --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
-      --popover: 0 0% 100%;
-      --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-      --primary: 222.2 47.4% 11.2%;
-      --primary-foreground: 210 40% 98%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
-      --secondary: 210 40% 96.1%;
-      --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-      --muted: 210 40% 96.1%;
-      --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-      --accent: 210 40% 96.1%;
-      --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-      --destructive: 0 84.2% 60.2%;
-      --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-      --border: 214.3 31.8% 91.4%;
-      --input: 214.3 31.8% 91.4%;
-      --ring: 222.2 84% 4.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
 
-      --radius: 0.5rem;
-    }
-
-    .dark {
-      --background: 222.2 84% 4.9%;
-      --foreground: 210 40% 98%;
-
-      --card: 222.2 84% 4.9%;
-      --card-foreground: 210 40% 98%;
-
-      --popover: 222.2 84% 4.9%;
-      --popover-foreground: 210 40% 98%;
-
-      --primary: 210 40% 98%;
-      --primary-foreground: 222.2 47.4% 11.2%;
-
-      --secondary: 217.2 32.6% 17.5%;
-      --secondary-foreground: 210 40% 98%;
-
-      --muted: 217.2 32.6% 17.5%;
-      --muted-foreground: 215 20.2% 65.1%;
-
-      --accent: 217.2 32.6% 17.5%;
-      --accent-foreground: 210 40% 98%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 210 40% 98%;
-
-      --border: 217.2 32.6% 17.5%;
-      --input: 217.2 32.6% 17.5%;
-      --ring: 212.7 26.8% 83.9%;
-    }
+    --radius: 0.5rem;
   }
 
-  @layer base {
-    * {
-      @apply border-border;
-    }
-    body {
-      @apply bg-background text-foreground;
-    }
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* NOTE: Black */
+  .black-22 {
+    @apply font-black;
+    font-size: 22px;
+    line-height: 140%;
+  }
+
+  .black-16 {
+    @apply font-black;
+    font-size: 16px;
+    line-height: 150%;
+  }
+
+  /* NOTE: Bold */
+  .bold-24 {
+    @apply font-bold;
+    font-size: 24px;
+    line-height: 140%; /* 33.6px */
+  }
+  .bold-22 {
+    @apply font-bold;
+    font-size: 22px;
+    line-height: 140%; /* 30.8px */
+  }
+  .bold-20 {
+    @apply font-bold;
+    font-size: 20px;
+    line-height: 140%; /* 28px */
+  }
+  .bold-18 {
+    @apply font-bold;
+    font-size: 18px;
+    line-height: 150%; /* 25.2px */
+  }
+  .bold-16 {
+    @apply font-bold;
+    font-size: 16px;
+    line-height: 150%; /* 24px */
+  }
+  .bold-15 {
+    @apply font-bold;
+    font-size: 15px;
+    line-height: 150%; /* 22.5px */
+  }
+  .bold-14 {
+    @apply font-bold;
+    font-size: 14px;
+    line-height: 150%; /* 21px */
+  }
+  .bold-12 {
+    @apply font-bold;
+    font-size: 12px;
+    line-height: 150%; /* 18px */
+  }
+  .bold-11 {
+    @apply font-bold;
+    font-size: 11px;
+    line-height: 150%; /* 16.5px */
+  }
+  .bold-10 {
+    @apply font-bold;
+    font-size: 10px;
+    line-height: 150%; /* 15px */
+  }
+
+  /* NOTE: Semibold */
+  .semibold-34 {
+    @apply font-semibold;
+    font-size: 34px;
+    line-height: 140%; /* 47.6px */
+  }
+  .semibold-24 {
+    @apply font-semibold;
+    font-size: 24px;
+    line-height: 140%; /* 33.6px */
+  }
+  .semibold-22 {
+    @apply font-semibold;
+    font-size: 22px;
+    line-height: 140%; /* 30.8px */
+  }
+  .semibold-20 {
+    @apply font-semibold;
+    font-size: 20px;
+    line-height: 140%; /* 28px */
+  }
+  .semibold-18 {
+    @apply font-semibold;
+    font-size: 18px;
+    line-height: 150%; /* 25.2px */
+  }
+  .semibold-16 {
+    @apply font-semibold;
+    font-size: 16px;
+    line-height: 150%; /* 24px */
+  }
+  .semibold-15 {
+    @apply font-semibold;
+    font-size: 15px;
+    line-height: 150%; /* 22.5px */
+  }
+  .semibold-14 {
+    @apply font-semibold;
+    font-size: 14px;
+    line-height: 150%; /* 21px */
+  }
+  .semibold-12 {
+    @apply font-semibold;
+    font-size: 12px;
+    line-height: 150%; /* 18px */
+  }
+  .semibold-11 {
+    @apply font-semibold;
+    font-size: 11px;
+    line-height: 150%; /* 16.5px */
+  }
+  .semibold-10 {
+    @apply font-semibold;
+    font-size: 10px;
+    line-height: 150%; /* 15px */
+  }
+
+  /* NOTE: Medium */
+  .medium-24 {
+    @apply font-medium;
+    font-size: 24px;
+    line-height: 140%; /* 33.6px */
+  }
+  .medium-22 {
+    @apply font-medium;
+    font-size: 22px;
+    line-height: 140%; /* 30.8px */
+  }
+  .medium-20 {
+    @apply font-medium;
+    font-size: 20px;
+    line-height: 140%; /* 28px */
+  }
+  .medium-18 {
+    @apply font-medium;
+    font-size: 18px;
+    line-height: 150%; /* 25.2px */
+  }
+  .medium-16 {
+    @apply font-medium;
+    font-size: 16px;
+    line-height: 150%; /* 24px */
+  }
+  .medium-15 {
+    @apply font-medium;
+    font-size: 15px;
+    line-height: 150%; /* 22.5px */
+  }
+  .medium-14 {
+    @apply font-medium;
+    font-size: 14px;
+    line-height: 150%; /* 21px */
+  }
+  .medium-12 {
+    @apply font-medium;
+    font-size: 12px;
+    line-height: 150%; /* 18px */
+  }
+  .medium-11 {
+    @apply font-medium;
+    font-size: 11px;
+    line-height: 150%; /* 16.5px */
+  }
+  .medium-10 {
+    @apply font-medium;
+    font-size: 10px;
+    line-height: 150%; /* 15px */
+  }
+
+  /* NOTE: Regular */
+  .regular-24 {
+    @apply font-normal;
+    font-size: 24px;
+    line-height: 140%; /* 33.6px */
+  }
+
+  .regular-22 {
+    @apply font-normal;
+    font-size: 22px;
+    line-height: 140%; /* 30.8px */
+  }
+
+  .regular-20 {
+    @apply font-normal;
+    font-size: 20px;
+    line-height: 140%; /* 28px */
+  }
+
+  .regular-18 {
+    @apply font-normal;
+    font-size: 18px;
+    line-height: 150%; /* 25.2px */
+  }
+
+  .regular-16 {
+    @apply font-normal;
+    font-size: 16px;
+    line-height: 150%; /* 24px */
+  }
+
+  .regular-15 {
+    @apply font-normal;
+    font-size: 15px;
+    line-height: 150%; /* 22.5px */
+  }
+
+  .regular-14 {
+    @apply font-normal;
+    font-size: 14px;
+    line-height: 150%; /* 21px */
+  }
+
+  .regular-12 {
+    @apply font-normal;
+    font-size: 12px;
+    line-height: 150%; /* 18px */
+  }
+
+  .regular-11 {
+    @apply font-normal;
+    font-size: 11px;
+    line-height: 150%; /* 16.5px */
+  }
+
+  .regular-10 {
+    @apply font-normal;
+    font-size: 10px;
+    line-height: 150%; /* 15px */
+  }
+}
