@@ -1,17 +1,19 @@
 import * as React from "react";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CardSizeProps } from "@/interface";
+import { CardInfoProps, CardSizeProps } from "@/model";
 import { getSizeClasses } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
-export default function CardWithImage() {
-  //임시 배열 정의
-  const images = ["/food.png", "/food.png", "/food.png"];
-  const info = [
-    { label: "영업시간", value: "11:00 - 21:00" },
-    { label: "브레이크 타임", value: "15:00 - 17:00" },
-    { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
-  ];
+export const CardWithImage: React.FC<CardInfoProps> = ({
+  place,
+  link,
+  rating,
+  numberOfReviews,
+  images,
+  info,
+}) => {
+  const router = useRouter();
 
   return (
     <Card className="flex flex-col items-center w-[335px] max-h-[372px] py-[24px]">
@@ -21,19 +23,21 @@ export default function CardWithImage() {
             <CardTitle>
               <div className="flex flex-row gap-x-[8px] justify-center items-center">
                 <div className="flex w-[214px] h-[31px] items-center">
-                  돈카춘 노원점
+                  {place}
                 </div>
                 <div className="flex flex-row gap-x-[4px] w-[73px] h-[31px] items-center">
                   <div className="flex flex-row w-[16px] h-[16px]">
                     <Image
-                      src="/naver.png"
+                      src="/png/naver.png"
                       alt="naver"
                       width={16}
                       height={16}
                       priority
                     />
                   </div>
-                  <div className="text-[14px]">4.5 (30)</div>
+                  <div className="text-[14px]">
+                    {rating} ({numberOfReviews})
+                  </div>
                 </div>
               </div>
             </CardTitle>
@@ -60,27 +64,31 @@ export default function CardWithImage() {
             key={index}
             className="flex flex-row justify-between w-[295px] h-[21px] gap-x-[16px] text-[14px]"
           >
-            <div>{item.label}</div>
-            <div>{item.value}</div>
+            <span>{item.label}</span>
+            <span>{item.value}</span>
           </div>
         ))}
-        <button className="flex flex-row mt-[12px] items-center justify-center w-[295px] h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]">
+        <button
+          className="flex flex-row mt-[12px] items-center justify-center w-[295px] h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
+          onClick={() => router.push(link)}
+        >
           <div className="w-[55px] h-[18px] opacity-80 text-[12px] font-semibold">
             자세히 보기
           </div>
           <Image
-            src="/ic_arrow_right.svg"
+            src="/svg/ic_arrow_right.svg"
             className=""
             alt="arrow_right"
             width={12}
             height={12}
             priority
+            unoptimized
           />
         </button>
       </CardContent>
     </Card>
   );
-}
+};
 
 export function CardWithLike({ size }: CardSizeProps) {
   const { cardSizeClass, imageSize } = getSizeClasses(size);
@@ -92,12 +100,13 @@ export function CardWithLike({ size }: CardSizeProps) {
           className={`flex flex-col items-center justify-center ${cardSizeClass}`}
         >
           <Image
-            src="/img_like.svg"
+            src="/svg/img_like.svg"
             alt="like"
             className=""
             width={imageSize}
             height={imageSize}
             priority
+            unoptimized
           />
         </div>
       </CardContent>
@@ -115,15 +124,18 @@ export function CardWithDislike({ size }: CardSizeProps) {
           className={`flex flex-col items-center justify-center ${cardSizeClass}`}
         >
           <Image
-            src="/img_dislike.svg"
+            src="/svg/img_dislike.svg"
             alt="dislike"
             className=""
             width={imageSize}
             height={imageSize}
             priority
+            unoptimized
           />
         </div>
       </CardContent>
     </Card>
   );
 }
+
+export default CardWithImage;
