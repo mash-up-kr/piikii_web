@@ -20,18 +20,37 @@ const buttonVariants = cva(
     focus-visible:ring-offset-2
     disabled:pointer-events-none
     disabled:opacity-40
-    w-80
     `,
   {
     variants: {
       variant: {
-        default: "bg-primary-700 text-primary-foreground hover:bg-primary-800",
+        default: `bg-primary-700 
+          text-primary-foreground
+          hover:bg-primary-800
+          max-w-[330px]
+          w-[100%]`,
+        secondary: `bg-secondary-dislike-100
+          text-secondary-dislike-700
+          hover:bg-secondary-dislike-700
+          hover:text-white
+          max-w-[113px]
+          w-[100%]
+          rounded-[28px]
+          `,
+        natural: `bg-natural/0
+          text-black
+          hover:bg-natural-200
+          hover:text-black
+          max-w-[113px]
+          w-[100%]
+          rounded-[10px]
+          border-[1px]
+          border-natural-300
+          `,
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
@@ -49,13 +68,13 @@ const buttonVariants = cva(
   }
 );
 
-export interface BasisButtonButtonProps
+export interface ButtonButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
-const BasisButton = React.forwardRef<HTMLButtonElement, BasisButtonButtonProps>(
+const Button = React.forwardRef<HTMLButtonElement, ButtonButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return (
@@ -67,6 +86,6 @@ const BasisButton = React.forwardRef<HTMLButtonElement, BasisButtonButtonProps>(
     );
   }
 );
-BasisButton.displayName = "Button";
+Button.displayName = "Button";
 
-export { BasisButton, buttonVariants };
+export { Button, buttonVariants };
