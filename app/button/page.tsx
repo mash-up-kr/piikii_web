@@ -1,10 +1,12 @@
-import { BasisButton } from "@/components/common/Buttons/BasisButton";
+import { Button } from "@/components/common/Button/Button";
 import React from "react";
 
 const ButtonComponentPage = () => {
   return (
     <div className="mt-10 mx-10">
-      <BasisButton>버튼</BasisButton>
+      <Button>버튼</Button>
+      <Button variant={"secondary"}>삭제하기</Button>
+      <Button variant={"natural"}>투표시작</Button>
     </div>
   );
 };

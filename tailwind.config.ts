@@ -34,6 +34,16 @@ const config = {
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          dislike: {
+            100: "#FEF1F2",
+            700: "#FF5B5B",
+            800: "#EC3737",
+          },
+        },
+        natural: {
+          0: "#fff",
+          200: "#F0F1F5",
+          300: "#E7E8EB",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
