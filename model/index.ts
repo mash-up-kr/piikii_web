@@ -13,7 +13,7 @@ export interface CardInfoProps {
   rating: string;
   numberOfReviews: number;
   images: string[];
-  info: { label: string; value: string }[];
+  info?: { label: string; value: string }[];
 }
 
 export interface ImgProps {
