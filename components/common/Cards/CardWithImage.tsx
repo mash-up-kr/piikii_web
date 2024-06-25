@@ -2,7 +2,7 @@ import * as React from "react";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CardInfoProps, CardSizeProps } from "@/model";
-import { getSizeClasses } from "@/lib/utils";
+import { cn, getSizeClasses } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 export const CardWithImage: React.FC<CardInfoProps> = ({
@@ -94,15 +94,19 @@ export function CardWithLike({ size }: CardSizeProps) {
   const { cardSizeClass, imageSize } = getSizeClasses(size);
 
   return (
-    <Card className={`flex flex-col items-center ${cardSizeClass}`}>
+    <Card
+      className={cn("flex flex-col items-center justify-center", cardSizeClass)}
+    >
       <CardContent>
         <div
-          className={`flex flex-col items-center justify-center ${cardSizeClass}`}
+          className={cn(
+            "flex flex-col items-center justify-center",
+            cardSizeClass
+          )}
         >
           <Image
             src="/svg/img_like.svg"
             alt="like"
-            className=""
             width={imageSize}
             height={imageSize}
             priority
@@ -118,15 +122,19 @@ export function CardWithDislike({ size }: CardSizeProps) {
   const { cardSizeClass, imageSize } = getSizeClasses(size);
 
   return (
-    <Card className={`flex flex-col items-center ${cardSizeClass}`}>
+    <Card
+      className={cn("flex flex-col items-center justify-center", cardSizeClass)}
+    >
       <CardContent>
         <div
-          className={`flex flex-col items-center justify-center ${cardSizeClass}`}
+          className={cn(
+            "flex flex-col items-center justify-center",
+            cardSizeClass
+          )}
         >
           <Image
             src="/svg/img_dislike.svg"
             alt="dislike"
-            className=""
             width={imageSize}
             height={imageSize}
             priority

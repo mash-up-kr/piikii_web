@@ -2,7 +2,7 @@ import { Size } from "@/model";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export const SMALL_CARD_SIZE_CLASS = "w-[268px] " as const;
+export const SMALL_CARD_SIZE_CLASS = "w-[268px] h-[298px]" as const;
 export const LARGE_CARD_SIZE_CLASS = "w-[335px] h-[372px]" as const;
 export const SMALL_IMAGE_SIZE_CLASS = 96 as const;
 export const LARGE_IMAGE_SIZE_CLASS = 120 as const;

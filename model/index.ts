@@ -15,3 +15,8 @@ export interface CardInfoProps {
   images: string[];
   info: { label: string; value: string }[];
 }
+
+export interface ImgProps {
+  width: number;
+  height: number;
+}
