@@ -20,3 +20,12 @@ export interface ImgProps {
   width: number;
   height: number;
 }
+
+export interface IconAndDesc {
+  icon: string;
+  desc: string;
+}
+
+export interface CardIconProps {
+  iconAndDesc: IconAndDesc[];
+}
