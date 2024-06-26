@@ -9,14 +9,24 @@ export interface CardSizeProps {
 
 export interface CardInfoProps {
   place: string;
-  link: string;
+  link?: string;
   rating: string;
   numberOfReviews: number;
   images: string[];
-  info: { label: string; value: string }[];
+  info?: { label: string; value: string }[];
+  onButtonClick?: () => void;
 }
 
 export interface ImgProps {
   width: number;
   height: number;
+}
+
+export interface IconAndDesc {
+  icon: string;
+  desc: string;
+}
+
+export interface CardIconProps {
+  iconAndDesc: IconAndDesc[];
 }
