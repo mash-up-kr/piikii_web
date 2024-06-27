@@ -9,14 +9,18 @@ export interface CardSizeProps {
 
 export interface CardInfoProps {
   place: string;
-  link: string;
-  rating: string;
-  numberOfReviews: number;
+  link?: string;
+  rating?: string;
+  numberOfReviews?: number;
   images: string[];
-  info: { label: string; value: string }[];
+  info?: { label: string; value: string }[];
 }
 
 export interface ImgProps {
   width: number;
   height: number;
+}
+
+export interface PendingCardListProps {
+  cards: { place: string; images: string[] }[];
 }
