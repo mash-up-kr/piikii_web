@@ -49,7 +49,7 @@ export const CardForCopiedContent: React.FC<CardInfoProps> = ({
                 </span>
               </div>
             </div>
-            <div
+            <button
               className="flex w-[32px] h-[32px] items-center justify-center rounded-2xl bg-[#FF601C] group-hover:bg-[#DD4808] group-active:bg-[#BF3900] mr-[8px]"
               onClick={onButtonClick}
             >
@@ -62,7 +62,7 @@ export const CardForCopiedContent: React.FC<CardInfoProps> = ({
                 priority
                 unoptimized
               />
-            </div>
+            </button>
           </div>
         </div>
       </CardContent>
