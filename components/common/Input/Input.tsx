@@ -8,17 +8,16 @@ const inputClassName = cva(
             flex
             h-[56px]
             w-full
-            max-w-[335px]
             rounded-[12px]
-            border-color-natural-200
+            border-color-neutral-200
             border
             border-input
             bg-transparent
-            bg-natural-100
+            bg-neutral-100
             px-[20px]
             py-[16px]
             text-fontSize-medium-16
-            text-color-natural-500
+            text-color-neutral-500
             shadow-sm
             transition-colors
             file:border-0
@@ -29,7 +28,7 @@ const inputClassName = cva(
             focus-visible:outline-none
             focus-visible:ring-0
             focus-visible:ring-ring
-            focus:bg-natural-200
+            focus:bg-neutral-200
             disabled:cursor-not-allowed
             disabled:opacity-50
             caret-Primary-700
@@ -47,7 +46,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const paddingLeft = leftSlot ? "pl-[40px]" : "";
     const paddingRight = rightSlot ? "pr-[64px]" : "";
     return (
-      <div className="relative flex items-center w-full max-w-[335px]">
+      <div className="relative flex items-center w-full">
         {leftSlot && (
           <div className="absolute left-4 flex items-center">{leftSlot}</div>
         )}
