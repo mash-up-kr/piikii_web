@@ -22,6 +22,18 @@ const BADGE_LIST_INITIAL_VALUE: BadgeMapType = new Map([
   ["play", []],
 ]);
 
+const updatedLabelList = (array: BadgeType[], condition: boolean) => {
+  const updatedList = array.map((item, index) => {
+    const itemLabel = item.label as string;
+    const name = itemLabel.split(/차|[0-9]/)[0];
+    return {
+      ...item,
+      label: `${name}${condition ? `${index + 1}차` : ""}`,
+    };
+  });
+  return updatedList;
+};
+
 const useCourse = ({ handleStep }: UseCourseProps) => {
   const [badgeList, setBadgeList] = useState<BadgeMapType>(
     BADGE_LIST_INITIAL_VALUE
@@ -71,15 +83,7 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
         const data = getBadgeData(nextId, item, mapValue?.length);
         cloneList.set(mapType, [...mapValue, data]);
       } else {
-        const updatedList = mapValue.map((item, index) => {
-          const itemLabel = item.label as string;
-          const name = itemLabel.split(/차|[0-9]/)[0];
-          return {
-            ...item,
-            label: `${name}${mapValue.length !== 0 ? `${index + 1}차` : ""}`,
-          };
-        });
-
+        const updatedList = updatedLabelList(mapValue, mapValue.length !== 0);
         const data = getBadgeData(nextId, item, updatedList?.length);
         cloneList.set(mapType, [...updatedList, data]);
       }
@@ -94,15 +98,11 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
 
     if (mapValue) {
       const filteredList = mapValue.filter((v) => v.id !== id);
+      const updatedList = updatedLabelList(
+        filteredList,
+        filteredList.length !== 1
+      );
 
-      const updatedList = filteredList.map((item, index) => {
-        const itemLabel = item.label as string;
-        const name = itemLabel.split(/차|[0-9]/)[0];
-        return {
-          ...item,
-          label: `${name}${filteredList.length === 1 ? "" : `${index + 1}차`}`,
-        };
-      });
       cloneList.set(mapType, [...updatedList]);
       setBadgeList(cloneList);
     }
