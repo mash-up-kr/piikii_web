@@ -2,24 +2,23 @@
 
 import { useCallback, useEffect, useState } from "react";
 import MotionCard from "./MotionCard";
-import { AnimatePresence } from "framer-motion";
-import { SwipeDirection } from "../model";
-import Image from "next/image";
-import { Button } from "@/components/common/Button/Button";
-import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
+import { CategoryChoiceState, SwipeDirection, VoteType } from "../model";
 import MotionCardActionButtons from "./MotionCardActionButtons";
 
 interface Props {
-  cardList: any[];
-  onUpdateCardList: (cardList: any[]) => void;
+  voteType: VoteType;
+  optionList: any[];
+  onUpdateOption: (option: any) => void;
 }
 
 type SwipedCount = number;
 type SwipeState = [SwipeDirection, SwipedCount];
 
 export default function MotionCardContainer({
-  cardList,
-  onUpdateCardList,
+  voteType,
+  optionList,
+  onUpdateOption,
 }: Props) {
   const [swipedDirection, setSwipedDirection] = useState<SwipeState>([
     SwipeDirection.NONE,
@@ -28,9 +27,22 @@ export default function MotionCardContainer({
 
   const [curCardIndex, setCurCardIndex] = useState(0);
 
-  const handleSwipeCard = useCallback((direction: SwipeDirection) => {
-    setSwipedDirection((prev) => [direction, prev[1] + 1]);
-  }, []);
+  const handleSwipeCard = useCallback(
+    (index: number, direction: SwipeDirection) => {
+      setSwipedDirection((prev) => [direction, prev[1] + 1]);
+
+      onUpdateOption({
+        ...optionList[index],
+        state:
+          direction === SwipeDirection.LEFT
+            ? CategoryChoiceState.DISLIKE
+            : direction === SwipeDirection.RIGHT
+            ? CategoryChoiceState.LIKE
+            : CategoryChoiceState.HOLD,
+      });
+    },
+    [onUpdateOption, optionList]
+  );
 
   useEffect(() => {
     if (swipedDirection[0] === SwipeDirection.NONE) return;
@@ -39,34 +51,53 @@ export default function MotionCardContainer({
   }, [swipedDirection]);
 
   return (
-    <>
-      <div className="flex h-[430px] w-full justify-center pt-[24px] pb-[32px] relative">
-        {curCardIndex <= cardList.length && (
-          <AnimatePresence initial={false}>
+    <AnimatePresence>
+      <motion.div
+        key={`motion-card-container-${voteType}`}
+        layout
+        initial={{ opacity: 0, y: voteType === VoteType.VOTE_HOLD ? -100 : 0 }}
+        animate={{ opacity: 1, y: 0, transition: { duration: 0.5 } }}
+        exit={{ opacity: 0 }}
+        className="flex h-[430px] w-full justify-center pt-[24px] pb-[32px] relative"
+      >
+        {curCardIndex <= optionList.length && (
+          <AnimatePresence>
             <MotionCard
-              key={curCardIndex + 1}
+              key={`${curCardIndex + 1}`}
               index={curCardIndex + 1}
               direction={swipedDirection[0]}
-              onSwipeCard={handleSwipeCard}
-              data={cardList[curCardIndex + 1] ?? null}
+              onSwipeCard={(direction) =>
+                handleSwipeCard(curCardIndex + 1, direction)
+              }
+              data={
+                optionList.find(
+                  (option) => option.index === curCardIndex + 1
+                ) ?? null
+              }
               hideShadow={false}
             />
             <MotionCard
               key={curCardIndex}
               index={curCardIndex}
               direction={swipedDirection[0]}
-              onSwipeCard={handleSwipeCard}
-              data={cardList[curCardIndex] ?? null}
+              onSwipeCard={(direction) =>
+                handleSwipeCard(curCardIndex, direction)
+              }
+              data={
+                optionList.find((option) => option.index === curCardIndex) ??
+                null
+              }
               hideShadow={true}
             />
           </AnimatePresence>
         )}
-      </div>
+      </motion.div>
 
       {/* Action Buttons */}
       <MotionCardActionButtons
-        onClickButton={(direction) => handleSwipeCard(direction)}
+        voteType={voteType}
+        onClickButton={(direction) => handleSwipeCard(curCardIndex, direction)}
       />
-    </>
+    </AnimatePresence>
   );
 }
