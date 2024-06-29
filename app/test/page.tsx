@@ -20,6 +20,12 @@ const iconInfo: IconInfo[] = [
   { icon: "🥨", label: "디저트" },
   { icon: "🍺", label: "술" },
   { icon: "🕹️", label: "놀거리" },
+const handleButtonClick = () => {
+  return alert("click!");
+};
+const cardData = [
+  { place: "딤딤섬 삼성점", images: ["/png/food.png"] },
+  { place: "딤딤섬 목동점", images: ["/png/food.png"] },
 ];
 
 const handleButtonClick = () => {
@@ -41,6 +47,7 @@ const CardComponentPage = () => {
         reviewCount={30}
         images={images}
         info={info}
+        onButtonClick={handleButtonClick}
       />
       <CardWithImageSmall
         place={"dghsajhgldhljghjdhdjdghjhlds"}
