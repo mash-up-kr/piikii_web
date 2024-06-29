@@ -10,8 +10,8 @@ export interface CardSizeProps {
 export interface CardInfoProps {
   place: string;
   link?: string;
-  rating: string;
-  numberOfReviews: number;
+  rating?: string;
+  reviewCount?: number;
   images: string[];
   info?: { label: string; value: string }[];
   onButtonClick?: () => void;
@@ -29,4 +29,7 @@ export interface IconAndDesc {
 
 export interface CardIconProps {
   iconAndDesc: IconAndDesc[];
+  
+export interface PendingCardListProps {
+  cards: { place: string; images: string[] }[];
 }

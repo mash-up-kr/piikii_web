@@ -5,6 +5,10 @@ import CardWithImage, {
   CardWithLike,
 } from "@/components/common/Cards/CardWithImage";
 import { IconAndDesc, Size } from "@/model";
+import PendingCard, {
+  PendingCardList,
+} from "@/components/common/Cards/PendingCard";
+import { Size } from "@/model";
 import React from "react";
 
 const images = ["/png/food.png", "/png/food.png", "/png/food.png"];
@@ -16,6 +20,10 @@ const info = [
 const clickFunction = () => {
   return alert("click!");
 };
+const cardData = [
+  { place: "딤딤섬 삼성점", images: ["/png/food.png"] },
+  { place: "딤딤섬 목동점", images: ["/png/food.png"] },
+];
 
 const CardComponentPage = () => {
   return (
@@ -24,23 +32,18 @@ const CardComponentPage = () => {
         place={"돈카춘 노원점"}
         link={"/"}
         rating={"4.5"}
-        numberOfReviews={30}
+        reviewCount={30}
         images={images}
         info={info}
       />
-      {/* <div className="flex flex-row gap-x-5">
-        <CardWithLike size={Size.small} />
-        <CardWithDislike size={Size.large} /> */}
-      <CardForCopiedContent
-        place={"온소반 상암점"}
+      <CardWithImageSmall
+        place={"dghsajhgldhljghjdhdjdghjhlds"}
         link={"/"}
-        rating={"4.01"}
-        numberOfReviews={433}
+        rating={"4.1"}
+        reviewCount={300}
         images={images}
         info={info}
-        onButtonClick={clickFunction}
       />
-      {/* </div> */}
     </div>
   );
 };
