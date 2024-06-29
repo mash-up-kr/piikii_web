@@ -10,8 +10,11 @@ import { Z_INDEX } from "@/lib/constants";
 import { TEMP_ROOM_CATEGORIES } from "./sample-data";
 import { CategoryChoiceState, VoteType } from "./model";
 import HoldingOptionAvatarList from "./components/HoldingOptionAvatarList";
+import OnboardingOverlay from "./components/OnboardingOverlay";
 
 export default function Page() {
+  const [isOverlayVisible, setIsOverlayVisible] = useState<boolean>(true);
+
   const [curScheduleIndex, setCurStageIndex] = useState<number>(0);
 
   const [resultData, setResultData] = useState<any>({
@@ -188,7 +191,10 @@ export default function Page() {
         )}
       </div>
 
-      {/*  */}
+      {/* Onboarding Overlay */}
+      {isOverlayVisible && (
+        <OnboardingOverlay onStartVote={() => setIsOverlayVisible(false)} />
+      )}
     </div>
   );
 }
