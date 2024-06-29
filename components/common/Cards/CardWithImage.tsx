@@ -13,6 +13,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
   images,
   info,
   noShadow,
+  cardClassName,
 }) => {
   const router = useRouter();
 
@@ -20,7 +21,8 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
     <Card
       className={cn(
         "flex flex-col items-center w-[335px] max-h-[372px] py-[24px] rounded-xl border-0",
-        noShadow && "shadow-none"
+        noShadow && "shadow-none",
+        cardClassName
       )}
     >
       <div className="flex flex-col w-[295px] h-[139px]">

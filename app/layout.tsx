@@ -26,7 +26,7 @@ export default function RootLayout({
         className={`${Pretendard.className} w-screen flex justify-center bg-primary-200`}
       >
         <ClientProvider>
-          <div className="max-w-[400px] w-full bg-neutral-0 relative h-dvh overflow-y-auto">
+          <div className="max-w-[375px] w-full bg-neutral-0 relative h-dvh overflow-y-auto overflow-x-hidden">
             {children}
           </div>
         </ClientProvider>
