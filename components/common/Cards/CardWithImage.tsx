@@ -16,7 +16,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
   const router = useRouter();
 
   return (
-    <Card className="flex flex-col items-center w-[335px] max-h-[372px] py-[24px] rounded-xl ">
+    <Card className="flex flex-col items-center w-[335px] max-h-[372px] py-[24px] rounded-xl">
       <div className="flex flex-col w-[295px] h-[139px]">
         <div className="flex flex-row gap-x-[8px]">
           <CardHeader>
@@ -70,7 +70,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
         ))}
         <button
           className="flex flex-row mt-[12px] items-center justify-center w-[295px] h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
-          onClick={() => router.push(link)}
+          onClick={() => (link ? router.push(link) : null)}
         >
           <div className="w-[55px] h-[18px] opacity-80 text-[12px] font-semibold">
             자세히 보기

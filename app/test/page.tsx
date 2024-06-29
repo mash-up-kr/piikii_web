@@ -3,7 +3,9 @@ import CardWithImage, {
   CardWithDislike,
   CardWithLike,
 } from "@/components/common/Cards/CardWithImage";
-import { CardWithImageSmall } from "@/components/common/Cards/CardWithImageSmall";
+import PendingCard, {
+  PendingCardList,
+} from "@/components/common/Cards/PendingCard";
 import { Size } from "@/model";
 import React from "react";
 
@@ -12,6 +14,10 @@ const info = [
   { label: "영업시간", value: "11:00 - 21:00" },
   { label: "브레이크 타임", value: "15:00 - 17:00" },
   { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
+];
+const cardData = [
+  { place: "딤딤섬 삼성점", images: ["/png/food.png"] },
+  { place: "딤딤섬 목동점", images: ["/png/food.png"] },
 ];
 
 const CardComponentPage = () => {
@@ -33,6 +39,8 @@ const CardComponentPage = () => {
         images={images}
         info={info}
       />
+      <PendingCard place={"돈카춘 노원점"} images={images} />
+      <PendingCardList cards={cardData} />
     </div>
   );
 };
