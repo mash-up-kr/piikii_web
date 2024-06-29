@@ -5,42 +5,14 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  type CarouselApi,
 } from "@/components/ui/carousel";
 
 import Image from "next/image";
 import React, { Children } from "react";
-
-const TEMP_ITEM = {
-  comp: (
-    <div className="h-[100px]">
-      <Image
-        src="/png/ic_picture_24.png"
-        width={100}
-        height={100}
-        alt="ic_picture_24.png"
-      />
-    </div>
-  ),
-};
-
-const TEMP_SLIDE_ITEMS = Array.from({ length: 3 }).fill(
-  TEMP_ITEM.comp
-) as React.ReactNode[];
+import useHome, { TEMP_SLIDE_ITEMS } from "./_hooks/useHome";
 
 const Home = () => {
-  const [api, setApi] = React.useState<CarouselApi>();
-  const [current, setCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (!api) return;
-
-    setCurrent(api.selectedScrollSnap() + 1);
-
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1);
-    });
-  }, [api]);
+  const { api, current, setApi, handleNext } = useHome();
 
   return (
     <BasisSection className="bg-primary-100">
@@ -97,7 +69,7 @@ const Home = () => {
       </ul>
 
       <div className="absolute w-full bottom-0 bg-white py-[10px] px-[20px]">
-        <Button className="h-[56px]">
+        <Button className="h-[56px]" onClick={handleNext}>
           {current - 1 === 2 ? `모임 만들기` : "다음"}
         </Button>
       </div>

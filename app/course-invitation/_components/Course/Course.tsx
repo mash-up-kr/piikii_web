@@ -8,7 +8,7 @@ import { IconInfo } from "@/model";
 import CourseBadge from "./_components/CourseBadge";
 import useCourse from "./_hooks/useCourse";
 
-const iconInfo: (IconInfo & { type: string })[] = [
+const MENU_LIST: IconInfo[] = [
   { icon: "🍔", label: "음식", type: "food" },
   { icon: "🥨", label: "디저트", type: "desert" },
   { icon: "🍺", label: "술", type: "alchol" },
@@ -16,7 +16,7 @@ const iconInfo: (IconInfo & { type: string })[] = [
 ];
 
 const Course = () => {
-  const { badgeList, BADGE_INIT_DATA } = useCourse();
+  const { badgeList, BADGE_INIT_DATA, onClickCard } = useCourse();
   return (
     <BasisSection className="flex flex-col items-center">
       <h3 className="py-[32px] text-bold-22">어떤 순서로 가실 건가요?</h3>
@@ -35,7 +35,11 @@ const Course = () => {
             />
           );
         })}
-      <CardWithIconList iconInfo={iconInfo} className="pt-[32px]" />
+      <CardWithIconList
+        iconInfo={MENU_LIST}
+        onClickCard={onClickCard}
+        className="pt-[32px]"
+      />
 
       <div className="absolute w-full bottom-0 bg-white py-[10px] px-[20px]">
         <Button className="h-[56px]" disabled={badgeList.length === 0}>
