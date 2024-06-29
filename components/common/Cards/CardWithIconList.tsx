@@ -1,3 +1,4 @@
+import { BadgeType } from "@/app/course-invitation/_components/Course/_hooks/useCourse";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { IconInfo } from "@/model";
@@ -19,14 +20,14 @@ export interface CardWithIconListProps
   extends React.HTMLAttributes<HTMLDivElement> {
   asChild?: boolean;
   iconInfo: IconInfo[];
-  onClickCard?: (value: IconInfo) => void;
+  onClickCard?: (value: BadgeType) => void;
 }
 
 export const CardWithIconList = React.forwardRef<
   HTMLDivElement,
   CardWithIconListProps
 >(({ className, iconInfo, onClickCard }, ref) => {
-  const onClick = (item: IconInfo) => {
+  const onClick = (item: BadgeType) => {
     onClickCard && onClickCard(item);
   };
 

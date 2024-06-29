@@ -1,10 +1,13 @@
-'use client'
-import React from 'react'
+"use client";
+import React from "react";
+import { StepType } from "../_hooks/useCourseInvitation";
 
-const Invitation = () => {
-  return (
-    <div>Invitation</div>
-  )
+interface InvitationProps {
+  handleStep: (step: StepType) => void;
 }
 
-export default Invitation
+const Invitation = ({ handleStep }: InvitationProps) => {
+  return <div>Invitation</div>;
+};
+
+export default Invitation;

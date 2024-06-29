@@ -1,15 +1,15 @@
-import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import React from "react";
+import { Badge } from "@/components/ui/badge";
 import { BadgeType } from "../_hooks/useCourse";
 
 export interface CourseBadgeProps {
   item: BadgeType;
-  onDelete: () => void;
+  onDelete: (item: BadgeType) => void;
 }
 
 const CourseBadge = ({ item, onDelete }: CourseBadgeProps) => {
-  const { label } = item || {};
+  const { label, icon, type, id } = item || {};
   return (
     <>
       <Badge
@@ -17,9 +17,13 @@ const CourseBadge = ({ item, onDelete }: CourseBadgeProps) => {
         className="py-[10.5px] px-[16px] min-w-[72px] max-h-[37px]"
       >
         <div className="flex items-center w-full justify-between">
-          {label && <p>{label}</p>}
+          {icon && <p className="mr-[6px]">{icon}</p>}
+          {label && <p className="text-medium-14">{label}</p>}
 
-          <div className="cursor-pointer" onClick={onDelete}>
+          <div
+            className="cursor-pointer ml-[8px]"
+            onClick={() => onDelete({ label, icon, type, id })}
+          >
             <Image
               src={`/png/ic_x_16.png`}
               width={16}
