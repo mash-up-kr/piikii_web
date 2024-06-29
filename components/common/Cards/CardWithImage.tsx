@@ -12,35 +12,38 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
   reviewCount,
   images,
   info,
+  noShadow,
 }) => {
   const router = useRouter();
 
   return (
-    <Card className="flex flex-col items-center w-[335px] max-h-[372px] py-[24px] rounded-xl">
+    <Card
+      className={cn(
+        "flex flex-col items-center w-[335px] max-h-[372px] py-[24px] rounded-xl border-0",
+        noShadow && "shadow-none"
+      )}
+    >
       <div className="flex flex-col w-[295px] h-[139px]">
-        <div className="flex flex-row gap-x-[8px]">
-          <CardHeader>
-            <CardTitle>
-              <div className="flex flex-row gap-x-[8px] justify-center items-center">
-                <div className="flex w-[214px] h-[31px] items-center">
-                  {place}
+        <div className="flex gap-x-[8px]">
+          <CardHeader className="w-full">
+            <div className="flex w-full gap-x-[8px] justify-between items-center h-[31px] text-semibold-22">
+              <div className="flex items-center">{place}</div>
+              <div className="flex gap-x-[4px] items-center">
+                <div className="flex w-[16px] h-[16px]">
+                  <Image
+                    src="/png/naver.png"
+                    alt="naver"
+                    width={16}
+                    height={16}
+                    priority
+                    unoptimized
+                  />
                 </div>
-                <div className="flex flex-row gap-x-[4px] w-[73px] h-[31px] items-center">
-                  <div className="flex flex-row w-[16px] h-[16px]">
-                    <Image
-                      src="/png/naver.png"
-                      alt="naver"
-                      width={16}
-                      height={16}
-                      priority
-                    />
-                  </div>
-                  <div className="text-[14px]">
-                    {rating} ({reviewCount})
-                  </div>
+                <div className="text-[14px]">
+                  {rating} ({reviewCount})
                 </div>
               </div>
-            </CardTitle>
+            </div>
           </CardHeader>
         </div>
         <div className="flex flex-row gap-x-[9px] py-[15px]">

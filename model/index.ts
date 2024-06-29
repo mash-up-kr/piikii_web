@@ -15,6 +15,7 @@ export interface CardInfoProps {
   images: string[];
   info?: { label: string; value: string }[];
   onButtonClick?: () => void;
+  noShadow?: boolean;
 }
 
 export interface ImgProps {
