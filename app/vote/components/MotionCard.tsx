@@ -19,6 +19,11 @@ const variants = {
   animate: { y: 0, opacity: 1 },
   exit: (custom: { exitX: number; exitY: number }) => ({
     x: custom.exitX,
+
+    /**
+     * NOTE: custom.exitX 가 0 이면 exitY 값을 설정하여 위로 올라가게 함
+     * - 기본적으로 좌우로 이동 할때 exitX 값을 설정해주면서 index 변경을 하는데 exitX 값 설정 없이 index 변경은 "보류"로 인식하기 위한 로직
+     */
     y: custom.exitX ? 0 : custom.exitY,
     opacity: 0,
     transition: { duration: 0.3 },
