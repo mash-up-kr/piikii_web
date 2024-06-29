@@ -21,13 +21,8 @@ const variants = {
   animate: { y: 0, opacity: 1 },
   exit: (custom: { exitX: number; exitY: number }) => ({
     x: custom.exitX,
-
-    /**
-     * NOTE: custom.exitX 가 0 이면 exitY 값을 설정하여 위로 올라가게 함
-     * - 기본적으로 좌우로 이동 할때 exitX 값을 설정해주면서 index 변경을 하는데 exitX 값 설정 없이 index 변경은 "보류"로 인식하기 위한 로직
-     */
     y: custom.exitY,
-    opacity: custom.exitX ? 0 : 1,
+    opacity: 0,
     transition: { duration: custom.exitX ? 0.3 : 0.6, ease: "easeIn" },
   }),
 };
@@ -58,7 +53,7 @@ export default function MotionCard({
   }, [direction]);
 
   const exitY = useMemo(() => {
-    if (direction === SwipeDirection.UP) return -500;
+    if (direction === SwipeDirection.UP) return -800;
     return 0;
   }, [direction]);
 
@@ -114,17 +109,16 @@ export default function MotionCard({
         whileDrag={{ cursor: "grabbing" }}
       >
         <CardWithImage
-          place={index.toString()}
-          rating="4.5"
+          place={data.name}
+          rating={data.rating.toString()}
           reviewCount={100}
-          images={["/png/food.png", "/png/food.png", "/png/food.png"]}
+          images={data.images}
           info={[
             { label: "음식", value: "한식" },
             { label: "가격대", value: "만원 미만" },
             { label: "위치", value: "강남역" },
           ]}
           noShadow={hideShadow}
-          cardClassName=""
         />
 
         <motion.div
