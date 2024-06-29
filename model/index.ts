@@ -11,7 +11,7 @@ export interface CardInfoProps {
   place: string;
   link: string;
   rating: string;
-  numberOfReviews: number;
+  reviewCount: number;
   images: string[];
   info: { label: string; value: string }[];
 }
@@ -21,11 +21,11 @@ export interface ImgProps {
   height: number;
 }
 
-export interface IconAndDesc {
+export interface IconInfo {
   icon: string;
-  desc: string;
+  label: string;
 }
 
 export interface CardIconProps {
-  iconAndDesc: IconAndDesc[];
+  iconInfo: IconInfo[];
 }

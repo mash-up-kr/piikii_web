@@ -1,12 +1,10 @@
 "use client";
-import CardWithIcon, {
-  CardWithIconList,
-} from "@/components/common/Cards/CardWithIcon";
+import { CardWithIconList } from "@/components/common/Cards/CardWithIconList";
 import CardWithImage, {
   CardWithDislike,
   CardWithLike,
 } from "@/components/common/Cards/CardWithImage";
-import { IconAndDesc, Size } from "@/model";
+import { IconInfo, Size } from "@/model";
 import React from "react";
 
 const images = ["/png/food.png", "/png/food.png", "/png/food.png"];
@@ -15,11 +13,11 @@ const info = [
   { label: "브레이크 타임", value: "15:00 - 17:00" },
   { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
 ];
-const iconAndDesc: IconAndDesc[] = [
-  { icon: "🍔", desc: "음식" },
-  { icon: "🥨", desc: "디저트" },
-  { icon: "🍺", desc: "술" },
-  { icon: "🕹️", desc: "놀거리" },
+const iconInfo: IconInfo[] = [
+  { icon: "🍔", label: "음식" },
+  { icon: "🥨", label: "디저트" },
+  { icon: "🍺", label: "술" },
+  { icon: "🕹️", label: "놀거리" },
 ];
 
 const CardComponentPage = () => {
@@ -29,11 +27,11 @@ const CardComponentPage = () => {
         place={"돈카춘 노원점"}
         link={"/"}
         rating={"4.5"}
-        numberOfReviews={30}
+        reviewCount={30}
         images={images}
         info={info}
       />
-      <CardWithIconList iconAndDesc={iconAndDesc} />
+      <CardWithIconList iconInfo={iconInfo} />
     </div>
   );
 };
