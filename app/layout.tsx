@@ -22,8 +22,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={Pretendard.className}>
-        <ClientProvider>{children}</ClientProvider>
+      <body
+        className={`${Pretendard.className} w-screen flex justify-center min-h-screen bg-primary-200`}
+      >
+        <ClientProvider>
+          <div className="max-w-[400px] w-full bg-neutral-0 relative">
+            {children}
+          </div>
+        </ClientProvider>
       </body>
     </html>
   );
