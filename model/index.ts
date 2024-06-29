@@ -22,14 +22,15 @@ export interface ImgProps {
   height: number;
 }
 
-export interface IconAndDesc {
+export interface IconInfo {
   icon: string;
-  desc: string;
+  label: string;
 }
 
 export interface CardIconProps {
-  iconAndDesc: IconAndDesc[];
-  
+  iconInfo: IconInfo[];
+}
+
 export interface PendingCardListProps {
   cards: { place: string; images: string[] }[];
 }

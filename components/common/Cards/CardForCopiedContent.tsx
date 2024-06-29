@@ -5,7 +5,7 @@ import Image from "next/image";
 export const CardForCopiedContent: React.FC<CardInfoProps> = ({
   place,
   rating,
-  numberOfReviews,
+  reviewCount,
   images,
   onButtonClick,
 }) => {
@@ -45,7 +45,7 @@ export const CardForCopiedContent: React.FC<CardInfoProps> = ({
                   {rating}
                 </span>
                 <span className="w-[31px] h-[18px] text-[12px] text-[#363A3C] opacity-50">
-                  ({numberOfReviews})
+                  ({reviewCount})
                 </span>
               </div>
             </div>
