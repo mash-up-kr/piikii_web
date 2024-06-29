@@ -6,6 +6,8 @@ import CardWithImage, {
 } from "@/components/common/Cards/CardWithImage";
 import { IconInfo, Size } from "@/model";
 import React from "react";
+import { CardWithImageSmall } from "@/components/common/Cards/CardWithImageSmall";
+import { number } from "yargs";
 
 const images = ["/png/food.png", "/png/food.png", "/png/food.png"];
 const info = [
@@ -18,6 +20,12 @@ const iconInfo: IconInfo[] = [
   { icon: "🥨", label: "디저트" },
   { icon: "🍺", label: "술" },
   { icon: "🕹️", label: "놀거리" },
+const handleButtonClick = () => {
+  return alert("click!");
+};
+const cardData = [
+  { place: "딤딤섬 삼성점", images: ["/png/food.png"] },
+  { place: "딤딤섬 목동점", images: ["/png/food.png"] },
 ];
 
 const CardComponentPage = () => {
@@ -30,6 +38,7 @@ const CardComponentPage = () => {
         reviewCount={30}
         images={images}
         info={info}
+        onButtonClick={handleButtonClick}
       />
       <CardWithIconList iconInfo={iconInfo} />
     </div>
