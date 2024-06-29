@@ -14,6 +14,7 @@ export interface CardInfoProps {
   reviewCount: number;
   images: string[];
   info: { label: string; value: string }[];
+  onButtonClick?: () => void;
 }
 
 export interface ImgProps {
