@@ -5,12 +5,15 @@ import MotionCard from "./MotionCard";
 import { AnimatePresence } from "framer-motion";
 import { SwipeDirection } from "../model";
 
-const TEMP_CARD_LIST = [1, 2, 3, 4, 5];
+interface Props {
+  cardList: any[];
+  onUpdateCardList: (cardList: any[]) => void;
+}
 
-export default function MotionCardContainer() {
+export default function MotionCardContainer({ cardList }: Props) {
   const [curIndex, setCurIndex] = useState(0);
 
-  const handleCardSwipe = useCallback(
+  const handleSwipeCard = useCallback(
     (direction: SwipeDirection) => {
       setCurIndex(curIndex + 1);
     },
@@ -19,25 +22,28 @@ export default function MotionCardContainer() {
 
   return (
     <div className="flex h-[450px] justify-center pt-[20px] relative overflow-x-hidden">
-      {curIndex <= TEMP_CARD_LIST.length && (
+      {curIndex <= cardList.length && (
         <AnimatePresence initial={false}>
           <MotionCard
             key={curIndex + 2}
             index={curIndex + 2}
-            onCardSwipe={handleCardSwipe}
-            data={TEMP_CARD_LIST[curIndex + 2] ?? null}
+            onSwipeCard={handleSwipeCard}
+            data={cardList[curIndex + 2] ?? null}
+            hideShadow={false}
           />
           <MotionCard
             key={curIndex + 1}
             index={curIndex + 1}
-            onCardSwipe={handleCardSwipe}
-            data={TEMP_CARD_LIST[curIndex + 1] ?? null}
+            onSwipeCard={handleSwipeCard}
+            data={cardList[curIndex + 1] ?? null}
+            hideShadow={true}
           />
           <MotionCard
             key={curIndex}
             index={curIndex}
-            onCardSwipe={handleCardSwipe}
-            data={TEMP_CARD_LIST[curIndex] ?? null}
+            onSwipeCard={handleSwipeCard}
+            data={cardList[curIndex] ?? null}
+            hideShadow={true}
           />
         </AnimatePresence>
       )}
