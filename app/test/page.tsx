@@ -21,7 +21,7 @@ const CardComponentPage = () => {
         place={"돈카춘 노원점"}
         link={"/"}
         rating={"4.5"}
-        numberOfReviews={30}
+        reviewCount={30}
         images={images}
         info={info}
       />
@@ -29,7 +29,7 @@ const CardComponentPage = () => {
         place={"dghsajhgldhljghjdhdjdghjhlds"}
         link={"/"}
         rating={"4.1"}
-        numberOfReviews={300}
+        reviewCount={300}
         images={images}
         info={info}
       />
