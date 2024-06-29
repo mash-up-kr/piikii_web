@@ -3,6 +3,7 @@ import CardWithImage, {
   CardWithDislike,
   CardWithLike,
 } from "@/components/common/Cards/CardWithImage";
+import { CardWithImageSmall } from "@/components/common/Cards/CardWithImageSmall";
 import { Size } from "@/model";
 import React from "react";
 
@@ -20,14 +21,18 @@ const CardComponentPage = () => {
         place={"돈카춘 노원점"}
         link={"/"}
         rating={"4.5"}
-        numberOfReviews={30}
+        reviewCount={30}
         images={images}
         info={info}
       />
-      <div className="flex flex-row gap-x-5">
-        <CardWithLike size={Size.small} />
-        <CardWithDislike size={Size.large} />
-      </div>
+      <CardWithImageSmall
+        place={"dghsajhgldhljghjdhdjdghjhlds"}
+        link={"/"}
+        rating={"4.1"}
+        reviewCount={300}
+        images={images}
+        info={info}
+      />
     </div>
   );
 };

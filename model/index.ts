@@ -11,9 +11,9 @@ export interface CardInfoProps {
   place: string;
   link: string;
   rating: string;
-  numberOfReviews: number;
+  reviewCount: number;
   images: string[];
-  info: { label: string; value: string }[];
+  info?: { label: string; value: string }[];
 }
 
 export interface ImgProps {

@@ -16,7 +16,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
   const router = useRouter();
 
   return (
-    <Card className="flex flex-col items-center w-[335px] max-h-[372px] py-[24px]">
+    <Card className="flex flex-col items-center w-[335px] max-h-[372px] py-[24px] rounded-xl ">
       <div className="flex flex-col w-[295px] h-[139px]">
         <div className="flex flex-row gap-x-[8px]">
           <CardHeader>
@@ -59,7 +59,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
       </div>
       <hr className="w-[295px] mt-[24px]" />
       <CardContent className="flex flex-col w-[295px] h-[161px] gap-y-[8px] my-[20px]">
-        {info.map((item, index) => (
+        {info?.map((item, index) => (
           <div
             key={index}
             className="flex flex-row justify-between w-[295px] h-[21px] gap-x-[16px] text-[14px]"
