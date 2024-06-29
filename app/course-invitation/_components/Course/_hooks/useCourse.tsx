@@ -1,11 +1,15 @@
-import { IconInfo } from "@/model";
 import { cloneDeep } from "lodash-es";
 import { useMemo, useState } from "react";
 import { StepType } from "../../_hooks/useCourseInvitation";
 
-export type BadgeType = Partial<IconInfo> & { id?: number };
+export type BadgeInfoType = {
+  icon?: string;
+  label?: string;
+  type?: string;
+  id?: number;
+};
 
-export const BADGE_INIT_DATA: BadgeType = { id: 0, label: "?" };
+export type BadgeType = BadgeInfoType;
 
 export type BadgeMapKeyType = "food" | "desert" | "alchol" | "play";
 
@@ -14,6 +18,8 @@ export type BadgeMapType = Map<BadgeMapKeyType, BadgeType[]>;
 export interface UseCourseProps {
   handleStep: (step: StepType) => void;
 }
+
+const BADGE_INIT_DATA: BadgeType = { id: 0, label: "?" };
 
 const BADGE_LIST_INITIAL_VALUE: BadgeMapType = new Map([
   ["food", []],
@@ -46,7 +52,13 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
   };
 
   const list = useMemo(() => {
-    return Array.from(badgeList.values()).flatMap((item) => item);
+    return Array.from(badgeList.values())
+      .flatMap((item) => item)
+      .sort((a, b) => {
+        if (typeof a.id === "number" && typeof b.id === "number") {
+          return a.id - b.id;
+        } else return 0;
+      });
   }, [badgeList]);
 
   const getBadgeData = (id: number, item: BadgeType, count: number) => {
@@ -88,6 +100,7 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
         cloneList.set(mapType, [...updatedList, data]);
       }
     }
+
     setBadgeList(cloneList);
     setNextId(nextId + 1);
   };

@@ -8,13 +8,8 @@ const CourseInvitation = () => {
   const { step, handleStep } = useCourseInvitation();
   return (
     <>
-      {/* <NavigationBar
-        title="샘플"
-        leftSlot={<div>LEFT</div>}
-        rightSlot={<div>RIGHT</div>}
-      /> */}
       {step === "course" && <Course handleStep={handleStep} />}
-      {step === "invitation" && <Invitation handleStep={handleStep}/>}
+      {step === "invitation" && <Invitation handleStep={handleStep} />}
     </>
   );
 };
