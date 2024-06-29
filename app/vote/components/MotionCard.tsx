@@ -1,14 +1,16 @@
 "use client";
 
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { SwipeDirection } from "../model";
 import Image from "next/image";
 import { Z_INDEX } from "@/lib/constants";
 import CardWithImage from "@/components/common/Cards/CardWithImage";
+import { get } from "http";
 
 interface Props {
   index: number;
+  direction: SwipeDirection | null;
   data: any;
   onSwipeCard: (direction: SwipeDirection) => void;
   hideShadow: boolean;
@@ -24,20 +26,19 @@ const variants = {
      * NOTE: custom.exitX 가 0 이면 exitY 값을 설정하여 위로 올라가게 함
      * - 기본적으로 좌우로 이동 할때 exitX 값을 설정해주면서 index 변경을 하는데 exitX 값 설정 없이 index 변경은 "보류"로 인식하기 위한 로직
      */
-    y: custom.exitX ? 0 : custom.exitY,
-    opacity: 0,
-    transition: { duration: 0.3 },
+    y: custom.exitY,
+    opacity: custom.exitX ? 0 : 1,
+    transition: { duration: custom.exitX ? 0.3 : 0.6, ease: "easeIn" },
   }),
 };
 
 export default function MotionCard({
   index,
+  direction,
   onSwipeCard,
   data,
   hideShadow,
 }: Props) {
-  const [exitX, setExitX] = useState(0);
-
   const x = useMotionValue(0);
   const y = useTransform(x, [-250, 0, 250], [-30, 0, -30]);
 
@@ -50,17 +51,26 @@ export default function MotionCard({
 
   const swipeCardOverlayOpacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
 
-  function handleDragEnd(_: any, info: { offset: { x: number } }) {
+  const exitX = useMemo(() => {
+    if (direction === SwipeDirection.LEFT) return -250;
+    if (direction === SwipeDirection.RIGHT) return 250;
+    return 0;
+  }, [direction]);
+
+  const exitY = useMemo(() => {
+    if (direction === SwipeDirection.UP) return -500;
+    return 0;
+  }, [direction]);
+
+  const handleDragEnd = (_: any, info: { offset: { x: number } }) => {
     if (info.offset.x < -50) {
-      setExitX(-250);
       onSwipeCard(SwipeDirection.LEFT);
     }
 
     if (info.offset.x > 50) {
-      setExitX(250);
       onSwipeCard(SwipeDirection.RIGHT);
     }
-  }
+  };
 
   if (!data) return <></>;
 
@@ -69,7 +79,7 @@ export default function MotionCard({
       {/* Background Overlay */}
       <motion.div
         layout
-        className="w-[335px] h-[372px] rounded-[20px] flex justify-center items-center absolute top-[20px] bg-primary-100"
+        className="w-[335px] h-[372px] rounded-[20px] flex justify-center items-center absolute top-[24px] bg-primary-100"
         exit={{ opacity: 0, transition: { duration: 0.3 } }}
         style={{
           opacity: swipeCardOverlayOpacity,
@@ -79,14 +89,15 @@ export default function MotionCard({
 
       {/* Main Motion Card Component */}
       <motion.div
-        className="w-[335px] h-[372px] rounded-[20px] flex justify-center items-center absolute top-[20px]"
+        key={index}
+        className="w-[335px] h-[372px] rounded-[20px] flex justify-center items-center absolute top-[24px]"
         layout
         initial="initial"
         animate="animate"
         exit="exit"
         custom={{
           exitX,
-          exitY: 100,
+          exitY,
         }}
         drag="x"
         dragConstraints={{ top: 0, right: 0, bottom: 0, left: 0 }}
@@ -103,7 +114,7 @@ export default function MotionCard({
         whileDrag={{ cursor: "grabbing" }}
       >
         <CardWithImage
-          place="맛집 이름"
+          place={index.toString()}
           rating="4.5"
           reviewCount={100}
           images={["/png/food.png", "/png/food.png", "/png/food.png"]}
@@ -113,6 +124,7 @@ export default function MotionCard({
             { label: "위치", value: "강남역" },
           ]}
           noShadow={hideShadow}
+          cardClassName=""
         />
 
         <motion.div
