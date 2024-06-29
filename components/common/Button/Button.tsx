@@ -27,13 +27,11 @@ const buttonVariants = cva(
         default: `bg-primary-700 
           text-primary-foreground
           hover:bg-primary-800
-          max-w-[330px]
           w-[100%]`,
         secondary: `bg-secondary-dislike-100
           text-secondary-dislike-700
           hover:bg-secondary-dislike-700
           hover:text-white
-          max-w-[113px]
           w-[100%]
           rounded-[28px]
           `,
@@ -41,7 +39,6 @@ const buttonVariants = cva(
           text-black
           hover:bg-natural-200
           hover:text-black
-          max-w-[113px]
           w-[100%]
           rounded-[10px]
           border-[1px]
