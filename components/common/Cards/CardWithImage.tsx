@@ -9,7 +9,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
   place,
   link,
   rating,
-  numberOfReviews,
+  reviewCount,
   images,
   info,
 }) => {
@@ -36,7 +36,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
                     />
                   </div>
                   <div className="text-[14px]">
-                    {rating} ({numberOfReviews})
+                    {rating} ({reviewCount})
                   </div>
                 </div>
               </div>
@@ -95,7 +95,10 @@ export function CardWithLike({ size }: CardSizeProps) {
 
   return (
     <Card
-      className={cn("flex flex-col items-center justify-center", cardSizeClass)}
+      className={cn(
+        "flex flex-col items-center justify-center rounded-xl ",
+        cardSizeClass
+      )}
     >
       <CardContent>
         <div
@@ -123,7 +126,10 @@ export function CardWithDislike({ size }: CardSizeProps) {
 
   return (
     <Card
-      className={cn("flex flex-col items-center justify-center", cardSizeClass)}
+      className={cn(
+        "flex flex-col items-center justify-center rounded-xl ",
+        cardSizeClass
+      )}
     >
       <CardContent>
         <div

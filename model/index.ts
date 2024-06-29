@@ -11,14 +11,24 @@ export interface CardInfoProps {
   place: string;
   link?: string;
   rating?: string;
-  reviewCount: number;
+  reviewCount?: number;
   images: string[];
   info?: { label: string; value: string }[];
+  onButtonClick?: () => void;
 }
 
 export interface ImgProps {
   width: number;
   height: number;
+}
+
+export interface IconInfo {
+  icon: string;
+  label: string;
+}
+
+export interface CardIconProps {
+  iconInfo: IconInfo[];
 }
 
 export interface PendingCardListProps {
