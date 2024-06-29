@@ -1,13 +1,43 @@
+import { BadgeType } from "@/app/course-invitation/_components/Course/_hooks/useCourse";
 import { Card, CardContent } from "@/components/ui/card";
-import { CardIconProps } from "@/model";
+import { cn } from "@/lib/utils";
+import { IconInfo } from "@/model";
+import { cva } from "class-variance-authority";
+import React from "react";
 
-export const CardWithIconList: React.FC<CardIconProps> = ({ iconInfo }) => {
+const cardWithIconListVariants = cva(
+  `
+    w-[335px]
+    h-full
+    grid
+    grid-cols-2
+    grid-rows-2
+    gap-[8px]
+  `
+);
+
+export interface CardWithIconListProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  asChild?: boolean;
+  iconInfo: IconInfo[];
+  onClickCard?: (value: BadgeType) => void;
+}
+
+export const CardWithIconList = React.forwardRef<
+  HTMLDivElement,
+  CardWithIconListProps
+>(({ className, iconInfo, onClickCard }, ref) => {
+  const onClick = (item: BadgeType) => {
+    onClickCard && onClickCard(item);
+  };
+
   return (
-    <div className="w-[335px] h-[240px] grid grid-cols-2 grid-rows-2 gap-[8px]">
+    <div ref={ref} className={cn(cardWithIconListVariants({ className }))}>
       {iconInfo.slice(0, 4).map((item, index) => (
         <Card
           key={index}
           className={`flex flex-col w-[164px] h-[116px] items-center justify-center cursor-pointer pt-[19px] pb-[18px] bg-[#FFF7F2] hover:bg-[#FFF1EB] active:bg-[#FFEAE1]`}
+          onClick={() => onClick(item)}
         >
           <CardContent className="flex flex-col">
             <div className="flex flex-col">
@@ -25,6 +55,8 @@ export const CardWithIconList: React.FC<CardIconProps> = ({ iconInfo }) => {
       ))}
     </div>
   );
-};
+});
+
+CardWithIconList.displayName = "CardWithIconList";
 
 export default CardWithIconList;

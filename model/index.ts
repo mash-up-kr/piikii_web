@@ -27,6 +27,7 @@ export interface ImgProps {
 export interface IconInfo {
   icon: string;
   label: string;
+  type?: string;
 }
 
 export interface CardIconProps {
