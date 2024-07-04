@@ -1,7 +1,7 @@
 import { cloneDeep } from "lodash-es";
 import { useMemo, useState } from "react";
 import { StepType } from "../../_hooks/useCourseInvitation";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/common/Toast/use-toast";
 
 export type BadgeInfoType = {
   icon?: string;
@@ -124,12 +124,12 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
   };
 
   const handleNext = () => {
-
-    if(list.length === 0) {
-      console.log('nono')
+    if (list.length === 0) {
+      toast.toast({
+        title: "약속 순서를 선택하세요",
+      });
     }
-
-    // handleStep("invitation");
+    handleStep("invitation");
   };
 
   return {
