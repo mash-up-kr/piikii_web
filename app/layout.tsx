@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 
 import "./globals.css";
 import { ClientProvider } from "@/components/providers/ClientProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 const Pretendard = localFont({
   src: "../static/fonts/PretendardVariable.woff2",
@@ -30,6 +31,7 @@ export default function RootLayout({
             {children}
           </div>
         </ClientProvider>
+        <Toaster />
       </body>
     </html>
   );

@@ -44,7 +44,9 @@ const Invitation = ({ handleStep }: InvitationProps) => {
           </div>
         }
       />
+
       <BasisSection className="flex flex-col mt-[56px] px-[20px]">
+        
         <p className="text-bold-22">초대장 만들기</p>
 
         <p className="text-neutral-600 mt-[12px]">
@@ -91,7 +93,7 @@ const Invitation = ({ handleStep }: InvitationProps) => {
           <Textarea className="mt-[12px]" />
         </div>
 
-        <div className="absolute w-full left-0 bottom-0 bg-white mt-[100px] px-[20px] mb-[10px]">
+        <div className="w-full bottom-0 bg-white mt-[100px]  mb-[10px]">
           <Button className="h-[56px]">다 적었어요</Button>
         </div>
       </BasisSection>

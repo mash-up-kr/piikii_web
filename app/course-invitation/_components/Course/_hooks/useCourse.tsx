@@ -1,6 +1,7 @@
 import { cloneDeep } from "lodash-es";
 import { useMemo, useState } from "react";
 import { StepType } from "../../_hooks/useCourseInvitation";
+import { useToast } from "@/components/ui/use-toast";
 
 export type BadgeInfoType = {
   icon?: string;
@@ -41,6 +42,7 @@ const updatedLabelList = (array: BadgeType[], condition: boolean) => {
 };
 
 const useCourse = ({ handleStep }: UseCourseProps) => {
+  const toast = useToast();
   const [badgeList, setBadgeList] = useState<BadgeMapType>(
     BADGE_LIST_INITIAL_VALUE
   );
@@ -122,7 +124,12 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
   };
 
   const handleNext = () => {
-    handleStep("invitation");
+
+    if(list.length === 0) {
+      console.log('nono')
+    }
+
+    // handleStep("invitation");
   };
 
   return {

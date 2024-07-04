@@ -59,10 +59,10 @@ const Course = ({ handleStep }: CourseProps) => {
         className="pt-[32px]"
       />
 
-      <div className="absolute w-full bottom-0 bg-white py-[10px] px-[20px]">
+      <div className="w-full bottom-0 bg-white py-[10px] px-[20px] mt-[134px]">
         <Button
           className="h-[56px]"
-          disabled={isAllCategoriesEmpty()}
+          variant={isAllCategoriesEmpty() ? "disabled" : "default"}
           onClick={handleNext}
         >
           정했어요
