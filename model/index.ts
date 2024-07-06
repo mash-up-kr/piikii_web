@@ -1,3 +1,5 @@
+import { OrderType } from "@/app/edit-course/page";
+
 export enum Size {
   small = "small",
   large = "large",
@@ -24,5 +26,5 @@ export interface ImgProps {
 export interface IconInfo {
   icon: string;
   label: string;
-  type: string;
+  type: OrderType;
 }

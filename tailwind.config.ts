@@ -97,6 +97,7 @@ const config = {
       boxShadow: {
         l: "0px 20px 36px 0px rgba(139, 149, 161, 0.10)",
         s: "0px 6px 20px 0px rgba(139, 149, 161, 0.10)",
+        xl: "0px 20px 36px 0px rgba(139, 149, 161, 0.10);",
       },
       borderRadius: {
         "2xl": "25px",
@@ -104,9 +105,6 @@ const config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-      },
-      boxShadow: {
-        xl: "0px 20px 36px 0px rgba(139, 149, 161, 0.10);",
       },
       keyframes: {
         "accordion-down": {
