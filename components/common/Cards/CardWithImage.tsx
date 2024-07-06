@@ -12,35 +12,40 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
   reviewCount,
   images,
   info,
+  noShadow,
+  cardClassName,
 }) => {
   const router = useRouter();
 
   return (
-    <Card className="flex flex-col items-center w-[335px] max-h-[372px] py-[24px]">
+    <Card
+      className={cn(
+        "flex flex-col items-center w-[335px] max-h-[372px] py-[24px] rounded-xl border-0",
+        noShadow && "shadow-none",
+        cardClassName
+      )}
+    >
       <div className="flex flex-col w-[295px] h-[139px]">
-        <div className="flex flex-row gap-x-[8px]">
-          <CardHeader>
-            <CardTitle>
-              <div className="flex flex-row gap-x-[8px] justify-center items-center">
-                <div className="flex w-[214px] h-[31px] items-center">
-                  {place}
+        <div className="flex gap-x-[8px]">
+          <CardHeader className="w-full">
+            <div className="flex w-full gap-x-[8px] justify-between items-center h-[31px] text-semibold-22">
+              <div className="flex items-center">{place}</div>
+              <div className="flex gap-x-[4px] items-center">
+                <div className="flex w-[16px] h-[16px]">
+                  <Image
+                    src="/png/naver.png"
+                    alt="naver"
+                    width={16}
+                    height={16}
+                    priority
+                    unoptimized
+                  />
                 </div>
-                <div className="flex flex-row gap-x-[4px] w-[73px] h-[31px] items-center">
-                  <div className="flex flex-row w-[16px] h-[16px]">
-                    <Image
-                      src="/png/naver.png"
-                      alt="naver"
-                      width={16}
-                      height={16}
-                      priority
-                    />
-                  </div>
-                  <div className="text-[14px]">
-                    {rating} ({reviewCount})
-                  </div>
+                <div className="text-[14px]">
+                  {rating} ({reviewCount})
                 </div>
               </div>
-            </CardTitle>
+            </div>
           </CardHeader>
         </div>
         <div className="flex flex-row gap-x-[9px] py-[15px]">
@@ -59,7 +64,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
       </div>
       <hr className="w-[295px] mt-[24px]" />
       <CardContent className="flex flex-col w-[295px] h-[161px] gap-y-[8px] my-[20px]">
-        {info.map((item, index) => (
+        {info?.map((item, index) => (
           <div
             key={index}
             className="flex flex-row justify-between w-[295px] h-[21px] gap-x-[16px] text-[14px]"
@@ -70,7 +75,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
         ))}
         <button
           className="flex flex-row mt-[12px] items-center justify-center w-[295px] h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
-          onClick={() => router.push(link)}
+          onClick={() => (link ? router.push(link) : null)}
         >
           <div className="w-[55px] h-[18px] opacity-80 text-[12px] font-semibold">
             자세히 보기
@@ -95,7 +100,10 @@ export function CardWithLike({ size }: CardSizeProps) {
 
   return (
     <Card
-      className={cn("flex flex-col items-center justify-center", cardSizeClass)}
+      className={cn(
+        "flex flex-col items-center justify-center rounded-xl ",
+        cardSizeClass
+      )}
     >
       <CardContent>
         <div
@@ -123,7 +131,10 @@ export function CardWithDislike({ size }: CardSizeProps) {
 
   return (
     <Card
-      className={cn("flex flex-col items-center justify-center", cardSizeClass)}
+      className={cn(
+        "flex flex-col items-center justify-center rounded-xl ",
+        cardSizeClass
+      )}
     >
       <CardContent>
         <div

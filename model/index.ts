@@ -11,11 +11,14 @@ export interface CardSizeProps {
 
 export interface CardInfoProps {
   place: string;
-  link: string;
-  rating: string;
-  reviewCount: number;
+  link?: string;
+  rating?: string;
+  reviewCount?: number;
   images: string[];
-  info: { label: string; value: string }[];
+  info?: { label: string; value: string }[];
+  onButtonClick?: () => void;
+  noShadow?: boolean;
+  cardClassName?: string;
 }
 
 export interface ImgProps {
