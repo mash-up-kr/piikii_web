@@ -28,3 +28,12 @@ export interface IconInfo {
   label: string;
   type: OrderType;
 }
+
+export interface CardIconProps {
+  iconInfo: IconInfo[];
+}
+
+export interface PendingCardListProps {
+  cards: { place: string; images: string[] }[];
+  type: OrderType;
+}
