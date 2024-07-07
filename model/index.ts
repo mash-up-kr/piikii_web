@@ -1,4 +1,4 @@
-import { OrderType } from "@/app/edit-course/page";
+import { OrderType } from "@/app/edit-course/_components/DragAndDropArea";
 
 export enum Size {
   small = "small",

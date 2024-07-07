@@ -1,4 +1,4 @@
-import { ValueType } from "@/app/edit-course/page";
+import { ValueType } from "@/app/edit-course/_components/DragAndDropArea";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 

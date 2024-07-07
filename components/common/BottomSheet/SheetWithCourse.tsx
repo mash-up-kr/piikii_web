@@ -9,8 +9,8 @@ import {
 import { Button } from "../Button/Button";
 import Image from "next/image";
 import { useState } from "react";
-import { OrderType } from "@/app/edit-course/page";
 import { iconInfo } from "@/lib/utils";
+import { OrderType } from "@/app/edit-course/_components/DragAndDropArea";
 
 interface SheetWithCourseProps {
   handleItemClick: (type: OrderType) => void;

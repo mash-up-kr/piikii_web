@@ -11,8 +11,8 @@ import { StepType } from "../_hooks/useCourseInvitation";
 
 const MENU_LIST: IconInfo[] = [
   { icon: "🍔", label: "음식", type: "food" },
-  { icon: "🥨", label: "디저트", type: "desert" },
-  { icon: "🍺", label: "술", type: "alchol" },
+  { icon: "🥨", label: "디저트", type: "dessert" },
+  { icon: "🍺", label: "술", type: "beer" },
   { icon: "🕹️", label: "놀거리", type: "play" },
 ];
 
