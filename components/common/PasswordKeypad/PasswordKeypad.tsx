@@ -12,7 +12,7 @@ const PasswordKeypad = ({
   title = "모임 비밀번호 생성",
   subTitle = "투표를 시작하거나 마감할 때 필요해요",
 }: PasswordKeypadProps) => {
-  const { password, KEYPAD_DATA, handleInputPassword } = usePasswordKeypad();
+  const { password, KEYPAD_DATA, handlePassword } = usePasswordKeypad();
 
   return (
     <>
@@ -53,7 +53,7 @@ const PasswordKeypad = ({
                       className={`h-[60px] flex items-center justify-center ${
                         item.id !== "empty" && "cursor-pointer"
                       }`}
-                      onClick={() => handleInputPassword(item.id)}
+                      onClick={() => handlePassword(item.id)}
                     >
                       {item.value}
                     </button>
@@ -61,7 +61,7 @@ const PasswordKeypad = ({
                     <button
                       type="button"
                       className="flex justify-center items-center cursor-pointer"
-                      onClick={() => handleInputPassword(item.id)}
+                      onClick={() => handlePassword(item.id)}
                     >
                       <Image
                         src={item.value}
