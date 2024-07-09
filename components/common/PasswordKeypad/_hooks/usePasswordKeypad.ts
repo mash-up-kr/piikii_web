@@ -16,13 +16,13 @@ const usePasswordKeypad = () => {
       if (keypadId === "empty") return;
 
       if (keypadId !== "back") {
-        if (password.length === 4) return;
+        if (data.length === 4) return;
         data.push(keypadId);
       }
 
       if (keypadId === "back") {
-        if (password.length === 0) return;
-        if (password.length > 0) data.pop();
+        if (data.length === 0) return;
+        if (data.length > 0) data.pop();
       }
 
       setPassword(data);

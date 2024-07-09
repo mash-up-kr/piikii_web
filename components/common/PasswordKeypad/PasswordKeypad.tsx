@@ -45,30 +45,26 @@ const PasswordKeypad = ({
         <div className="grid grid-cols-3 mt-[32px] w-full">
           {Children.toArray(
             KEYPAD_DATA.map((item) => {
+              const { type, id, value } = item;
               return (
                 <>
-                  {item.type === "value" ? (
+                  {type === "value" ? (
                     <button
                       type="button"
                       className={`h-[60px] flex items-center justify-center ${
-                        item.id !== "empty" && "cursor-pointer"
+                        id !== "empty" && "cursor-pointer"
                       }`}
-                      onClick={() => handlePassword(item.id)}
+                      onClick={() => handlePassword(id)}
                     >
-                      {item.value}
+                      {value}
                     </button>
                   ) : (
                     <button
                       type="button"
                       className="flex justify-center items-center cursor-pointer"
-                      onClick={() => handlePassword(item.id)}
+                      onClick={() => handlePassword(id)}
                     >
-                      <Image
-                        src={item.value}
-                        alt={item.value}
-                        width={24}
-                        height={24}
-                      />
+                      <Image src={value} alt={value} width={24} height={24} />
                     </button>
                   )}
                 </>
