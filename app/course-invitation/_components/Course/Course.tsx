@@ -35,11 +35,9 @@ const Course = ({ handleStep }: CourseProps) => {
     <BasisSection className="flex flex-col items-center">
       <h3 className="py-[32px] text-bold-22">어떤 순서로 가실 건가요?</h3>
 
-      {isAllCategoriesEmpty() && (
+      {isAllCategoriesEmpty ? (
         <CourseBadge item={{ ...BADGE_INIT_DATA }} onDelete={() => null} />
-      )}
-
-      {!isAllCategoriesEmpty() && (
+      ) : (
         <div className="px-[20px] justify-center flex gap-[8px] flex-wrap">
           {list.map((item, index) => {
             return (
@@ -59,10 +57,10 @@ const Course = ({ handleStep }: CourseProps) => {
         className="pt-[32px]"
       />
 
-      <div className="absolute w-full bottom-0 bg-white py-[10px] px-[20px]">
+      <div className="w-full bottom-0 bg-white py-[10px] px-[20px] mt-[134px]">
         <Button
           className="h-[56px]"
-          disabled={isAllCategoriesEmpty()}
+          variant={isAllCategoriesEmpty ? "disabled" : "default"}
           onClick={handleNext}
         >
           정했어요

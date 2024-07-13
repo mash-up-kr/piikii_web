@@ -24,6 +24,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        disabled: `bg-primary-700 
+          text-primary-foreground
+          hover:bg-primary-800
+          w-[100%]
+          opacity-40
+          `,
         default: `bg-primary-700 
           text-primary-foreground
           hover:bg-primary-800

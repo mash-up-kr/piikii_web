@@ -1,6 +1,7 @@
 import { cloneDeep } from "lodash-es";
 import { useMemo, useState } from "react";
 import { StepType } from "../../_hooks/useCourseInvitation";
+import { useToast } from "@/components/common/Toast/use-toast";
 
 export type BadgeInfoType = {
   icon?: string;
@@ -41,15 +42,16 @@ const updatedLabelList = (array: BadgeType[], condition: boolean) => {
 };
 
 const useCourse = ({ handleStep }: UseCourseProps) => {
+  const toast = useToast();
   const [badgeList, setBadgeList] = useState<BadgeMapType>(
     BADGE_LIST_INITIAL_VALUE
   );
 
   const [nextId, setNextId] = useState(1);
 
-  const isAllCategoriesEmpty = () => {
+  const isAllCategoriesEmpty = useMemo(() => {
     return Array.from(badgeList.values()).every((value) => value.length === 0);
-  };
+  },[badgeList]);
 
   const list = useMemo(() => {
     return Array.from(badgeList.values())
@@ -122,6 +124,12 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
   };
 
   const handleNext = () => {
+    if (list.length === 0) {
+      toast.toast({
+        title: "약속 순서를 선택하세요",
+      });
+    return;
+    }
     handleStep("invitation");
   };
 

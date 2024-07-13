@@ -14,16 +14,14 @@ const CourseBadge = ({ item, onDelete }: CourseBadgeProps) => {
     <>
       <Badge
         variant="outline"
-        className="py-[10.5px] px-[16px] min-w-[72px] max-h-[37px]"
+        className="py-[10.5px] px-[16px] min-w-[72px] max-h-[37px] cursor-pointer"
+        onClick={() => onDelete({ label, icon, type, id })}
       >
         <div className="flex items-center w-full justify-between">
           {icon && <p className="mr-[6px]">{icon}</p>}
           {label && <p className="text-medium-14">{label}</p>}
 
-          <div
-            className="cursor-pointer ml-[8px]"
-            onClick={() => onDelete({ label, icon, type, id })}
-          >
+          <div className="ml-[8px]">
             <Image
               src={`/png/ic_x_16.png`}
               width={16}
