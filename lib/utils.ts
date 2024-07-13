@@ -19,3 +19,10 @@ export const getSizeClasses = (size: Size) => {
 
   return { cardSizeClass, imageSize };
 };
+
+export const iconInfo = [
+  { icon: "🍔", label: "음식", type: "food" },
+  { icon: "🥨", label: "디저트", type: "dessert" },
+  { icon: "🍺", label: "술", type: "beer" },
+  { icon: "🕹️", label: "놀거리", type: "play" },
+];

@@ -7,7 +7,7 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
   place,
   link,
   rating,
-  numberOfReviews,
+  reviewCount,
   images,
 }) => {
   return (
@@ -40,7 +40,7 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
               {rating}
             </span>
             <span className="text-[12px] max-w-[31px] h-[18px] items-center text-[#B5B9C6]">
-              ({numberOfReviews})
+              ({reviewCount})
             </span>
           </div>
         </div>

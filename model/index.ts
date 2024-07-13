@@ -1,3 +1,5 @@
+import { OrderType } from "@/app/edit-course/_components/DragAndDropArea";
+
 export enum Size {
   small = "small",
   large = "large",
@@ -27,7 +29,7 @@ export interface ImgProps {
 export interface IconInfo {
   icon: string;
   label: string;
-  type?: string;
+  type: OrderType;
 }
 
 export interface CardIconProps {
@@ -36,4 +38,5 @@ export interface CardIconProps {
 
 export interface PendingCardListProps {
   cards: { place: string; images: string[] }[];
+  type: OrderType;
 }
