@@ -49,9 +49,9 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
 
   const [nextId, setNextId] = useState(1);
 
-  const isAllCategoriesEmpty = () => {
+  const isAllCategoriesEmpty = useMemo(() => {
     return Array.from(badgeList.values()).every((value) => value.length === 0);
-  };
+  },[badgeList]);
 
   const list = useMemo(() => {
     return Array.from(badgeList.values())
@@ -128,6 +128,7 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
       toast.toast({
         title: "약속 순서를 선택하세요",
       });
+    return;
     }
     handleStep("invitation");
   };
