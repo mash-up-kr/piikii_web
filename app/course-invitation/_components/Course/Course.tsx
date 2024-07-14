@@ -54,12 +54,12 @@ const Course = ({ handleStep }: CourseProps) => {
       <CardWithIconList
         iconInfo={MENU_LIST}
         onClickCard={addBadge}
-        className="pt-[32px]"
+        className="pt-[32px] z-[99]"
       />
 
       <div className="w-full bottom-0 bg-white py-[10px] px-[20px] mt-[134px]">
         <Button
-          className="h-[56px]"
+          className="h-[56px] z-[99]"
           variant={isAllCategoriesEmpty ? "disabled" : "default"}
           onClick={handleNext}
         >
