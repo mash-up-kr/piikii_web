@@ -25,7 +25,8 @@ const useInvitation = () => {
 
   const handlePasswordConfirm = (_password: string[]) => {
     if (isPasswordCorrect(_password)) {
-      console.log("일치");
+      onPasswordConfirmSheetClose();
+      alert(JSON.stringify(_password));
     } else {
       toast.toast({ title: "비밀번호가 일치하지 않아요", duration: 500 });
     }
