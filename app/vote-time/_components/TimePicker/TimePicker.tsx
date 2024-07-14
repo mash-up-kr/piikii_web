@@ -34,7 +34,7 @@ const TimePicker = ({ value, onChange }: TimePickerProps) => {
         <Picker.Column
           key={name}
           name={name as keyof Selections}
-          style={{ zIndex: 99 }}
+          className="z-[99] !flex-initial"
         >
           {(selections[name as keyof Selections] as string[]).map((option) => (
             <Picker.Item key={option} value={option} className="w-[80px]">

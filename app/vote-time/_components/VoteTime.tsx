@@ -64,7 +64,7 @@ const VoteTime = () => {
                   onClick={() => {
                     handleDateClick(item.date);
                   }}
-                  className={`flex flex-col gap-[10px] w-[48px] items-center rounded-[9px] py-[10px] ${
+                  className={`flex flex-col gap-[10px] w-[48px] items-center rounded-[9px] py-[10px] cursor-pointer ${
                     isSelected ? "bg-neutral-900" : "bg-neutral-100"
                   }`}
                 >
