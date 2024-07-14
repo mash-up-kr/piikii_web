@@ -14,7 +14,7 @@ const CourseBadge = ({ item, onDelete }: CourseBadgeProps) => {
     <>
       <Badge
         variant="outline"
-        className="py-[10.5px] px-[16px] min-w-[72px] max-h-[37px] cursor-pointer z-[99]"
+        className="py-[10.5px] px-[16px] min-w-[72px] max-h-[37px] cursor-pointer"
         onClick={() => onDelete({ label, icon, type, id })}
       >
         <div className="flex items-center w-full justify-between">
