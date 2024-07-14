@@ -52,7 +52,7 @@ const Invitation = ({ handleStep }: InvitationProps) => {
               width={24}
               height={24}
             />
-            <p className="text-semi-bold-15 text-neutral-700">
+            <p className="text-semibold-15 text-neutral-700">
               모임 순서정하기
             </p>
           </div>

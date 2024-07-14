@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import React from "react";
 
-const basisSectionVariarnts = cva("min-h-screen");
+const basisSectionVariarnts = cva("");
 
 export interface BasisSectionProps
   extends React.HTMLAttributes<HTMLDivElement> {
