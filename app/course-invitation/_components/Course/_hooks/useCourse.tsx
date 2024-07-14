@@ -12,7 +12,7 @@ export type BadgeInfoType = {
 
 export type BadgeType = BadgeInfoType;
 
-export type BadgeMapKeyType = "food" | "desert" | "alchol" | "play";
+export type BadgeMapKeyType = "food" | "dessert" | "beer" | "play";
 
 export type BadgeMapType = Map<BadgeMapKeyType, BadgeType[]>;
 
@@ -24,8 +24,8 @@ const BADGE_INIT_DATA: BadgeType = { id: 0, label: "?" };
 
 const BADGE_LIST_INITIAL_VALUE: BadgeMapType = new Map([
   ["food", []],
-  ["desert", []],
-  ["alchol", []],
+  ["dessert", []],
+  ["beer", []],
   ["play", []],
 ]);
 
@@ -51,7 +51,7 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
 
   const isAllCategoriesEmpty = useMemo(() => {
     return Array.from(badgeList.values()).every((value) => value.length === 0);
-  },[badgeList]);
+  }, [badgeList]);
 
   const list = useMemo(() => {
     return Array.from(badgeList.values())
@@ -128,7 +128,7 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
       toast.toast({
         title: "약속 순서를 선택하세요",
       });
-    return;
+      return;
     }
     handleStep("invitation");
   };
