@@ -1,12 +1,14 @@
 "use client";
 import React, { Children } from "react";
-import { StepType } from "../_hooks/useCourseInvitation";
+import Image from "next/image";
 import BasisSection from "@/components/common/Layout/BasisSection";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import { Input } from "@/components/common/Input/Input";
-import Image from "next/image";
 import { Button } from "@/components/common/Button/Button";
 import { Textarea } from "@/components/ui/textarea";
+import { PasswordInputSheet } from "@/components/common/BottomSheet/PasswordInputSheet";
+import { StepType } from "../_hooks/useCourseInvitation";
+import useInvitation from "./_hooks/useInvitation";
 
 const DUMMY_IMAGES = [
   {
@@ -24,6 +26,18 @@ interface InvitationProps {
 }
 
 const Invitation = ({ handleStep }: InvitationProps) => {
+  const {
+    name,
+    message,
+    isButtonDisabled,
+    passwordSheet,
+    passwordConfirmSheet,
+    handleMessage,
+    handleName,
+    onSubmit,
+    handlePassword,
+    handlePasswordConfirm,
+  } = useInvitation();
   return (
     <>
       <NavigationBar
@@ -46,7 +60,6 @@ const Invitation = ({ handleStep }: InvitationProps) => {
       />
 
       <BasisSection className="flex flex-col mt-[56px] px-[20px]">
-        
         <p className="text-bold-22">초대장 만들기</p>
 
         <p className="text-neutral-600 mt-[12px]">
@@ -58,7 +71,11 @@ const Invitation = ({ handleStep }: InvitationProps) => {
           <p className="text-bold-14 text-primary-700">필수</p>
         </div>
 
-        <Input placeholder="모임 이름을 적어주세요" />
+        <Input
+          placeholder="모임 이름을 적어주세요"
+          value={name}
+          onChange={handleName}
+        />
 
         <div className="text-bold-16 text-secondary-800 mt-[32px]">썸네일</div>
 
@@ -90,12 +107,44 @@ const Invitation = ({ handleStep }: InvitationProps) => {
 
         <div className="mt-[32px]">
           <p className="text-bold-16">하고 싶은 메시지</p>
-          <Textarea className="mt-[12px]" />
+          <Textarea
+            className="mt-[12px]"
+            value={message}
+            onChange={handleMessage}
+          />
         </div>
 
-        <div className="w-full bottom-0 bg-white mt-[100px]  mb-[10px]">
-          <Button className="h-[56px]">다 적었어요</Button>
+        <div className="w-full bottom-0 bg-white mt-[100px] mb-[10px]">
+          <PasswordInputSheet
+            title="모임 비밀번호 생성"
+            subTitle="투표를 시작하거나 마감할 때 필요해요"
+            isOpen={passwordSheet.isOpen}
+            onInteractOutside={passwordSheet.onClose}
+            onPasswordComplete={(result) => {
+              handlePassword(result);
+              passwordConfirmSheet.onOpen();
+            }}
+            trigger={
+              <Button
+                variant={isButtonDisabled ? "disabled" : "default"}
+                className="h-[56px]"
+                onClick={onSubmit}
+              >
+                다 적었어요
+              </Button>
+            }
+          />
         </div>
+
+        <PasswordInputSheet
+          title="모임 비밀번호 다시 입력"
+          subTitle="비밀번호를한번 더 확인합니다"
+          isOpen={passwordConfirmSheet.isOpen}
+          onInteractOutside={passwordConfirmSheet.onClose}
+          onPasswordComplete={(result) => {
+            handlePasswordConfirm(result);
+          }}
+        />
       </BasisSection>
     </>
   );

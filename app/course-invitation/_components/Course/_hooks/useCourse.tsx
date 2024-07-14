@@ -127,6 +127,7 @@ const useCourse = ({ handleStep }: UseCourseProps) => {
     if (list.length === 0) {
       toast.toast({
         title: "약속 순서를 선택하세요",
+        duration: 500,
       });
       return;
     }

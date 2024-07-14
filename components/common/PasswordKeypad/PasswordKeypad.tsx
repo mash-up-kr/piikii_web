@@ -1,18 +1,22 @@
 "use client";
-import React, { Children } from "react";
+import React, { Children, memo } from "react";
 import usePasswordKeypad from "./_hooks/usePasswordKeypad";
 import Image from "next/image";
 
 export interface PasswordKeypadProps {
   title?: string;
   subTitle?: string;
+  onPasswordComplete: (password: string[]) => void;
 }
 
 const PasswordKeypad = ({
   title = "모임 비밀번호 생성",
   subTitle = "투표를 시작하거나 마감할 때 필요해요",
+  onPasswordComplete,
 }: PasswordKeypadProps) => {
-  const { password, KEYPAD_DATA, handlePassword } = usePasswordKeypad();
+  const { password, KEYPAD_DATA, handlePassword } = usePasswordKeypad({
+    onPasswordComplete,
+  });
 
   return (
     <>
@@ -77,4 +81,4 @@ const PasswordKeypad = ({
   );
 };
 
-export default PasswordKeypad;
+export default memo(PasswordKeypad);

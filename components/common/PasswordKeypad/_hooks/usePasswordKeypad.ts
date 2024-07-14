@@ -1,12 +1,14 @@
-"use client";
-
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { KEYPAD_DATA } from "../_constants";
 import { cloneDeep } from "lodash-es";
 
 type KeypadIdType = (typeof KEYPAD_DATA)[number]["id"];
 
-const usePasswordKeypad = () => {
+export interface UsePasswordKeypadProps {
+  onPasswordComplete: (password: string[]) => void;
+}
+
+const usePasswordKeypad = ({ onPasswordComplete }: UsePasswordKeypadProps) => {
   const [password, setPassword] = useState<string[]>([]);
 
   const handlePassword = useCallback(
@@ -30,7 +32,16 @@ const usePasswordKeypad = () => {
     [password]
   );
 
-  console.log("입력된 패스워드", password);
+  const initPassword = () => {
+    setPassword([]);
+  };
+
+  useEffect(() => {
+    if (password.length === 4) {
+      onPasswordComplete(password);
+      initPassword();
+    }
+  }, [onPasswordComplete, password]);
 
   return {
     password,
