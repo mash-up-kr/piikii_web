@@ -15,6 +15,7 @@
     "@tanstack/react-query": "^5.40.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.11",
     "embla-carousel-react": "^8.1.6",
     "framer-motion": "^11.2.13",
     "lodash-es": "^4.17.21",

@@ -58,7 +58,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         />
         {isLengthVisible && (
           <div className="absolute bottom-2 right-2 text-sm text-gray-500">
-            <span className="text-primary-700 text-semi-bold-18">
+            <span className="text-primary-700 text-semibold-18">
               {textLength}
             </span>
             /
