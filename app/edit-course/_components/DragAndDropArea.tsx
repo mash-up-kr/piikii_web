@@ -27,26 +27,36 @@ const updateColumnsOnDelete = (
   prevColumns: ColumnsType,
   globalIndexToDelete: number
 ): ColumnsType => {
-  const updatedList: Record<OrderType, ValueType[]> = {
+  const updatedList: ValueType[] = [];
+
+  Object.values(prevColumns.course.list)
+    .flat()
+    .forEach((item) => {
+      if (item.globalIndex !== globalIndexToDelete) {
+        updatedList.push(item);
+      }
+    });
+
+  const newList: Record<OrderType, ValueType[]> = {
     food: [],
     dessert: [],
     beer: [],
     play: [],
   };
 
-  Object.values(prevColumns.course.list)
-    .flat()
-    .forEach((item) => {
-      if (item.globalIndex !== globalIndexToDelete) {
-        updatedList[item.type].push(item);
-      }
-    });
+  updatedList.forEach((item, index) => {
+    const newIndex =
+      item.globalIndex > globalIndexToDelete
+        ? item.globalIndex - 1
+        : item.globalIndex;
+    newList[item.type].push({ ...item, globalIndex: newIndex });
+  });
 
   return {
     ...prevColumns,
     course: {
       ...prevColumns.course,
-      list: updatedList,
+      list: newList,
     },
   };
 };
@@ -85,10 +95,10 @@ const DragAndDropArea: React.FC = () => {
       list: {
         food: [
           { globalIndex: 0, title: "음식", type: "food", icon: "🍔" },
-          { globalIndex: 2, title: "음식", type: "food", icon: "🍔" },
+          { globalIndex: 1, title: "음식", type: "food", icon: "🍔" },
         ],
         dessert: [
-          { globalIndex: 1, title: "디저트", type: "dessert", icon: "🥨" },
+          { globalIndex: 2, title: "디저트", type: "dessert", icon: "🥨" },
         ],
         beer: [],
         play: [],
@@ -100,6 +110,10 @@ const DragAndDropArea: React.FC = () => {
   const [itemCount, setItemCount] = useState(
     Object.values(updatedInitialColumns.course.list).flat().length
   );
+
+  useEffect(() => {
+    setColumns(updatedInitialColumns);
+  }, []);
 
   const allItems = useMemo(() => {
     return Object.values(columns.course.list)
@@ -184,7 +198,7 @@ const DragAndDropArea: React.FC = () => {
             >
               {allItems.map((item: ValueType, index: number) => (
                 <Draggable
-                  key={item.globalIndex}
+                  key={index}
                   draggableId={`item-${item.type}-${item.globalIndex}`}
                   index={index}
                 >
