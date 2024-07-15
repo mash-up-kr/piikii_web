@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DragDropContext, DropResult, Draggable } from "react-beautiful-dnd";
 import Image from "next/image";
 import CardWithCourse from "@/components/common/Cards/CardWithCourse";
@@ -21,10 +21,6 @@ export type ColumnsType = {
     id: "course";
     list: Record<OrderType, ValueType[]>;
   };
-};
-
-type DragAndDropProps = {
-  initialColumns: ColumnsType;
 };
 
 const updateColumnsOnDelete = (
@@ -67,10 +63,42 @@ const reorder = (
   return result;
 };
 
-const DragAndDropArea: React.FC<DragAndDropProps> = ({ initialColumns }) => {
-  const [columns, setColumns] = useState(initialColumns);
+const generateUniqueTitles = (columns: ColumnsType): ColumnsType => {
+  const updatedColumns = { ...columns };
+  Object.keys(updatedColumns.course.list).forEach((category) => {
+    updatedColumns.course.list[category as OrderType].forEach((item, index) => {
+      if (updatedColumns.course.list[category as OrderType].length > 1) {
+        item.title = `${item.title.split(" ")[0]} ${index + 1}차`;
+      } else {
+        item.title = item.title.split(" ")[0];
+      }
+    });
+  });
+  return updatedColumns;
+};
+
+const DragAndDropArea: React.FC = () => {
+  // 사용자가 설정한 데이터라고 가정
+  const initialColumns: ColumnsType = {
+    course: {
+      id: "course",
+      list: {
+        food: [
+          { globalIndex: 0, title: "음식", type: "food", icon: "🍔" },
+          { globalIndex: 2, title: "음식", type: "food", icon: "🍔" },
+        ],
+        dessert: [
+          { globalIndex: 1, title: "디저트", type: "dessert", icon: "🥨" },
+        ],
+        beer: [],
+        play: [],
+      },
+    },
+  };
+  const updatedInitialColumns = generateUniqueTitles(initialColumns);
+  const [columns, setColumns] = useState(updatedInitialColumns);
   const [itemCount, setItemCount] = useState(
-    Object.values(initialColumns.course.list).flat().length
+    Object.values(updatedInitialColumns.course.list).flat().length
   );
 
   const allItems = useMemo(() => {
@@ -107,9 +135,13 @@ const DragAndDropArea: React.FC<DragAndDropProps> = ({ initialColumns }) => {
   };
 
   const handleItemDelete = (globalIndexToDelete: number) => {
-    setColumns((prevColumns) =>
-      updateColumnsOnDelete(prevColumns, globalIndexToDelete)
-    );
+    setColumns((prevColumns) => {
+      const updatedColumns = updateColumnsOnDelete(
+        prevColumns,
+        globalIndexToDelete
+      );
+      return generateUniqueTitles(updatedColumns);
+    });
     setItemCount(itemCount - 1);
   };
 
@@ -124,16 +156,19 @@ const DragAndDropArea: React.FC<DragAndDropProps> = ({ initialColumns }) => {
       icon: icon.icon,
     };
 
-    setColumns((prevColumns) => ({
-      ...prevColumns,
-      course: {
-        ...prevColumns.course,
-        list: {
-          ...prevColumns.course.list,
-          [type]: [...prevColumns.course.list[type], newItem],
+    setColumns((prevColumns) => {
+      const updatedColumns = {
+        ...prevColumns,
+        course: {
+          ...prevColumns.course,
+          list: {
+            ...prevColumns.course.list,
+            [type]: [...prevColumns.course.list[type], newItem],
+          },
         },
-      },
-    }));
+      };
+      return generateUniqueTitles(updatedColumns);
+    });
     setItemCount(itemCount + 1);
   };
 
