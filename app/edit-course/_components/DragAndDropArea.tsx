@@ -23,19 +23,34 @@ export type ColumnsType = {
   };
 };
 
+const addItemToColumns = (
+  prevColumns: ColumnsType,
+  newItem: ValueType
+): ColumnsType => {
+  const updatedColumns = {
+    ...prevColumns,
+    course: {
+      ...prevColumns.course,
+      list: {
+        ...prevColumns.course.list,
+        [newItem.type]: [...prevColumns.course.list[newItem.type], newItem],
+      },
+    },
+  };
+  return generateUniqueTitles(updatedColumns);
+};
+
+const flattenColumns = (columns: ColumnsType): ValueType[] => {
+  return Object.values(columns.course.list).flat();
+};
+
 const updateColumnsOnDelete = (
   prevColumns: ColumnsType,
   globalIndexToDelete: number
 ): ColumnsType => {
-  const updatedList: ValueType[] = [];
-
-  Object.values(prevColumns.course.list)
-    .flat()
-    .forEach((item) => {
-      if (item.globalIndex !== globalIndexToDelete) {
-        updatedList.push(item);
-      }
-    });
+  const updatedList: ValueType[] = flattenColumns(prevColumns).filter(
+    (item) => item.globalIndex !== globalIndexToDelete
+  );
 
   const newList: Record<OrderType, ValueType[]> = {
     food: [],
@@ -108,7 +123,7 @@ const DragAndDropArea: React.FC = () => {
   const updatedInitialColumns = generateUniqueTitles(initialColumns);
   const [columns, setColumns] = useState(updatedInitialColumns);
   const [itemCount, setItemCount] = useState(
-    Object.values(updatedInitialColumns.course.list).flat().length
+    flattenColumns(updatedInitialColumns).length
   );
 
   useEffect(() => {
@@ -116,10 +131,10 @@ const DragAndDropArea: React.FC = () => {
   }, []);
 
   const allItems = useMemo(() => {
-    return Object.values(columns.course.list)
-      .flat()
-      .sort((a, b) => a.globalIndex - b.globalIndex);
-  }, [columns.course.list]);
+    return flattenColumns(columns).sort(
+      (a, b) => a.globalIndex - b.globalIndex
+    );
+  }, [columns]);
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
@@ -163,26 +178,14 @@ const DragAndDropArea: React.FC = () => {
     const icon = iconInfo.find((item) => item.type === type);
     if (!icon) return;
 
-    const newItem = {
+    const newItem: ValueType = {
       globalIndex: itemCount,
       title: `${icon.label}`,
-      type: icon.type,
+      type: type,
       icon: icon.icon,
     };
 
-    setColumns((prevColumns) => {
-      const updatedColumns = {
-        ...prevColumns,
-        course: {
-          ...prevColumns.course,
-          list: {
-            ...prevColumns.course.list,
-            [type]: [...prevColumns.course.list[type], newItem],
-          },
-        },
-      };
-      return generateUniqueTitles(updatedColumns);
-    });
+    setColumns((prevColumns) => addItemToColumns(prevColumns, newItem));
     setItemCount(itemCount + 1);
   };
 
