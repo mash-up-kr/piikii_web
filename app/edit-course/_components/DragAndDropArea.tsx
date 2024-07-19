@@ -4,7 +4,7 @@ import { DragDropContext, DropResult, Draggable } from "react-beautiful-dnd";
 import Image from "next/image";
 import CardWithCourse from "@/components/common/Cards/CardWithCourse";
 import { SheetWithCourse } from "@/components/common/BottomSheet/SheetWithCourse";
-import { iconInfo } from "@/lib/utils";
+import { flattenColumns, iconInfo } from "@/lib/utils";
 import { StrictModeDroppable } from "./Droppable";
 
 export type OrderType = "food" | "dessert" | "beer" | "play";
@@ -38,10 +38,6 @@ const addItemToColumns = (
     },
   };
   return generateUniqueTitles(updatedColumns);
-};
-
-const flattenColumns = (columns: ColumnsType): ValueType[] => {
-  return Object.values(columns.course.list).flat();
 };
 
 const updateColumnsOnDelete = (
