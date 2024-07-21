@@ -6,7 +6,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Button } from "../Button/Button";
 import Image from "next/image";
 import { useState } from "react";
 import { iconInfo } from "@/lib/utils";
@@ -26,7 +25,7 @@ export function SheetWithCourse({ handleItemClick }: SheetWithCourseProps) {
     <div className="">
       <Sheet key={"bottom"}>
         <SheetTrigger asChild>
-          <button className="flex mt-[24px] items-center justify-center w-[335px] h-[61px] py-[20px] px-[24px] text-black rounded-[12px] border-1 border-dashed border-[#B5B9C6] bg-[#F9FAFB]">
+          <button className="flex mt-[24px] items-center justify-center w-[335px] h-[61px] py-[20px] px-[24px] text-black rounded-[12px] border-2 border-dashed border-[#B5B9C6] bg-[#F9FAFB]">
             <div className="flex flex-row gap-x-[6px]">
               <Image
                 src={"/svg/ic_plus_circle.svg"}

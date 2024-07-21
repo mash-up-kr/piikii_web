@@ -1,38 +1,34 @@
 "use client";
-import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import React, { useRef, useState, TouchEvent } from "react";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ColumnsType } from "../edit-course/_components/DragAndDropArea";
 import { CategoryChip } from "./_components/CategoryChip";
 import { flattenColumns } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 // 사용자가 설정한 데이터라고 가정
 const initialColumns: ColumnsType = {
   course: {
     id: "course",
     list: {
-      food: [
-        { globalIndex: 0, title: "음식 1차", type: "food", icon: "🍔" },
-        { globalIndex: 1, title: "음식 2차", type: "food", icon: "🍔" },
-      ],
-      dessert: [
-        { globalIndex: 2, title: "디저트 3차", type: "dessert", icon: "🥨" },
-      ],
+      food: [{ globalIndex: 0, title: "음식점", type: "food", icon: "🍔" }],
+      dessert: [{ globalIndex: 1, title: "카페", type: "dessert", icon: "🥨" }],
       beer: [
-        { globalIndex: 3, title: "술 1차", type: "dessert", icon: "🥨" },
-        { globalIndex: 4, title: "술 2차", type: "dessert", icon: "🥨" },
+        { globalIndex: 2, title: "술 1차", type: "dessert", icon: "🍻" },
+        { globalIndex: 3, title: "술 2차", type: "dessert", icon: "🍻" },
       ],
-      play: [],
+      play: [{ globalIndex: 4, title: "놀거리", type: "play", icon: "🕹️" }],
     },
   },
 };
 
 const AddCoursePage = () => {
+  const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
+  const [selectedChip, setSelectedChip] = useState<number | null>(null);
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     setTouchStartX(e.targetTouches[0].clientX);
@@ -52,6 +48,10 @@ const AddCoursePage = () => {
     }
   };
 
+  const handleChipClick = (index: number) => {
+    setSelectedChip(index === selectedChip ? null : index);
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex cursor-pointer px-[20px] py-[11px] mb-[16px]">
@@ -65,7 +65,7 @@ const AddCoursePage = () => {
         <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FFF7F2] border-2 border-[#FFF1EB] rounded-[32px] items-center">
           <p className="w-[251px] h-[24px] text-[#747B89]">
             네이버, 카카오 링크를 넣어주세요
-          </p>{" "}
+          </p>
           <Image
             src={"/png/ic_arrow_left_circle_32.png"}
             alt="arrow"
@@ -73,8 +73,11 @@ const AddCoursePage = () => {
             height={32}
           />
         </div>
-        <div className="flex flex-row mt-[8px] w-[335px] h-[37px] items-center py-[8px] pr-[12px]">
-          <div className="flex flex-row items-center justify-start gap-x-[6px]">
+        <div
+          className="flex flex-row mt-[8px] w-[335px] h-[37px] items-center py-[8px] pr-[12px]"
+          onClick={() => router.push("/add-course/detail")}
+        >
+          <div className="flex flex-row items-center justify-start gap-x-[6px] cursor-pointer">
             <Image
               src={"/png/ic_plus_circle_20.png"}
               alt="plus"
@@ -97,16 +100,32 @@ const AddCoursePage = () => {
           onTouchEnd={handleTouchEnd}
         >
           {flattenColumns(initialColumns).map((item) => (
-            <CategoryChip key={item.globalIndex} title={item.title} />
+            <CategoryChip
+              key={item.globalIndex}
+              title={item.title}
+              selected={selectedChip === item.globalIndex}
+              onClick={() => handleChipClick(item.globalIndex)}
+            />
           ))}
         </div>
-        <div className="flex items-center justify-center w-[32px] h-[32px] mr-[20px] border-2 border-[#E7E8EB] rounded-[16px] bg-white">
-          <Image
-            src={"/png/ic_arrow_left_right_20.png"}
-            alt="plus"
-            width={20}
-            height={20}
-          />
+        <div className="relative flex items-center justify-center w-[64px] h-[37px] mr-[20px] cursor-pointer">
+          <div className="absolute left-[-16px] w-[16px] h-full">
+            <Image
+              src={"/svg/gradient.svg"}
+              width={16}
+              height={37}
+              alt="gradient"
+            />
+          </div>
+          <div className="flex items-center justify-center w-[32px] h-[32px] border-2 border-[#E7E8EB] rounded-[16px]">
+            <Image
+              src={"/png/ic_arrow_left_right_20.png"}
+              alt="plus"
+              width={16}
+              height={16}
+              onClick={() => router.push("/edit-course")}
+            />
+          </div>
         </div>
       </div>
 
