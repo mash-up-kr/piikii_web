@@ -54,8 +54,13 @@ const AddCoursePage = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex cursor-pointer px-[20px] py-[11px] mb-[16px]">
-        <p className="text-semibold-15 text-neutral-700">강남역으로 모여</p>
+      <div className="flex items-center justify-center gap-x-[17px] cursor-pointer px-[20px] py-[11px]">
+        <p className="flex w-[232px] text-semibold-15 text-neutral-700">
+          강남역으로 모여
+        </p>
+        <Button className="flex flex-col border-2 border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white">
+          <p className="font-semibold text-neutral-700 text-[12px]">투표시작</p>
+        </Button>
       </div>
       <div className="flex flex-col px-[20px] w-[335px] h-[148px] mt-[16px]">
         <div className="flex flex-row w-[224px] font-extrabold h-[31px] text-[22px] mb-[16px]">
@@ -131,12 +136,12 @@ const AddCoursePage = () => {
 
       <div className="flex flex-col w-full h-full items-center justify-center mt-[64px]">
         <div className="flex flex-col items-center justify-center w-full h-[197px] gap-y-[12px]">
-          <div className="flex w-[90px] h-[90px] rounded-[16px] bg-[#F0F1F5] items-center justify-center">
+          <div className="flex w-[108px] h-[104px] items-center justify-center">
             <Image
-              src={"/png/ic_picture_24.png"}
-              alt="empty_picture"
-              width={24}
-              height={24}
+              src={"/png/img_sample.png"}
+              alt="sample"
+              width={108}
+              height={104}
             />
           </div>
           <div className="flex flex-col w-full items-center justify-center text-[14px] text-[#8B95A1]">
