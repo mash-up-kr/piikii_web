@@ -1,6 +1,6 @@
 import React from "react";
-import EditOptionArea from "./_components/EditOptionArea";
 import { ColumnsType } from "../edit-course/_components/DragAndDropArea";
+import ResultArea from "./_components/ResultArea";
 
 const initialColumns: ColumnsType = {
   course: {
@@ -82,7 +82,9 @@ const placesInfo = [
 
 const VoteEditPage = () => {
   return (
-    <EditOptionArea initialColumns={initialColumns} placesInfo={placesInfo} />
+    <div>
+      <ResultArea initialColumns={initialColumns} placesInfo={placesInfo} />
+    </div>
   );
 };
 

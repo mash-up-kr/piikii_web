@@ -1,25 +1,11 @@
 "use client";
 import { CategoryChip } from "@/app/add-course/_components/CategoryChip";
-import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import { CardWithSelectedOption } from "@/components/common/Cards/CardWithSelectedOption";
 import { flattenColumns } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { VoteAreaProps } from "@/model";
 import { useState } from "react";
 
-interface EditOptionAreaProps {
-  initialColumns: ColumnsType;
-  placesInfo: Array<{
-    place: string;
-    link: string;
-    rating: string;
-    reviewCount: number;
-    images: string[];
-  }>;
-}
-const EditOptionArea = ({
-  initialColumns,
-  placesInfo,
-}: EditOptionAreaProps) => {
+const EditOptionArea = ({ initialColumns, placesInfo }: VoteAreaProps) => {
   const [selectedChip, setSelectedChip] = useState<number | null>(null);
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
 
