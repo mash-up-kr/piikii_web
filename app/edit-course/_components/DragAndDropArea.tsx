@@ -254,13 +254,10 @@ const DragAndDropArea: React.FC = () => {
           }`}
           onClick={() => {
             if (isDisabled) {
-              console.log(isDisabled);
-              toast.toast({
-                title: "카테고리를 1개 이상 추가해주세요",
-                duration: 500,
-              });
+              handleClickDisabledButton();
               return;
             }
+            //else일 경우 API call
           }}
         >
           바꿨어요

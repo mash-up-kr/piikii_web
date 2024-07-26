@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import { CategoryChip } from "../_components/CategoryChip";
 import { flattenColumns } from "@/lib/utils";
-import { Input } from "@/components/ui/Input";
 import { InputWithLabel } from "../_components/InputWithLabel";
 import { InputWithImage } from "../_components/InputWithImage";
 
