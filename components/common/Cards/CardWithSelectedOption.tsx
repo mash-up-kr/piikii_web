@@ -9,10 +9,11 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
   reviewCount,
   images,
   onButtonClick,
+  selected,
 }) => {
   return (
     <Card
-      className={`group flex flex-col w-[335px] h-[104px] items-start justify-center cursor-pointer p-[12px] rounded-[16px] group-active:border-2 group-active:border-[#FF601C]`}
+      className={`flex flex-col w-[335px] h-[104px] items-start justify-center cursor-pointer p-[12px] rounded-[16px] group-active:border-2 group-active:border-[#FF601C]`}
     >
       <CardContent className="flex flex-col w-[295px] h-[80px]">
         <div className="flex flex-row w-full h-full">
@@ -68,18 +69,24 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
               </div>
             </div>
             <button
-              className="flex w-[24px] h-[24px] items-center justify-center border-2 rounded-2xl border-[#E7E8EB] group-hover:border-[#FFD6D9] mr-[8px]"
+              className={`flex w-[24px] h-[24px] items-center justify-center rounded-2xl  ${
+                selected
+                  ? "border-none"
+                  : "border-2 border-[#E7E8EB] hover:border-[#FFD6D9]"
+              }  mr-[8px]`}
               onClick={onButtonClick}
             >
-              <Image
-                src={"png/ic_check_circle-1_24.png"}
-                alt="check"
-                className=""
-                width={24}
-                height={24}
-                priority
-                unoptimized
-              />
+              {selected && (
+                <Image
+                  src={"png/ic_check_circle-1_24.png"}
+                  alt="check"
+                  className=""
+                  width={24}
+                  height={24}
+                  priority
+                  unoptimized
+                />
+              )}
             </button>
           </div>
         </div>
