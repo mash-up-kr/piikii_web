@@ -4,8 +4,10 @@ import { DragDropContext, DropResult, Draggable } from "react-beautiful-dnd";
 import Image from "next/image";
 import CardWithCourse from "@/components/common/Cards/CardWithCourse";
 import { SheetWithCourse } from "@/components/common/BottomSheet/SheetWithCourse";
-import { iconInfo } from "@/lib/utils";
+import { flattenColumns, iconInfo } from "@/lib/utils";
 import { StrictModeDroppable } from "./Droppable";
+import { Button } from "@/components/common/Button/Button";
+import { useToast } from "@/components/common/Toast/use-toast";
 
 export type OrderType = "food" | "dessert" | "beer" | "play";
 
@@ -38,10 +40,6 @@ const addItemToColumns = (
     },
   };
   return generateUniqueTitles(updatedColumns);
-};
-
-const flattenColumns = (columns: ColumnsType): ValueType[] => {
-  return Object.values(columns.course.list).flat();
 };
 
 const updateColumnsOnDelete = (
@@ -125,10 +123,27 @@ const DragAndDropArea: React.FC = () => {
   const [itemCount, setItemCount] = useState(
     flattenColumns(updatedInitialColumns).length
   );
+  const [isDisabled, setIsDisabled] = useState(false);
+  const toast = useToast();
+
+  const handleClickDisabledButton = () => {
+    if (isDisabled) {
+      console.log(isDisabled);
+      toast.toast({
+        title: "카테고리를 1개 이상 추가해주세요",
+        duration: 500,
+      });
+    }
+    return;
+  };
 
   useEffect(() => {
     setColumns(updatedInitialColumns);
   }, []);
+
+  useEffect(() => {
+    setIsDisabled(itemCount === 0);
+  }, [itemCount]);
 
   const allItems = useMemo(() => {
     return flattenColumns(columns).sort(
@@ -232,6 +247,22 @@ const DragAndDropArea: React.FC = () => {
         </StrictModeDroppable>
       </DragDropContext>
       {itemCount < 5 && <SheetWithCourse handleItemClick={handleItemClick} />}
+      <div className="flex mt-auto justify-center w-[375px] h-[86px]">
+        <Button
+          className={`w-[335px] h-[56px] rounded-[14px] ${
+            isDisabled ? "opacity-40" : ""
+          }`}
+          onClick={() => {
+            if (isDisabled) {
+              handleClickDisabledButton();
+              return;
+            }
+            //else일 경우 API call
+          }}
+        >
+          바꿨어요
+        </Button>
+      </div>
     </>
   );
 };

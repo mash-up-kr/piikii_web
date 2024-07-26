@@ -1,3 +1,7 @@
+import {
+  ColumnsType,
+  ValueType,
+} from "@/app/edit-course/_components/DragAndDropArea";
 import { Size } from "@/model";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -18,6 +22,10 @@ export const getSizeClasses = (size: Size) => {
   const imageSize = isSmall ? SMALL_IMAGE_SIZE_CLASS : LARGE_IMAGE_SIZE_CLASS;
 
   return { cardSizeClass, imageSize };
+};
+
+export const flattenColumns = (columns: ColumnsType): ValueType[] => {
+  return Object.values(columns.course.list).flat();
 };
 
 export const iconInfo = [

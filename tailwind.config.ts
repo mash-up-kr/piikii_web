@@ -1,5 +1,12 @@
 import type { Config } from "tailwindcss";
 
+type PluginAPI = {
+  addUtilities: (
+    utilities: Record<string, object>,
+    options?: { respectPrefix?: boolean; respectImportant?: boolean }
+  ) => void;
+};
+
 const config = {
   darkMode: ["class"],
   content: [
@@ -167,7 +174,20 @@ const config = {
       "regular-10": ["10px", { lineHeight: "150%", fontWeight: 400 }],
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function ({ addUtilities }: PluginAPI) {
+      addUtilities({
+        ".scrollbar-hide": {
+          "scrollbar-width": "none",
+          "-ms-overflow-style": "none",
+        },
+        ".scrollbar-hide::-webkit-scrollbar": {
+          display: "none",
+        },
+      });
+    },
+  ],
 } satisfies Config;
 
 export default config;
