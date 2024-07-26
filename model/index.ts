@@ -1,4 +1,7 @@
-import { OrderType } from "@/app/edit-course/_components/DragAndDropArea";
+import {
+  ColumnsType,
+  OrderType,
+} from "@/app/edit-course/_components/DragAndDropArea";
 
 export enum Size {
   small = "small",
@@ -40,4 +43,9 @@ export interface CardIconProps {
 export interface PendingCardListProps {
   cards: { place: string; images: string[] }[];
   type: OrderType;
+}
+
+export interface VoteAreaProps {
+  initialColumns: ColumnsType;
+  placesInfo: CardInfoProps[];
 }

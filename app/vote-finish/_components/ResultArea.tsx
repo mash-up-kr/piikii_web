@@ -1,22 +1,12 @@
 "use client";
 import { CategoryChip } from "@/app/add-course/_components/CategoryChip";
-import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import CardWithImage from "@/components/common/Cards/CardWithImage";
 import Image from "next/image";
 import { flattenColumns } from "@/lib/utils";
 import { useState } from "react";
+import { VoteAreaProps } from "@/model";
 
-interface EditOptionAreaProps {
-  initialColumns: ColumnsType;
-  placesInfo: Array<{
-    place: string;
-    link: string;
-    rating: string;
-    reviewCount: number;
-    images: string[];
-  }>;
-}
-const ResultArea = ({ initialColumns, placesInfo }: EditOptionAreaProps) => {
+const ResultArea = ({ initialColumns, placesInfo }: VoteAreaProps) => {
   const [selectedChip, setSelectedChip] = useState<number | null>(null);
   const [expandedCards, setExpandedCards] = useState<number[]>([]);
 
@@ -71,6 +61,7 @@ const ResultArea = ({ initialColumns, placesInfo }: EditOptionAreaProps) => {
             </div>
             {expandedCards.includes(index) && (
               <CardWithImage
+                info={placeInfo.info}
                 place={placeInfo.place}
                 link={placeInfo.link}
                 rating={placeInfo.rating}

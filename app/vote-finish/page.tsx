@@ -24,6 +24,11 @@ const placesInfo = [
     rating: "4.01",
     reviewCount: 433,
     images: ["/png/food.png"],
+    info: [
+      { label: "영업시간", value: "11:00 - 21:00" },
+      { label: "브레이크 타임", value: "15:00 - 17:00" },
+      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
+    ],
   },
   {
     place: "스타벅스 강남점",
@@ -31,6 +36,11 @@ const placesInfo = [
     rating: "4.5",
     reviewCount: 1200,
     images: ["/png/food.png"],
+    info: [
+      { label: "영업시간", value: "11:00 - 21:00" },
+      { label: "브레이크 타임", value: "15:00 - 17:00" },
+      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
+    ],
   },
   {
     place: "맥도날드 홍대점",
@@ -38,6 +48,11 @@ const placesInfo = [
     rating: "3.8",
     reviewCount: 530,
     images: ["/png/food.png"],
+    info: [
+      { label: "영업시간", value: "11:00 - 21:00" },
+      { label: "브레이크 타임", value: "15:00 - 17:00" },
+      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
+    ],
   },
   {
     place: "빕스 여의도점",
@@ -45,6 +60,11 @@ const placesInfo = [
     rating: "4.2",
     reviewCount: 870,
     images: ["/png/food.png"],
+    info: [
+      { label: "영업시간", value: "11:00 - 21:00" },
+      { label: "브레이크 타임", value: "15:00 - 17:00" },
+      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
+    ],
   },
   {
     place: "이디야 커피 신촌점",
@@ -52,6 +72,11 @@ const placesInfo = [
     rating: "4.0",
     reviewCount: 300,
     images: ["/png/food.png"],
+    info: [
+      { label: "영업시간", value: "11:00 - 21:00" },
+      { label: "브레이크 타임", value: "15:00 - 17:00" },
+      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
+    ],
   },
 ];
 
