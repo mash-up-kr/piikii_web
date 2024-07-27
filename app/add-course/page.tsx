@@ -6,6 +6,7 @@ import { ColumnsType } from "../edit-course/_components/DragAndDropArea";
 import { CategoryChip } from "./_components/CategoryChip";
 import { flattenColumns } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { Button as CommonButton } from "@/components/common/Button/Button";
 
 // 사용자가 설정한 데이터라고 가정
 const initialColumns: ColumnsType = {
@@ -58,8 +59,10 @@ const AddCoursePage = () => {
         <p className="flex w-[232px] text-semibold-15 text-neutral-700">
           강남역으로 모여
         </p>
-        <Button className="flex flex-col border-2 border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white">
+
+        <Button className="flex border-2 border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white gap-[4px]">
           <p className="font-semibold text-neutral-700 text-[12px]">투표시작</p>
+          <Image width={16} height={16} src="/gif/vote_button.gif" alt="vote_button.gif"/>
         </Button>
       </div>
       <div className="flex flex-col px-[20px] w-[335px] h-[148px] mt-[16px]">

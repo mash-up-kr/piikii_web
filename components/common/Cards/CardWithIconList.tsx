@@ -21,12 +21,13 @@ export interface CardWithIconListProps
   asChild?: boolean;
   iconInfo: IconInfo[];
   onClickCard?: (value: BadgeType) => void;
+  cardClassName?: string;
 }
 
 export const CardWithIconList = React.forwardRef<
   HTMLDivElement,
   CardWithIconListProps
->(({ className, iconInfo, onClickCard }, ref) => {
+>(({ className, iconInfo, onClickCard, cardClassName }, ref) => {
   const onClick = (item: BadgeType) => {
     onClickCard && onClickCard(item);
   };
@@ -36,7 +37,10 @@ export const CardWithIconList = React.forwardRef<
       {iconInfo.slice(0, 4).map((item, index) => (
         <Card
           key={index}
-          className={`flex flex-col w-[164px] h-[116px] items-center justify-center cursor-pointer pt-[19px] pb-[18px] bg-[#FFF7F2] hover:bg-[#FFF1EB] active:bg-[#FFEAE1]`}
+          className={cn(
+            `flex flex-col w-[164px] h-[116px] items-center justify-center cursor-pointer pt-[19px] pb-[18px] bg-[#FFF7F2] hover:bg-[#FFF1EB] active:bg-[#FFEAE1]`,
+            cardClassName
+          )}
           onClick={() => onClick(item)}
         >
           <CardContent className="flex flex-col">

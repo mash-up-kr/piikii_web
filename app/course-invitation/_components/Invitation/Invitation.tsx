@@ -10,28 +10,20 @@ import { PasswordInputSheet } from "@/components/common/BottomSheet/PasswordInpu
 import { StepType } from "../_hooks/useCourseInvitation";
 import useInvitation from "./_hooks/useInvitation";
 
-const DUMMY_IMAGES = [
-  {
-    id: 0,
-    src: "pong_box_image_small.png",
-  },
-  {
-    id: 1,
-    src: "luppy_box_image_small.png",
-  },
-];
-
 interface InvitationProps {
   handleStep: (step: StepType) => void;
 }
 
 const Invitation = ({ handleStep }: InvitationProps) => {
   const {
+    CARD_IMAGES,
     name,
     message,
     isButtonDisabled,
     passwordSheet,
     passwordConfirmSheet,
+    thumbnail,
+    updateThumbnail,
     handleMessage,
     handleName,
     onSubmit,
@@ -52,9 +44,7 @@ const Invitation = ({ handleStep }: InvitationProps) => {
               width={24}
               height={24}
             />
-            <p className="text-semibold-15 text-neutral-700">
-              모임 순서정하기
-            </p>
+            <p className="text-semibold-15 text-neutral-700">모임 순서정하기</p>
           </div>
         }
       />
@@ -79,15 +69,22 @@ const Invitation = ({ handleStep }: InvitationProps) => {
 
         <div className="text-bold-16 text-secondary-800 mt-[32px]">썸네일</div>
 
-        <div className="flex gap-[5px] mt-[12px]">
+        <div className="flex gap-[5px] mt-[12px] h-[40px] overflow-x-auto">
           {Children.toArray(
-            DUMMY_IMAGES.map((item, index) => {
+            CARD_IMAGES.map((item, index) => {
+              const { id, src } = item;
               return (
                 <Image
-                  src={`/png/${item.src}`}
-                  width={80}
-                  height={40}
-                  alt={`image-${item.src}-${index}`}
+                  src={`/png/${src}`}
+                  width={75}
+                  height={50}
+                  alt={`image-${src}-${index}`}
+                  className={`rounded-[8px] cursor-pointer border-[2px] ${
+                    thumbnail.id === index
+                      ? "border-secondary-700"
+                      : "border-neutral-200"
+                  }`}
+                  onClick={() => updateThumbnail({ id, src })}
                 />
               );
             })
@@ -95,14 +92,21 @@ const Invitation = ({ handleStep }: InvitationProps) => {
         </div>
 
         <div className="mt-[16px]">
-          <div className="">
-            <Image
-              src={`/png/pong_box_image_large.png`}
-              width={334}
-              height={167}
-              alt="pong_box_image_large.png"
-            />
-          </div>
+          {Children.toArray(
+            CARD_IMAGES.map((item, index) => {
+              return (
+                <Image
+                  src={`/png/${item.src}`}
+                  width={334}
+                  height={167}
+                  alt={item.src}
+                  className={`rounded-[16px] ${
+                    thumbnail.id === index ? "block" : "hidden"
+                  }`}
+                />
+              );
+            })
+          )}
         </div>
 
         <div className="mt-[32px]">

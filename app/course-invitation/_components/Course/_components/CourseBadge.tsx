@@ -9,7 +9,7 @@ export interface CourseBadgeProps {
 }
 
 const CourseBadge = ({ item, onDelete }: CourseBadgeProps) => {
-  const { label, icon, type, id } = item || {};
+  const { label, icon, type, id, iconImage } = item || {};
   return (
     <>
       <Badge
@@ -18,6 +18,7 @@ const CourseBadge = ({ item, onDelete }: CourseBadgeProps) => {
         onClick={() => onDelete({ label, icon, type, id })}
       >
         <div className="flex items-center w-full justify-between">
+          {iconImage && iconImage}
           {icon && <p className="mr-[6px]">{icon}</p>}
           {label && <p className="text-medium-14">{label}</p>}
 

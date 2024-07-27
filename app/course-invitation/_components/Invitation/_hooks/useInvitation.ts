@@ -1,6 +1,34 @@
 import { useToast } from "@/components/common/Toast/use-toast";
 import { ChangeEvent, useMemo, useState } from "react";
 
+export type CardImageType = {
+  id: number;
+  src: string;
+};
+
+export const CARD_IMAGES: CardImageType[] = [
+  {
+    id: 0,
+    src: "invitation_image.png",
+  },
+  {
+    id: 1,
+    src: "invitation_image_1.png",
+  },
+  {
+    id: 2,
+    src: "invitation_image_2.png",
+  },
+  {
+    id: 3,
+    src: "invitation_image_3.png",
+  },
+  {
+    id: 4,
+    src: "invitation_image_4.png",
+  },
+];
+
 const useInvitation = () => {
   const toast = useToast();
   const [isPasswordSheetOpen, setIsPasswordSheetOpen] = useState(false);
@@ -10,6 +38,14 @@ const useInvitation = () => {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [password, setPassword] = useState("");
+  const [thumbnail, setThumbnail] = useState<(typeof CARD_IMAGES)[number]>({
+    id: 0,
+    src: "invitation_image.png",
+  });
+
+  const updateThumbnail = ({ id, src }: (typeof CARD_IMAGES)[number]) => {
+    setThumbnail({ id, src });
+  };
 
   const isButtonDisabled = useMemo(() => {
     return !name;
@@ -67,6 +103,7 @@ const useInvitation = () => {
   };
 
   return {
+    CARD_IMAGES,
     name,
     message,
     isButtonDisabled,
@@ -81,6 +118,8 @@ const useInvitation = () => {
       onClose: onPasswordConfirmSheetClose,
       onOpen: onPasswordConfirmSheetOpen,
     },
+    thumbnail,
+    updateThumbnail,
     handleName,
     handleMessage,
     onSubmit,

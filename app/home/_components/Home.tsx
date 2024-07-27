@@ -9,14 +9,14 @@ import {
 
 import Image from "next/image";
 import React, { Children } from "react";
-import useHome, { TEMP_SLIDE_ITEMS } from "./_hooks/useHome";
+import useHome, { SLIDE_LIST } from "./_hooks/useHome";
 
 const Home = () => {
   const { api, current, setApi, handleNext } = useHome();
 
   return (
     <>
-      <BasisSection className="bg-primary-200">
+      <BasisSection className="bg-primary-100 h-[100vh]">
         <div className="flex justify-between items-center h-[56px]  py-[8px] px-[12px]">
           <div className="w-[100px] h-[40px] bg-neutral-200 flex justify-center items-center">
             <Image
@@ -32,7 +32,7 @@ const Home = () => {
         </div>
 
         <div>
-          <div className="pt-[16px] pb-[27px] flex flex-col text-center bg-primary-200">
+          <div className="pt-[16px] pb-[27px] flex flex-col text-center bg-primary-100">
             <p className="text-primary-700 text-black-22">모임에 가기 전</p>
             <p className="text-black-22">가고 싶은 후보지를 모아봐요</p>
           </div>
@@ -40,12 +40,11 @@ const Home = () => {
           <Carousel setApi={setApi}>
             <CarouselContent>
               {Children.toArray(
-                TEMP_SLIDE_ITEMS.map((item, index) => {
+                SLIDE_LIST.map((item) => {
                   return (
                     <CarouselItem>
-                      <div className="bg-neutral-200 h-[312px] flex justify-center items-center">
-                        {item}
-                        {index}
+                      <div className="h-[312px] flex justify-center items-center">
+                        {item.comp}
                       </div>
                     </CarouselItem>
                   );
