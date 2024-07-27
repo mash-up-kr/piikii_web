@@ -1,6 +1,10 @@
-import React from "react";
-import EditOptionArea from "./_components/EditOptionArea";
-import { ColumnsType } from "../edit-course/_components/DragAndDropArea";
+"use client";
+
+import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
+import NavigationBar from "@/components/common/Navigation/NavigationBar";
+import EditOptionArea from "@/components/common/Vote/EditOptionArea";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const initialColumns: ColumnsType = {
   course: {
@@ -80,10 +84,40 @@ const placesInfo = [
   },
 ];
 
-const VoteEditPage = () => {
-  return (
-    <EditOptionArea initialColumns={initialColumns} placesInfo={placesInfo} />
-  );
-};
+export default function VoteEditPage() {
+  const router = useRouter();
 
-export default VoteEditPage;
+  return (
+    <div>
+      <NavigationBar
+        title="재투표 하기"
+        leftSlot={
+          <button
+            className="flex justify-center items-center"
+            onClick={() => router.back()}
+          >
+            <Image
+              src="/svg/ic_chevron_left_black.svg"
+              width={24}
+              height={24}
+              alt="left-chevron"
+            />
+          </button>
+        }
+        rightSlot={
+          <button>
+            <span className="text-bold-15 text-primary-700">완료</span>
+          </button>
+        }
+        className="pl-[12px] pr-[20px]"
+      />
+
+      <div className="pt-[56px]">
+        <EditOptionArea
+          initialColumns={initialColumns}
+          placesInfo={placesInfo}
+        />
+      </div>
+    </div>
+  );
+}
