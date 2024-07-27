@@ -81,7 +81,11 @@ const useVoteTime = () => {
     onPasswordSheetOpen();
   };
 
-  const handleTimeChange = (newTime: { hour: string; minute: string; ampm: string }) => {
+  const handleTimeChange = (newTime: {
+    hour: string;
+    minute: string;
+    ampm: string;
+  }) => {
     setSelectedTime(newTime);
   };
 

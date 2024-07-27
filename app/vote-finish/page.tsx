@@ -1,6 +1,6 @@
 import React from "react";
 import { ColumnsType } from "../edit-course/_components/DragAndDropArea";
-import ResultArea from "./_components/ResultArea";
+import ResultArea from "../../components/common/Vote/ResultArea";
 
 const initialColumns: ColumnsType = {
   course: {
