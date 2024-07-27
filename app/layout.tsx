@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ClientProvider } from "@/components/providers/ClientProvider";
 import { Toaster } from "@/components/common/Toast/toaster";
+import LandingPage from "./landing";
 
 const Pretendard = localFont({
   src: "../static/fonts/PretendardVariable.woff2",
@@ -24,9 +25,12 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body
-        className={`${Pretendard.className} w-screen flex justify-center bg-primary-200`}
+        className={`${Pretendard.className} w-screen flex justify-center lg:justify-end bg-[#1B1F27]`}
       >
         <ClientProvider>
+          <div className="flex w-full justify-center">
+            <LandingPage />
+          </div>
           <div className="max-w-[375px] w-full bg-neutral-0 relative h-dvh overflow-y-auto overflow-x-hidden">
             {children}
           </div>
