@@ -2,12 +2,14 @@ import { cloneDeep } from "lodash-es";
 import { useMemo, useState } from "react";
 import { StepType } from "../../_hooks/useCourseInvitation";
 import { useToast } from "@/components/common/Toast/use-toast";
+import Image from "next/image";
 
 export type BadgeInfoType = {
   icon?: string;
   label?: string;
   type?: string;
   id?: number;
+  iconImage?: React.ReactNode;
 };
 
 export type BadgeType = BadgeInfoType;
@@ -20,7 +22,17 @@ export interface UseCourseProps {
   handleStep: (step: StepType) => void;
 }
 
-const BADGE_INIT_DATA: BadgeType = { id: 0, label: "?" };
+const BADGE_INIT_DATA: BadgeType = {
+  id: 0,
+  iconImage: (
+    <Image
+      src="/gif/question_mark.gif"
+      width={16}
+      height={16}
+      alt="question_mark.gif"
+    />
+  ),
+};
 
 const BADGE_LIST_INITIAL_VALUE: BadgeMapType = new Map([
   ["food", []],

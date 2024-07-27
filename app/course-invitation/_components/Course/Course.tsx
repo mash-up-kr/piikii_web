@@ -22,7 +22,6 @@ export interface CourseProps {
 
 const Course = ({ handleStep }: CourseProps) => {
   const {
-    badgeList,
     BADGE_INIT_DATA,
     list,
     addBadge,
@@ -55,6 +54,7 @@ const Course = ({ handleStep }: CourseProps) => {
         iconInfo={MENU_LIST}
         onClickCard={addBadge}
         className="pt-[32px]"
+        cardClassName="rounded-[16px]"
       />
 
       <div className="w-full bottom-0 bg-white py-[10px] px-[20px] mt-[134px]">

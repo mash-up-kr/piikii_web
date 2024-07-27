@@ -1,24 +1,40 @@
 import { CarouselApi } from "@/components/ui/carousel";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-export const TEMP_ITEM = {
-  comp: (
-    <div className="h-[100px]">
+export const SLIDE_LIST = [
+  {
+    comp: (
       <Image
-        src="/png/ic_picture_24.png"
-        width={100}
-        height={100}
-        alt="ic_picture_24.png"
+        src="/gif/onboarding_1.gif"
+        width={375}
+        height={370}
+        alt="onboarding_1.gif"
       />
-    </div>
-  ),
-};
-
-export const TEMP_SLIDE_ITEMS = Array.from({ length: 3 }).fill(
-  TEMP_ITEM.comp
-) as ReactNode[];
+    ),
+  },
+  {
+    comp: (
+      <Image
+        src="/gif/onboarding_2.gif"
+        width={375}
+        height={370}
+        alt="onboarding_2.gif"
+      />
+    ),
+  },
+  {
+    comp: (
+      <Image
+        src="/gif/onboarding_3.gif"
+        width={375}
+        height={370}
+        alt="onboarding_3.gif"
+      />
+    ),
+  },
+];
 
 const useHome = () => {
   const router = useRouter();
@@ -32,7 +48,7 @@ const useHome = () => {
       api?.scrollTo(idx + 1);
       return;
     } else {
-        router.push("/course-invitation")
+      router.push("/course-invitation");
     }
   };
 
