@@ -75,8 +75,10 @@ const LandingPage = () => {
         </div>
       </div>
       <div
-        className="flex flex-col min-w-[398px] h-[243px] items-center justify-center ${
-          gap-y-[24px] mt-[250px]"
+        className={`flex flex-col min-w-[398px] w-full h-[243px] items-center justify-center ${
+          isExpanded ? "mt-[125px]" : "mt-[250px]"
+        }
+          gap-y-[24px]`}
       >
         <div className="px-[4px] py-[3px]">
           <Image
