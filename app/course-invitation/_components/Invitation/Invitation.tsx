@@ -69,15 +69,15 @@ const Invitation = ({ handleStep }: InvitationProps) => {
 
         <div className="text-bold-16 text-secondary-800 mt-[32px]">썸네일</div>
 
-        <div className="flex gap-[5px] mt-[12px] h-[40px] overflow-x-auto">
+        <div className="flex gap-[5px] mt-[12px] overflow-x-auto scrollbar-hide">
           {Children.toArray(
             CARD_IMAGES.map((item, index) => {
               const { id, src } = item;
               return (
                 <Image
                   src={`/png/${src}`}
-                  width={75}
-                  height={50}
+                  width={70}
+                  height={40}
                   alt={`image-${src}-${index}`}
                   className={`rounded-[8px] cursor-pointer border-[2px] ${
                     thumbnail.id === index

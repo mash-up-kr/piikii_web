@@ -1,6 +1,6 @@
 import { RegisterSchedulesRequest } from "@/apis/schedule/types/dto";
 import { useToast } from "@/components/common/Toast/use-toast";
-import { useBadgeContext } from "@/providers/badge-store-provider";
+import { useBadgeContext } from "@/providers/badge-provider";
 import { ChangeEvent, useMemo, useState } from "react";
 import { transformBadgesToSchedule } from "../_utils";
 import { useCreateRoom } from "@/apis/room/RoomApi.mutation";
@@ -63,7 +63,7 @@ const useInvitation = () => {
           data: { roomUid },
         } = res;
         if (roomUid) roomUidStorage?.set({ roomUid });
-        onRequestCreateSchedules();
+        requestCreateSchedules();
       },
       onError: (err) => {
         toast.toast({ title: err.message });
@@ -96,13 +96,13 @@ const useInvitation = () => {
     };
   };
 
-  const onRequestCreateRoom = () => {
+  const requestCreateRoom = () => {
     createRoomMutate({
       ...getRoomCreateData(),
     });
   };
 
-  const onRequestCreateSchedules = () => {
+  const requestCreateSchedules = () => {
     createSchedulesMutate({
       ...getCreateSchedulesData(),
     });
@@ -113,18 +113,17 @@ const useInvitation = () => {
   };
 
   const isPasswordCorrect = (passwordConfirm: string[]) => {
-    return password === JSON.stringify(passwordConfirm);
+    return password === passwordConfirm.join('');
   };
 
   const handlePassword = (_password: string[]) => {
-    setPassword(JSON.stringify(_password));
+    setPassword(_password.join(''));
   };
 
   const handlePasswordConfirm = (_password: string[]) => {
     if (isPasswordCorrect(_password)) {
       onPasswordConfirmSheetClose();
-      // alert(JSON.stringify(_password));
-      onRequestCreateRoom();
+      requestCreateRoom();
     } else {
       toast.toast({ title: "비밀번호가 일치하지 않아요", duration: 500 });
     }

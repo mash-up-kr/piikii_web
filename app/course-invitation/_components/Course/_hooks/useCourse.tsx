@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import Image from "next/image";
-import { useBadgeContext } from "@/providers/badge-store-provider";
+import { useBadgeContext } from "@/providers/badge-provider";
 import { useToast } from "@/components/common/Toast/use-toast";
 import { StepType } from "../../_hooks/useCourseInvitation";
 
