@@ -28,7 +28,7 @@ export default function RootLayout({
         className={`${Pretendard.className} w-screen flex justify-center lg:justify-end bg-landing-background`}
       >
         <ClientProvider>
-          <div className="flex w-full justify-center lg:justify-start">
+          <div className="w-full justify-center lg:block hidden">
             <LandingPage />
           </div>
           <div className="max-w-[375px] w-full bg-neutral-0 relative h-dvh overflow-y-auto overflow-x-hidden xl:mr-[218px]">

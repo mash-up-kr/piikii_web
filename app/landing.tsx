@@ -13,8 +13,8 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-start">
-      <div className="flex flex-row gap-x-[12px] items-start mt-[32px] ml-[20px]">
+    <div className="flex flex-col w-full items-start">
+      <div className="flex flex-row gap-x-[12px] items-start mt-[32px] ml-[40px]">
         <Button
           className="w-[174px] h-[47px] rounded-[31px] text-[16px] py-[14px] px-[28px] bg-[#3F444D] text-white"
           onClick={() => router.push("/")}
