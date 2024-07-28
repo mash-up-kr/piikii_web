@@ -91,16 +91,16 @@ const LandingPage = () => {
           함께 즐기는 모임의 시작, 피키
         </div>
         <div className="flex flex-row items-center justify-center gap-x-[8px]">
-          <div className="bg-[#23272F] rounded-[16px] py-[11px] px-[20px] text-[#F9AC8B] text-[20px]">
+          <div className="bg-[#23272F] rounded-[16px] py-[11px] px-[20px] text-landing-food text-[20px]">
             밥
           </div>
-          <div className="bg-[#23272F] rounded-[16px] py-[11px] px-[20px] text-[#D4ABE7] text-[20px]">
+          <div className="bg-[#23272F] rounded-[16px] py-[11px] px-[20px] text-landing-dessert text-[20px]">
             디저트
           </div>
-          <div className="bg-[#23272F] rounded-[16px] py-[11px] px-[20px] text-[#9CD2F0] text-[20px]">
+          <div className="bg-[#23272F] rounded-[16px] py-[11px] px-[20px] text-landing-beer text-[20px]">
             술
           </div>
-          <div className="bg-[#23272F] rounded-[16px] py-[11px] px-[20px] text-[#ACAEF1] text-[20px]">
+          <div className="bg-[#23272F] rounded-[16px] py-[11px] px-[20px] text-landing-play text-[20px]">
             놀거리
           </div>
         </div>

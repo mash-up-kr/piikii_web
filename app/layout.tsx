@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body
-        className={`${Pretendard.className} w-screen flex justify-center lg:justify-end bg-[#1B1F27]`}
+        className={`${Pretendard.className} w-screen flex justify-center lg:justify-end bg-landing-background`}
       >
         <ClientProvider>
           <div className="flex w-full justify-center">
