@@ -9,6 +9,7 @@ export class RoomApi {
     if (axios) this.axios = axios;
   }
 
+  // 방(Room)을 생성합니다.
   createRoom = async (
     params: RoomSaveRequestForm
   ): Promise<SuccessSaveRoomResponse> => {
@@ -20,6 +21,7 @@ export class RoomApi {
     return data;
   };
 
+  // 방(Room) 정보를 조회합니다.
   readRoom = async (roomUid: string): Promise<SuccessRoomResponse> => {
     const { data } = await this.axios({
       method: "GET",

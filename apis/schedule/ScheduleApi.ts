@@ -9,11 +9,12 @@ export class ScheduleApi {
     if (axios) this.axios = axios;
   }
 
+  // 스케줄을 추가/수정/삭제합니다.
   createSchedules = async (
     req: RegisterSchedulesRequest
   ): Promise<ResponseForm> => {
     const { data } = await this.axios({
-      method: "POST",
+      method: "PUT",
       url: `/rooms`,
       data: req,
     });
