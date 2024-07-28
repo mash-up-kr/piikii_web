@@ -100,6 +100,13 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        landing: {
+          background: "#1B1F27",
+          food: "#F9AC8B",
+          dessert: "#D4ABE7",
+          beer: "#9CD2F0",
+          play: "#ACAEF1",
+        },
       },
       boxShadow: {
         l: "0px 20px 36px 0px rgba(139, 149, 161, 0.10)",
