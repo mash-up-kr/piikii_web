@@ -85,6 +85,7 @@ export default function CourseItem({
   return (
     <div className="flex flex-col relative">
       {/* Switch Bubble Tooltip */}
+      {/* FIXME: API 붙히면서 로컬스토리지 연동으로 최초 1회만 뜨게끔 수정 할 예정 */}
       {index === 0 && (
         <motion.div
           className="absolute right-0 top-[-35px]"
