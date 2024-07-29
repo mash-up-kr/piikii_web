@@ -17,7 +17,7 @@
     "clsx": "^2.1.1",
     "dayjs": "^1.11.11",
     "embla-carousel-react": "^8.1.6",
-    "framer-motion": "^11.2.13",
+    "framer-motion": "^11.3.19",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.379.0",
     "next": "14.2.3",

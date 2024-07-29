@@ -127,6 +127,7 @@ const VoteEditPage = () => {
           {/* SAMPLE DATA */}
           <CourseItem
             id="course"
+            index={0}
             type="food"
             placeTitle="옥소반 상암점"
             placeContact="02-1234-5678"
@@ -136,6 +137,7 @@ const VoteEditPage = () => {
 
           <CourseItem
             id="course"
+            index={1}
             type="food"
             placeTitle="옥소반 상암점"
             placeContact="02-1234-5678"
@@ -145,6 +147,7 @@ const VoteEditPage = () => {
 
           <CourseItem
             id="course"
+            index={2}
             type="food"
             placeTitle="옥소반 상암점"
             placeContact="02-1234-5678"

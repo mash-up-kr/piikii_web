@@ -2,12 +2,14 @@
 
 import { useToast } from "@/components/common/Toast/use-toast";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 interface Props {
   id: string;
+  index: number;
   type: "dessert" | "food" | "play";
   placeTitle: string;
   placeContact: string;
@@ -17,6 +19,7 @@ interface Props {
 
 export default function CourseItem({
   id,
+  index,
   type,
   placeTitle,
   placeContact,
@@ -80,7 +83,31 @@ export default function CourseItem({
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col relative">
+      {/* Switch Bubble Tooltip */}
+      {index === 0 && (
+        <motion.div
+          className="absolute right-0 top-[-35px]"
+          initial={{
+            opacity: 1,
+          }}
+          animate={{
+            opacity: 0,
+            transition: {
+              delay: 3,
+              duration: 0.5,
+            },
+          }}
+        >
+          <Image
+            src="/png/course-edit-tooltip.png"
+            width={235}
+            height={46}
+            alt="tooltip"
+          />
+        </motion.div>
+      )}
+
       {/* Course Top Section */}
       <div className="flex gap-x-[8px] min-h-[144px]">
         {/* Top-Left Section */}
