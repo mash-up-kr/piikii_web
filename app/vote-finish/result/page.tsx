@@ -1,12 +1,15 @@
 "use client";
 
 import React from "react";
-import { ColumnsType } from "../edit-course/_components/DragAndDropArea";
-import ResultArea from "../../components/common/Vote/ResultArea";
+
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import Image from "next/image";
 import Title from "@/components/common/Title";
-import CourseItem from "./_components/CourseItem";
+import ResultArea from "@/components/common/Vote/ResultArea";
+import { Button } from "@/components/common/Button/Button";
+import { PasswordInputSheet } from "@/components/common/BottomSheet/PasswordInputSheet";
+import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
+import useCloseVote from "@/app/vote-progress/_hooks/useCloseVote";
 import { useRouter } from "next/navigation";
 
 const initialColumns: ColumnsType = {
@@ -87,87 +90,58 @@ const placesInfo = [
   },
 ];
 
-const VoteEditPage = () => {
+const VoteResult = () => {
   const router = useRouter();
 
   return (
-    <div>
+    <div className="relative">
       <NavigationBar
-        className="pr-[24px] pl-[40px]"
-        title="코스 수정"
-        rightSlot={
-          <button className="flex justify-center items-center">
-            <Image
-              src={"/svg/ic_wrap_gray.svg"}
-              alt="wrap"
-              width={16}
-              height={16}
-            />
-          </button>
+        className="pl-[12px]"
+        leftSlot={
+          <div className="flex justify-start items-center">
+            <button className="flex justify-center items-center">
+              <Image
+                src={"/svg/ic_chevron_left_black.svg"}
+                alt="wrap"
+                width={24}
+                height={24}
+                onClick={() => router.back()}
+              />
+            </button>
+            <span className="pl-[4px] text-semibold-15 text-neutral-700">
+              투표 결과
+            </span>
+          </div>
         }
       />
-
       <div className="flex flex-col pt-[56px]">
-        <div className="px-[20px]">
-          <Title
-            title={
-              <span className="text-neutral-600 text-regular-15">
-                강남으로 모이자 팀
-              </span>
-            }
-            subtitle={
-              <span className="text-bold-22 text-neutral-900">
-                적합한 코스를 만들었어요
-              </span>
-            }
-          />
-        </div>
-
-        <div className="flex flex-col pt-[40px] px-[20px] gap-y-[21px]">
-          {/* SAMPLE DATA */}
-          <CourseItem
-            id="course"
-            type="food"
-            placeTitle="옥소반 상암점"
-            placeContact="02-1234-5678"
-            placeAddress="서울특별시 마포구 상암동 10-1"
-            distanceToNextLocation={500}
-          />
-
-          <CourseItem
-            id="course"
-            type="food"
-            placeTitle="옥소반 상암점"
-            placeContact="02-1234-5678"
-            placeAddress="서울특별시 마포구 상암동 10-1"
-            distanceToNextLocation={1000}
-          />
-
-          <CourseItem
-            id="course"
-            type="food"
-            placeTitle="옥소반 상암점"
-            placeContact="02-1234-5678"
-            placeAddress="서울특별시 마포구 상암동 10-1"
-            distanceToNextLocation={1500}
-          />
-        </div>
-
-        <div className="px-[20px] mt-[64px] mb-[24px]">
+        {/* Top Banner */}
+        <div className="flex items-center px-[20px] py-[12px] bg-secondary-like-50">
           <Image
-            src="/png/vote-finish-banner.png"
-            alt="banner"
-            width={335}
-            height={120}
-            className="w-full cursor-pointer"
-            unoptimized
-            onClick={() => router.push("/vote-finish/result")}
+            src="/png/ic_twinkle_20.png"
+            width={20}
+            height={20}
+            alt="twinkle"
           />
+          <p className="flex-1 pl-[4px] text-semibold-14 text-secondary-like-700">
+            19일 일요일 오후 6시 00분에 마감된 투표입니다
+          </p>
+        </div>
+
+        <div className="pt-[33px] px-[20px]">
+          <Title
+            title={<span>투표 결과를 공개할께요</span>}
+            subtitle={<span>6명이 참여했어요</span>}
+            subtitleClassName="text-neutral-600"
+          />
+        </div>
+
+        <div className="pt-[32px] pb-[16px]">
+          <ResultArea initialColumns={initialColumns} placesInfo={placesInfo} />
         </div>
       </div>
-      {/* <ResultArea initialColumns={initialColumns} placesInfo={placesInfo} /> */}
     </div>
   );
 };
 
-export default VoteEditPage;
+export default VoteResult;
