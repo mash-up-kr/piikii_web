@@ -18,7 +18,9 @@ export default function Title({
     <div className="flex flex-col gap-y-[12px]">
       <h1 className={cn("text-bold-22", titleClassName)}>{title}</h1>
       {subtitle && (
-        <p className={cn("text-regular-15", subtitleClassName)}>{subtitle}</p>
+        <span className={cn("text-regular-15", subtitleClassName)}>
+          {subtitle}
+        </span>
       )}
     </div>
   );

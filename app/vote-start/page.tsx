@@ -23,7 +23,7 @@ export default function VoteStart() {
 
       {/* Content */}
       <div className="flex flex-col h-full pt-[56px]">
-        <div className="flex-1 bg-gradient-to-b from-[#FFEDE5] to-[#FAF1ED] pt-[32px]">
+        <div className="flex flex-col flex-1 bg-gradient-to-b from-[#FFEDE5] to-[#FAF1ED] pt-[32px]">
           <Title
             title={
               <>
@@ -41,6 +41,16 @@ export default function VoteStart() {
             titleClassName="text-black-22 text-center"
             subtitleClassName="text-regular-15 text-center"
           />
+
+          <div className="lg:flex lg:flex-1 lg:items-center">
+            <Image
+              src="/gif/onboarding_2.gif"
+              width={375}
+              height={375}
+              className="w-full"
+              alt="onboarding-gif"
+            />
+          </div>
         </div>
 
         {/* Bottom Gradient */}
