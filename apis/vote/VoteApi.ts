@@ -2,9 +2,9 @@ import instance from "@/apis/instance";
 import { AxiosInstance } from "axios";
 import { ResponseForm } from "../common/model";
 import {
-  VoteCastPayloadDto,
-  VoteDeadlinePayloadDto,
-  VoteResultResponseDto,
+  VoteDeadlineSetRequestDto,
+  VoteResultByScheduleResponseDto,
+  VoteSaveRequestDto,
   VoteStatusResponseDto,
 } from "./types/dto";
 
@@ -16,7 +16,7 @@ class VoteApi {
 
   getVotes = async (
     roomUid: string
-  ): Promise<ResponseForm<VoteResultResponseDto>> => {
+  ): Promise<ResponseForm<VoteResultByScheduleResponseDto>> => {
     const { data } = await this.axios({
       method: "GET",
       url: `/rooms/${roomUid}/votes`,
@@ -39,7 +39,7 @@ class VoteApi {
     payload,
   }: {
     roomUid: string;
-    payload: VoteCastPayloadDto;
+    payload: VoteSaveRequestDto;
   }): Promise<ResponseForm> => {
     const { data } = await this.axios({
       method: "POST",
@@ -54,7 +54,7 @@ class VoteApi {
     payload,
   }: {
     roomUid: string;
-    payload: VoteDeadlinePayloadDto;
+    payload: VoteDeadlineSetRequestDto;
   }): Promise<ResponseForm> => {
     const { data } = await this.axios({
       method: "PATCH",

@@ -1,5 +1,3 @@
-import { PlaceDto } from "@/apis/place/types/dto";
-
 export enum VoteCastResultDto {
   AGREE = "AGREE",
   DISAGREE = "DISAGREE",
@@ -8,12 +6,29 @@ export enum VoteCastResultDto {
 /**
  * API Responses
  */
-export interface VoteResultResponseDto {
-  result: {
-    scheduleId: number;
-    scheduleName: string;
-    places: PlaceDto[];
+export interface VotePlaceResponseDto {
+  placeId: number;
+  name: string;
+  url: string;
+  thumbnailLinks: {
+    contents: string[];
   };
+  address: string;
+  phoneNumber: string;
+  starGrade: number;
+  origin: string;
+  memo: string;
+  countOfAgree: number;
+}
+
+export interface VoteResultByScheduleResponseDto {
+  scheduleId: number;
+  scheduleName: string;
+  places: VotePlaceResponseDto[];
+}
+
+export interface VoteResultResponseDto {
+  result: VoteResultByScheduleResponseDto;
 }
 
 export interface VoteStatusResponseDto {
@@ -23,15 +38,17 @@ export interface VoteStatusResponseDto {
 /**
  * API Payloads
  */
-export interface VoteCastPayloadDto {
+
+interface PlaceVoteResultDto {
+  placeId: number;
+  voteResult: VoteCastResultDto;
+}
+export interface VoteSaveRequestDto {
   userUid: string;
-  votes: {
-    placeId: number;
-    voteResult: VoteCastResultDto;
-  }[];
+  votes: PlaceVoteResultDto[];
 }
 
-export interface VoteDeadlinePayloadDto {
+export interface VoteDeadlineSetRequestDto {
   voteDeadline: string;
   password: string;
 }
