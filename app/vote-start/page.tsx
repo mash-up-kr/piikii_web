@@ -1,9 +1,44 @@
+"use client";
+
+import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
+import { useGetRoomQuery } from "@/apis/room/RoomApi.query";
 import { Button } from "@/components/common/Button/Button";
+import FullScreenLoader from "@/components/common/FullScreenLoader";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import Title from "@/components/common/Title";
+import { useToast } from "@/components/common/Toast/use-toast";
+import { roomUidStorage } from "@/utils/web-storage/room-uid";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 
 export default function VoteStart() {
+  const router = useRouter();
+  const toast = useToast();
+
+  const roomUid = useMemo(() => roomUidStorage?.get()?.roomUid, []);
+
+  const { data, isLoading, isError } = useGetPlacesQuery({
+    variables: {
+      roomUid: roomUid ?? "",
+    },
+    options: { enabled: !!roomUid },
+  });
+
+  const handleStartVote = () => {
+    if (!roomUid || !data) {
+      toast.toast({
+        variants: "warning",
+        title: "투표를 진행 할 방을 찾을 수 없습니다.",
+      });
+      return;
+    }
+
+    router.push("/vote");
+  };
+
+  if (isLoading || isError) return <FullScreenLoader />;
+
   return (
     <div className="flex flex-col h-full">
       <NavigationBar
@@ -23,7 +58,7 @@ export default function VoteStart() {
 
       {/* Content */}
       <div className="flex flex-col h-full pt-[56px]">
-        <div className="flex-1 bg-gradient-to-b from-[#FFEDE5] to-[#FAF1ED] pt-[32px]">
+        <div className="flex flex-col flex-1 bg-gradient-to-b from-[#FFEDE5] to-[#FAF1ED] pt-[32px]">
           <Title
             title={
               <>
@@ -36,11 +71,26 @@ export default function VoteStart() {
               </>
             }
             subtitle={
-              <p className="text-neutral-600">후보가 23곳으로 추려졌어요</p>
+              data && (
+                <p className="text-neutral-600">
+                  후보가 {data.places.length}곳으로 추려졌어요
+                </p>
+              )
             }
             titleClassName="text-black-22 text-center"
             subtitleClassName="text-regular-15 text-center"
           />
+
+          <div className="lg:flex lg:flex-1 lg:items-center">
+            <Image
+              src="/gif/onboarding_2.gif"
+              width={375}
+              height={375}
+              className="w-full"
+              alt="onboarding-gif"
+              unoptimized
+            />
+          </div>
         </div>
 
         {/* Bottom Gradient */}
@@ -48,7 +98,9 @@ export default function VoteStart() {
 
         {/* Bottom Button */}
         <div className="px-[20px] pt-[10px] pb-[20px]">
-          <Button className="rounded-[14px] h-[56px]">투표하기</Button>
+          <Button className="rounded-[14px] h-[56px]" onClick={handleStartVote}>
+            투표하기
+          </Button>
         </div>
       </div>
     </div>
