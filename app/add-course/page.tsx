@@ -18,17 +18,17 @@ export async function generateMetadata(
   ).then((res) => res.json());
 
   return {
-    title: room.data.name,
+    title: `📮 함께 온 메세지 ‘${room.data.name}’에 초대합니다. 💌`,
     description: room.data.message,
     twitter: {
       card: "summary_large_image",
-      title: room.data.name,
+      title: `📮 함께 온 메세지 ‘${room.data.name}’에 초대합니다. 💌`,
       description: room.data.message,
       images: `${room.data.thumbnailLinks}`,
     },
     openGraph: {
       type: "website",
-      title: room.data.name,
+      title: `📮 함께 온 메세지 ‘${room.data.name}’에 초대합니다. 💌`,
       description: room.data.message,
       images: `${room.data.thumbnailLinks}`,
     },
