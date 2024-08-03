@@ -1,7 +1,7 @@
 import { AxiosInstance } from "axios";
 import instance from "../instance";
 import { SuccessRoomResponse, SuccessSaveRoomResponse } from "./types/model";
-import { RoomSaveRequestForm } from "./types/dto";
+import { RoomSaveRequestForm, RoomUpdateRequestForm } from "./types/dto";
 
 export class RoomApi {
   axios: AxiosInstance = instance;
@@ -25,6 +25,27 @@ export class RoomApi {
   readRoom = async (roomUid: string): Promise<SuccessRoomResponse> => {
     const { data } = await this.axios({
       method: "GET",
+      url: `/rooms/${roomUid}`,
+    });
+    return data;
+  };
+
+  // 방(Room) 정보를 수정합니다.
+  updateRoom = async (
+    params: RoomUpdateRequestForm
+  ): Promise<SuccessRoomResponse> => {
+    const { data } = await this.axios({
+      method: "PUT",
+      url: `/rooms`,
+      data: params,
+    });
+    return data;
+  };
+
+  // 방(Room) 정보를 삭제합니다.
+  deleteRoom = async (roomUid: string): Promise<SuccessRoomResponse> => {
+    const { data } = await this.axios({
+      method: "DELETE",
       url: `/rooms/${roomUid}`,
     });
     return data;

@@ -5,3 +5,12 @@ export type RoomSaveRequestForm = {
   thumbnailLink: string;
   password: string;
 };
+
+export type RoomUpdateRequestForm = {
+  roomUid: string;
+  name: string;
+  message?: string;
+  thumbnailLink: string;
+  password: string;
+  voteDeadLine?: string;
+};

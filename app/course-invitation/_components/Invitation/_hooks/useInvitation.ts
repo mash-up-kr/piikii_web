@@ -62,8 +62,10 @@ const useInvitation = () => {
         const {
           data: { roomUid },
         } = res;
-        if (roomUid) roomUidStorage?.set({ roomUid });
-        requestCreateSchedules();
+        if (roomUid) {
+          roomUidStorage?.set({ roomUid });
+          requestCreateSchedules(roomUid);
+        } else throw Error("roomUid not found");
       },
       onError: (err) => {
         toast.toast({ title: err.message });
@@ -90,7 +92,10 @@ const useInvitation = () => {
     };
   };
 
-  const getCreateSchedulesData = (): RegisterSchedulesRequest => {
+  const getCreateSchedulesData = (): Pick<
+    RegisterSchedulesRequest,
+    "schedules"
+  > => {
     return {
       schedules: transformBadgesToSchedule(list),
     };
@@ -102,9 +107,10 @@ const useInvitation = () => {
     });
   };
 
-  const requestCreateSchedules = () => {
+  const requestCreateSchedules = (roomUid: string) => {
     createSchedulesMutate({
       ...getCreateSchedulesData(),
+      roomUid,
     });
   };
 
@@ -113,11 +119,11 @@ const useInvitation = () => {
   };
 
   const isPasswordCorrect = (passwordConfirm: string[]) => {
-    return password === passwordConfirm.join('');
+    return password === passwordConfirm.join("");
   };
 
   const handlePassword = (_password: string[]) => {
-    setPassword(_password.join(''));
+    setPassword(_password.join(""));
   };
 
   const handlePasswordConfirm = (_password: string[]) => {

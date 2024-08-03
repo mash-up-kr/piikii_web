@@ -6,5 +6,6 @@ export type RegisterScheduleRequest = {
 };
 
 export type RegisterSchedulesRequest = {
+  roomUid:string;
   schedules: RegisterScheduleRequest[];
 };
