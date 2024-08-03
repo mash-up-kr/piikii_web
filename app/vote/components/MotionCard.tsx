@@ -1,12 +1,12 @@
 "use client";
 
-import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useMemo, useState } from "react";
 import { SwipeDirection } from "../model";
 import Image from "next/image";
 import { Z_INDEX } from "@/lib/constants";
 import CardWithImage from "@/components/common/Cards/CardWithImage";
 import { get } from "http";
+import { useMotionValue, useTransform, motion } from "framer-motion";
 
 interface Props {
   index: number;
