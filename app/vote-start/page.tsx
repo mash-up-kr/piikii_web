@@ -88,10 +88,7 @@ export default function VoteStart() {
               height={375}
               className="w-full"
               alt="onboarding-gif"
-<<<<<<< HEAD
               unoptimized
-=======
->>>>>>> 1366af1 (feat: add gif (#74))
             />
           </div>
         </div>
