@@ -1,5 +1,12 @@
+import { RegisterSchedulesRequest } from "@/apis/schedule/types/dto";
 import { useToast } from "@/components/common/Toast/use-toast";
+import { useBadgeContext } from "@/providers/badge-provider";
 import { ChangeEvent, useMemo, useState } from "react";
+import { transformBadgesToSchedule } from "../_utils";
+import { useCreateRoom } from "@/apis/room/RoomApi.mutation";
+import { useCreateSchedules } from "@/apis/schedule/ScheduleApi.mutation";
+import { RoomSaveRequestForm } from "@/apis/room/types/dto";
+import { roomUidStorage } from "@/utils/web-storage/room-uid";
 
 export type CardImageType = {
   id: number;
@@ -35,6 +42,8 @@ const useInvitation = () => {
   const [isPasswordConfirmSheetOpen, setIsPasswordConfirmSheetOpen] =
     useState(false);
 
+  const { list } = useBadgeContext();
+
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [password, setPassword] = useState("");
@@ -43,26 +52,84 @@ const useInvitation = () => {
     src: "invitation_image.png",
   });
 
-  const updateThumbnail = ({ id, src }: (typeof CARD_IMAGES)[number]) => {
-    setThumbnail({ id, src });
-  };
-
   const isButtonDisabled = useMemo(() => {
     return !name;
   }, [name]);
 
+  const { mutate: createRoomMutate } = useCreateRoom({
+    options: {
+      onSuccess: (res) => {
+        const {
+          data: { roomUid },
+        } = res;
+        if (roomUid) {
+          roomUidStorage?.set({ roomUid });
+          requestCreateSchedules(roomUid);
+        } else throw Error("roomUid not found");
+      },
+      onError: (err) => {
+        toast.toast({ title: err.message });
+      },
+    },
+  });
+
+  const { mutate: createSchedulesMutate } = useCreateSchedules({
+    options: {
+      onSuccess: () => {},
+      onError: (err) => {
+        toast.toast({ title: err.message });
+      },
+    },
+  });
+
+  const getRoomCreateData = (): RoomSaveRequestForm => {
+    return {
+      name,
+      message,
+      // TODO: env로 프론트 도메인 기입
+      thumbnailLink: `http://localhost:3000/png/${thumbnail.src}`,
+      password,
+    };
+  };
+
+  const getCreateSchedulesData = (): Pick<
+    RegisterSchedulesRequest,
+    "schedules"
+  > => {
+    return {
+      schedules: transformBadgesToSchedule(list),
+    };
+  };
+
+  const requestCreateRoom = () => {
+    createRoomMutate({
+      ...getRoomCreateData(),
+    });
+  };
+
+  const requestCreateSchedules = (roomUid: string) => {
+    createSchedulesMutate({
+      ...getCreateSchedulesData(),
+      roomUid,
+    });
+  };
+
+  const updateThumbnail = ({ id, src }: (typeof CARD_IMAGES)[number]) => {
+    setThumbnail({ id, src });
+  };
+
   const isPasswordCorrect = (passwordConfirm: string[]) => {
-    return password === JSON.stringify(passwordConfirm);
+    return password === passwordConfirm.join("");
   };
 
   const handlePassword = (_password: string[]) => {
-    setPassword(JSON.stringify(_password));
+    setPassword(_password.join(""));
   };
 
   const handlePasswordConfirm = (_password: string[]) => {
     if (isPasswordCorrect(_password)) {
       onPasswordConfirmSheetClose();
-      alert(JSON.stringify(_password));
+      requestCreateRoom();
     } else {
       toast.toast({ title: "비밀번호가 일치하지 않아요", duration: 500 });
     }
