@@ -14,9 +14,11 @@ class VoteApi {
     if (axios) this.axios = axios;
   }
 
-  getVotes = async (
-    roomUid: string
-  ): Promise<ResponseForm<VoteResultByScheduleResponseDto>> => {
+  getVotes = async ({
+    roomUid,
+  }: {
+    roomUid: string;
+  }): Promise<ResponseForm<VoteResultByScheduleResponseDto>> => {
     const { data } = await this.axios({
       method: "GET",
       url: `/rooms/${roomUid}/votes`,
@@ -24,9 +26,11 @@ class VoteApi {
     return data;
   };
 
-  getVoteStatus = async (
-    roomUid: string
-  ): Promise<ResponseForm<VoteStatusResponseDto>> => {
+  getVoteStatus = async ({
+    roomUid,
+  }: {
+    roomUid: string;
+  }): Promise<ResponseForm<VoteStatusResponseDto>> => {
     const { data } = await this.axios({
       method: "GET",
       url: `/rooms/${roomUid}/votes/status`,

@@ -1,6 +1,11 @@
 import { AxiosInstance } from "axios";
 import instance from "../instance";
 import { ResponseForm } from "../common/model";
+import {
+  AddPlaceRequestDto,
+  ModifyPlaceRequestDto,
+  PlaceResponseDto,
+} from "./types/dto";
 
 class PlaceApi {
   axios: AxiosInstance = instance;
@@ -25,8 +30,11 @@ class PlaceApi {
     payload,
   }: {
     roomUid: string;
-    payload: any;
-  }): Promise<any> => {
+    payload: {
+      addPlaceRequest: AddPlaceRequestDto;
+      placeImages: string[];
+    };
+  }): Promise<ResponseForm<PlaceResponseDto>> => {
     const { data } = await this.axios({
       method: "POST",
       url: `/rooms/${roomUid}/places`,
@@ -41,7 +49,7 @@ class PlaceApi {
   }: {
     roomUid: string;
     placeId: string;
-  }): Promise<any> => {
+  }): Promise<ResponseForm> => {
     const { data } = await this.axios({
       method: "DELETE",
       url: `/rooms/${roomUid}/places/${placeId}`,
@@ -56,8 +64,11 @@ class PlaceApi {
   }: {
     roomUid: string;
     placeId: string;
-    payload: any;
-  }): Promise<any> => {
+    payload: {
+      modifyPlaceRequest: ModifyPlaceRequestDto;
+      newPlaceImages: string[];
+    };
+  }): Promise<ResponseForm<PlaceResponseDto>> => {
     const { data } = await this.axios({
       method: "PATCH",
       url: `/rooms/${roomUid}/places/${placeId}`,

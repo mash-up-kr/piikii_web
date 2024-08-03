@@ -12,19 +12,19 @@ import { UseMutationParams } from "@/types/tanstack-query/use-mutation-params";
 // };
 
 export const useCastVote = (
-  params?: UseMutationParams<typeof voteApi.postVote>
+  params: UseMutationParams<typeof voteApi.postVote>
 ) => {
   return useMutation({
     mutationFn: voteApi.postVote,
-    ...params?.options,
+    ...params.options,
   });
 };
 
 export const useUpdateVoteDeadline = (
-  params?: UseMutationParams<typeof voteApi.patchVoteDeadline>
+  params: UseMutationParams<typeof voteApi.patchVoteDeadline>
 ) => {
   return useMutation({
     mutationFn: voteApi.patchVoteDeadline,
-    ...params?.options,
+    ...params.options,
   });
 };
