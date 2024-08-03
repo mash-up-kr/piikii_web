@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState, TouchEvent } from "react";
+import React, { useRef, useState, TouchEvent, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
@@ -7,6 +7,7 @@ import { flattenColumns } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import { CategoryChip } from "./CategoryChip";
+import useCopyPasted from "../_hooks/useCopyPasted";
 
 // 사용자가 설정한 데이터라고 가정
 const initialColumns: ColumnsType = {
@@ -27,6 +28,8 @@ const initialColumns: ColumnsType = {
 const AddCourse = () => {
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
+  const { clipboardText } = useCopyPasted();
+
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
   const [selectedChip, setSelectedChip] = useState<number | null>(null);
