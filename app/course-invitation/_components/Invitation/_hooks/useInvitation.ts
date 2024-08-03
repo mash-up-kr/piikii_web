@@ -7,6 +7,7 @@ import { useCreateRoom } from "@/apis/room/RoomApi.mutation";
 import { useCreateSchedules } from "@/apis/schedule/ScheduleApi.mutation";
 import { RoomSaveRequestForm } from "@/apis/room/types/dto";
 import { roomUidStorage } from "@/utils/web-storage/room-uid";
+import { useRouter } from "next/navigation";
 
 export type CardImageType = {
   id: number;
@@ -37,7 +38,9 @@ export const CARD_IMAGES: CardImageType[] = [
 ];
 
 const useInvitation = () => {
+  const router = useRouter();
   const toast = useToast();
+
   const [isPasswordSheetOpen, setIsPasswordSheetOpen] = useState(false);
   const [isPasswordConfirmSheetOpen, setIsPasswordConfirmSheetOpen] =
     useState(false);
@@ -75,7 +78,9 @@ const useInvitation = () => {
 
   const { mutate: createSchedulesMutate } = useCreateSchedules({
     options: {
-      onSuccess: () => {},
+      onSuccess: () => {
+        router.push(`add-course?roomUid=${roomUidStorage?.get()?.roomUid}`);
+      },
       onError: (err) => {
         toast.toast({ title: err.message });
       },
