@@ -1,12 +1,9 @@
 "use client";
 
-import React from "react";
-import { ColumnsType } from "../edit-course/_components/DragAndDropArea";
-import ResultArea from "../../components/common/Vote/ResultArea";
+import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
+import EditOptionArea from "@/components/common/Vote/EditOptionArea";
 import Image from "next/image";
-import Title from "@/components/common/Title";
-import CourseItem from "./_components/CourseItem";
 import { useRouter } from "next/navigation";
 
 const initialColumns: ColumnsType = {
@@ -87,90 +84,40 @@ const placesInfo = [
   },
 ];
 
-const VoteEditPage = () => {
+export default function VoteEditPage() {
   const router = useRouter();
 
   return (
     <div>
       <NavigationBar
-        className="pr-[24px] pl-[40px]"
-        title="코스 수정"
-        rightSlot={
-          <button className="flex justify-center items-center">
+        title="코스 수정하기"
+        leftSlot={
+          <button
+            className="flex justify-center items-center"
+            onClick={() => router.back()}
+          >
             <Image
-              src={"/svg/ic_wrap_gray.svg"}
-              alt="wrap"
-              width={16}
-              height={16}
+              src="/svg/ic_chevron_left_black.svg"
+              width={24}
+              height={24}
+              alt="left-chevron"
             />
           </button>
         }
+        rightSlot={
+          <button>
+            <span className="text-bold-15 text-primary-700">완료</span>
+          </button>
+        }
+        className="pl-[12px] pr-[20px]"
       />
 
-      <div className="flex flex-col pt-[56px]">
-        <div className="px-[20px]">
-          <Title
-            title={
-              <span className="text-neutral-600 text-regular-15">
-                강남으로 모이자 팀
-              </span>
-            }
-            subtitle={
-              <span className="text-bold-22 text-neutral-900">
-                적합한 코스를 만들었어요
-              </span>
-            }
-          />
-        </div>
-
-        <div className="flex flex-col pt-[40px] px-[20px] gap-y-[21px]">
-          {/* SAMPLE DATA */}
-          <CourseItem
-            id="course"
-            index={0}
-            type="food"
-            placeTitle="옥소반 상암점"
-            placeContact="02-1234-5678"
-            placeAddress="서울특별시 마포구 상암동 10-1"
-            distanceToNextLocation={500}
-          />
-
-          <CourseItem
-            id="course"
-            index={1}
-            type="food"
-            placeTitle="옥소반 상암점"
-            placeContact="02-1234-5678"
-            placeAddress="서울특별시 마포구 상암동 10-1"
-            distanceToNextLocation={1000}
-          />
-
-          <CourseItem
-            id="course"
-            index={2}
-            type="food"
-            placeTitle="옥소반 상암점"
-            placeContact="02-1234-5678"
-            placeAddress="서울특별시 마포구 상암동 10-1"
-            distanceToNextLocation={1500}
-          />
-        </div>
-
-        <div className="px-[20px] mt-[64px] mb-[24px]">
-          <Image
-            src="/png/vote-finish-banner.png"
-            alt="banner"
-            width={335}
-            height={120}
-            className="w-full cursor-pointer"
-            unoptimized
-            onClick={() => router.push("/vote-finish/result")}
-          />
-        </div>
+      <div className="pt-[56px]">
+        <EditOptionArea
+          initialColumns={initialColumns}
+          placesInfo={placesInfo}
+        />
       </div>
-      {/* <ResultArea initialColumns={initialColumns} placesInfo={placesInfo} /> */}
     </div>
   );
-};
-
-export default VoteEditPage;
+}
