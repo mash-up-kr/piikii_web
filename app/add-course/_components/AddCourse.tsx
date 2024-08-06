@@ -2,12 +2,15 @@
 import React, { useRef, useState, TouchEvent, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-
 import { flattenColumns } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import { CategoryChip } from "./CategoryChip";
 import useCopyPasted from "../_hooks/useCopyPasted";
+import { Input } from "@/components/common/Input/Input";
+import useIsMobile from "./_hooks/useIsMobile";
+import CardWithCourse from "@/components/common/Cards/CardWithCourse";
+import { CardForCopiedContent } from "@/components/common/Cards/CardForCopiedContent";
 
 // 사용자가 설정한 데이터라고 가정
 const initialColumns: ColumnsType = {
@@ -28,7 +31,17 @@ const initialColumns: ColumnsType = {
 const AddCourse = () => {
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
+  const isMobile = useIsMobile();
   const { clipboardText } = useCopyPasted();
+  const [showInput, setShowInput] = useState(true);
+
+  useEffect(() => {
+    if (!isMobile && clipboardText !== "") {
+      setShowInput(false);
+    } else {
+      setShowInput(true);
+    }
+  }, [clipboardText, isMobile]);
 
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
@@ -78,17 +91,22 @@ const AddCourse = () => {
           <p className="text-[#FF601C]">투표 후 코스</p>
           <p>를 추천받아요</p>
         </div>
-        <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FFF7F2] border-2 border-[#FFF1EB] rounded-[32px] items-center">
-          <p className="w-[251px] h-[24px] text-[#747B89]">
-            네이버, 카카오 링크를 넣어주세요
-          </p>
-          <Image
-            src={"/png/ic_arrow_left_circle_32.png"}
-            alt="arrow"
-            width={32}
-            height={32}
-          />
-        </div>
+        {showInput ? (
+          <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FFF7F2] border-2 border-[#FFF1EB] rounded-[32px] items-center">
+            <Input
+              className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
+              placeholder="네이버, 카카오 링크를 넣어주세요"
+            />
+            <Image
+              src={"/png/ic_arrow_left_circle_32.png"}
+              alt="arrow"
+              width={32}
+              height={32}
+            />
+          </div>
+        ) : (
+          <CardForCopiedContent place={""} images={[]} />
+        )}
         <div
           className="flex flex-row mt-[8px] w-[335px] h-[37px] items-center py-[8px] pr-[12px]"
           onClick={() => router.push("/add-course/detail")}
@@ -106,7 +124,7 @@ const AddCourse = () => {
           </div>
         </div>
       </div>
-      <div className="flex w-[375px] h-[12px] bg-[#F9FAFB] mt-[16px] mb-[20px]" />
+      <div className="flex w-[375px] h-[12px] bg-[#F9FAFB] my-[20px]" />
       <div className="flex flex-row justify-between items-center">
         <div
           className="flex flex-start pl-[20px] w-full h-[37px] items-center gap-x-[8px] overflow-x-scroll scrollbar-hide"
