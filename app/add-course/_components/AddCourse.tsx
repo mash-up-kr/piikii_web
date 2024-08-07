@@ -2,42 +2,69 @@
 import React, { useRef, useState, TouchEvent, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { flattenColumns } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
+import { useSearchParams } from "next/navigation";
 import { CategoryChip } from "./CategoryChip";
 import useCopyPasted from "../_hooks/useCopyPasted";
 import { Input } from "@/components/common/Input/Input";
 import useIsMobile from "./_hooks/useIsMobile";
-import CardWithCourse from "@/components/common/Cards/CardWithCourse";
 import { CardForCopiedContent } from "@/components/common/Cards/CardForCopiedContent";
-
-// 사용자가 설정한 데이터라고 가정
-const initialColumns: ColumnsType = {
-  course: {
-    id: "course",
-    list: {
-      food: [{ globalIndex: 0, title: "음식점", type: "food", icon: "🍔" }],
-      dessert: [{ globalIndex: 1, title: "카페", type: "dessert", icon: "🥨" }],
-      beer: [
-        { globalIndex: 2, title: "술 1차", type: "dessert", icon: "🍻" },
-        { globalIndex: 3, title: "술 2차", type: "dessert", icon: "🍻" },
-      ],
-      play: [{ globalIndex: 4, title: "놀거리", type: "play", icon: "🕹️" }],
-    },
-  },
-};
+import scheduleApi from "@/apis/schedule/ScheduleApi";
+import { ScheduleResponse } from "@/apis/schedule/types/model";
+import roomApi from "@/apis/room/RoomApi";
+import { RoomResponse, SuccessRoomResponse } from "@/apis/room/types/model";
+import { useCourseContext } from "@/providers/course-provider";
+import originPlaceApi from "@/apis/origin-place/OriginPlaceApi";
+import { PlaceAutoCompleteUrlRequest } from "@/apis/origin-place/types/model";
+import { PlaceAutoCompleteResponse } from "@/apis/origin-place/types/dto";
 
 const AddCourse = () => {
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
   const { clipboardText } = useCopyPasted();
+  const [autoData, setAutoData] = useState<PlaceAutoCompleteResponse>();
   const [showInput, setShowInput] = useState(true);
+  const searchParams = useSearchParams();
+  const roomUid = searchParams.get("roomUid") || "";
+  const { roomInfo, setRoomInfo, categoryList, setCategoryList } =
+    useCourseContext();
+
+  const fetchCoursePageData = async (roomUid: string) => {
+    try {
+      const currentSchedule = await scheduleApi.readSchedules(roomUid);
+      const currentRoom = await roomApi.readRoom(roomUid);
+      console.log("Schedules:", currentSchedule);
+      setCategoryList(currentSchedule.data.schedules);
+      setRoomInfo(currentRoom.data);
+      return;
+    } catch (error) {
+      console.error("Error fetching schedules:", error);
+      return null;
+    }
+  };
+
+  const fetchAutoCompleteData = async (url: PlaceAutoCompleteUrlRequest) => {
+    try {
+      const copiedData = await originPlaceApi.postOriginPlace(url);
+      console.log(copiedData);
+      setAutoData(copiedData);
+    } catch (error) {
+      console.error("Error fetching copiedData:", error);
+    }
+  };
 
   useEffect(() => {
-    if (!isMobile && clipboardText !== "") {
+    fetchCoursePageData(roomUid);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile && clipboardText) {
       setShowInput(false);
+      const requestData: PlaceAutoCompleteUrlRequest = {
+        url: clipboardText,
+      };
+      fetchAutoCompleteData(requestData);
     } else {
       setShowInput(true);
     }
@@ -73,7 +100,7 @@ const AddCourse = () => {
     <div className="flex flex-col">
       <div className="flex items-center justify-center gap-x-[17px] cursor-pointer px-[20px] py-[11px]">
         <p className="flex w-[232px] text-semibold-15 text-neutral-700">
-          강남역으로 모여
+          {roomInfo?.name}
         </p>
 
         <Button className="flex border-2 border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white gap-[4px]">
@@ -137,14 +164,18 @@ const AddCourse = () => {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {flattenColumns(initialColumns).map((item) => (
-            <CategoryChip
-              key={item.globalIndex}
-              title={item.title}
-              selected={selectedChip === item.globalIndex}
-              onClick={() => handleChipClick(item.globalIndex)}
-            />
-          ))}
+          {categoryList?.map(
+            (item) =>
+              item.scheduleId &&
+              item.name && (
+                <CategoryChip
+                  key={item.scheduleId}
+                  title={item.name}
+                  selected={selectedChip === item.scheduleId}
+                  onClick={() => handleChipClick(item.scheduleId)}
+                />
+              )
+          )}
         </div>
         <div className="relative flex items-center justify-center w-[64px] h-[37px] mr-[20px] cursor-pointer">
           <div className="absolute left-[-16px] w-[16px] h-full">
@@ -166,7 +197,6 @@ const AddCourse = () => {
           </div>
         </div>
       </div>
-
       <div className="flex flex-col w-full h-full items-center justify-center mt-[64px]">
         <div className="flex flex-col items-center justify-center w-full h-[197px] gap-y-[12px]">
           <div className="flex w-[108px] h-[104px] items-center justify-center">
