@@ -5,6 +5,7 @@ import "./globals.css";
 import { ClientProvider } from "@/components/providers/ClientProvider";
 import { Toaster } from "@/components/common/Toast/toaster";
 import LandingPage from "./landing";
+import { CourseProvider } from "@/providers/course-provider";
 
 const Pretendard = localFont({
   src: "../static/fonts/PretendardVariable.woff2",
@@ -31,9 +32,11 @@ export default function RootLayout({
           <div className="w-full justify-center lg:block hidden">
             <LandingPage />
           </div>
-          <div className="max-w-[375px] w-full bg-neutral-0 relative h-dvh overflow-y-auto overflow-x-hidden xl:mr-[218px]">
-            {children}
-          </div>
+          <CourseProvider>
+            <div className="max-w-[375px] w-full bg-neutral-0 relative h-dvh overflow-y-auto overflow-x-hidden xl:mr-[218px]">
+              {children}
+            </div>
+          </CourseProvider>
         </ClientProvider>
         <Toaster />
       </body>

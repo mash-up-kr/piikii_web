@@ -3,27 +3,10 @@ import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import { CategoryChip } from "../_components/CategoryChip";
-import { flattenColumns } from "@/lib/utils";
 import { InputWithLabel } from "../_components/InputWithLabel";
 import { InputWithImage } from "../_components/InputWithImage";
-
-// 사용자가 설정한 데이터라고 가정
-const initialColumns: ColumnsType = {
-  course: {
-    id: "course",
-    list: {
-      food: [{ globalIndex: 0, title: "음식점", type: "food", icon: "🍔" }],
-      dessert: [{ globalIndex: 1, title: "카페", type: "dessert", icon: "🥨" }],
-      beer: [
-        { globalIndex: 2, title: "술 1차", type: "dessert", icon: "🥨" },
-        { globalIndex: 3, title: "술 2차", type: "dessert", icon: "🥨" },
-      ],
-      play: [{ globalIndex: 4, title: "놀거리", type: "play", icon: "🥨" }],
-    },
-  },
-};
+import { useCourseContext } from "@/providers/course-provider";
 
 const AddDetailPage = () => {
   const router = useRouter();
@@ -35,6 +18,7 @@ const AddDetailPage = () => {
   const [memoContent, setMemoContent] = useState("");
   const [selectedChip, setSelectedChip] = useState<number | null>(null);
   const [pictures, setPictures] = useState<string[]>([]);
+  const { categoryList } = useCourseContext();
 
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
@@ -98,14 +82,18 @@ const AddDetailPage = () => {
             여러 개 선택 가능해요
           </div>
           <div className="flex flex-row w-[252px] h-[98px] gap-x-[8px]">
-            {flattenColumns(initialColumns).map((item) => (
-              <CategoryChip
-                key={item.globalIndex}
-                title={item.title}
-                selected={selectedChip === item.globalIndex}
-                onClick={() => handleChipClick(item.globalIndex)}
-              />
-            ))}
+            {categoryList?.map(
+              (item) =>
+                item.scheduleId &&
+                item.name && (
+                  <CategoryChip
+                    key={item.scheduleId}
+                    title={item.name}
+                    selected={selectedChip === item.scheduleId}
+                    onClick={() => handleChipClick(item.scheduleId)}
+                  />
+                )
+            )}
           </div>
         </div>
         <div className="flex flex-col w-full h-[184px] gap-y-[32px]">

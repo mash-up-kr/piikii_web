@@ -3,6 +3,11 @@ import {
   ValueType,
 } from "@/app/edit-course/_components/DragAndDropArea";
 import { Size } from "@/model";
+import {
+  BadgeInfoType,
+  BadgeMapType,
+  BadgeType,
+} from "@/providers/badge-provider";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -24,8 +29,11 @@ export const getSizeClasses = (size: Size) => {
   return { cardSizeClass, imageSize };
 };
 
-export const flattenColumns = (columns: ColumnsType): ValueType[] => {
-  return Object.values(columns.course.list).flat();
+// export const flattenColumns = (columns: ColumnsType): ValueType[] => {
+//   return Object.values(columns.course.list).flat();
+// };
+export const flattenColumns = (badgeList: BadgeInfoType[]): BadgeInfoType[] => {
+  return Array.from(badgeList.values()).flat();
 };
 
 export const iconInfo = [
