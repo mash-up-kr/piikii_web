@@ -86,7 +86,11 @@ const AddCourse = () => {
           />
         </Button>
       </div>
-      <div className="flex flex-col px-[20px] w-[335px] h-[148px] mt-[16px]">
+      <div
+        className={`flex flex-col px-[20px] w-[335px] ${
+          !showInput ? "h-[148px]" : "h-[103px]"
+        } mt-[16px]`}
+      >
         <div className="flex flex-row w-[224px] font-extrabold h-[31px] text-[22px] mb-[16px]">
           <p className="text-[#FF601C]">투표 후 코스</p>
           <p>를 추천받아요</p>
@@ -107,21 +111,21 @@ const AddCourse = () => {
         ) : (
           <CardForCopiedContent place={""} images={[]} />
         )}
-        <div
-          className="flex flex-row mt-[8px] w-[335px] h-[37px] items-center py-[8px] pr-[12px]"
-          onClick={() => router.push("/add-course/detail")}
-        >
-          <div className="flex flex-row items-center justify-start gap-x-[6px] cursor-pointer">
-            <Image
-              src={"/png/ic_plus_circle_20.png"}
-              alt="plus"
-              width={20}
-              height={20}
-            />
-            <p className="w-[52px] text-[14px] font-semibold text-[#B5B9C6]">
-              직접 추가
-            </p>
-          </div>
+      </div>
+      <div
+        className="flex flex-row mt-[8px] mx-[20px] w-[335px] h-[37px] items-center py-[8px] pr-[12px]"
+        onClick={() => router.push("/add-course/detail")}
+      >
+        <div className="flex flex-row items-center justify-start gap-x-[6px] cursor-pointer">
+          <Image
+            src={"/png/ic_plus_circle_20.png"}
+            alt="plus"
+            width={20}
+            height={20}
+          />
+          <p className="w-[52px] text-[14px] font-semibold text-[#B5B9C6]">
+            직접 추가
+          </p>
         </div>
       </div>
       <div className="flex w-[375px] h-[12px] bg-[#F9FAFB] my-[20px]" />
