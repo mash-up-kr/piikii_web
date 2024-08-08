@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import { CategoryChip } from "./CategoryChip";
 import useCopyPasted from "../_hooks/useCopyPasted";
+import useShare from "@/hooks/useShare";
+import { RoomResponse } from "@/apis/room/types/model";
 
 // 사용자가 설정한 데이터라고 가정
 const initialColumns: ColumnsType = {
@@ -25,7 +27,11 @@ const initialColumns: ColumnsType = {
   },
 };
 
-const AddCourse = () => {
+export interface AddCourseProps {
+  data: RoomResponse;
+}
+
+const AddCourse = ({ data }: AddCourseProps) => {
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const { clipboardText } = useCopyPasted();
@@ -55,6 +61,8 @@ const AddCourse = () => {
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
   };
+
+  const { onShare } = useShare();
 
   return (
     <div className="flex flex-col">
@@ -163,7 +171,16 @@ const AddCourse = () => {
               함께 장소를 추가하세요
             </p>
           </div>
-          <Button className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-2 gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]">
+          <Button
+            className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-2 gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]"
+            onClick={async () =>
+              await onShare({
+                url: location.href,
+                title: data.name,
+                text: data.message,
+              })
+            }
+          >
             <Image src={"/svg/ic_wrap.svg"} alt="wrap" width={16} height={16} />
             <p>일행 초대</p>
           </Button>
