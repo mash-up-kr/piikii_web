@@ -1,6 +1,7 @@
 "use client";
 import { RoomResponse } from "@/apis/room/types/model";
 import { ScheduleResponse } from "@/apis/schedule/types/model";
+import { PlaceAutoCompleteData } from "@/components/common/Cards/CardForCopiedContent";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface CourseContextType {
@@ -8,6 +9,8 @@ interface CourseContextType {
   setRoomInfo: (info: RoomResponse | null) => void;
   categoryList: ScheduleResponse[] | null;
   setCategoryList: (data: ScheduleResponse[] | null) => void;
+  placeInfo: PlaceAutoCompleteData[];
+  addPlaceInfo: (place: PlaceAutoCompleteData) => void;
 }
 
 const CourseContext = createContext<CourseContextType | undefined>(undefined);
@@ -19,10 +22,21 @@ export const CourseProvider: React.FC<{ children: ReactNode }> = ({
   const [categoryList, setCategoryList] = useState<ScheduleResponse[] | null>(
     null
   );
+  const [placeInfo, setPlaceInfo] = useState<PlaceAutoCompleteData[]>([]);
 
+  const addPlaceInfo = (newPlace: PlaceAutoCompleteData) => {
+    setPlaceInfo((prevPlaces) => [...prevPlaces, newPlace]);
+  };
   return (
     <CourseContext.Provider
-      value={{ roomInfo, setRoomInfo, categoryList, setCategoryList }}
+      value={{
+        roomInfo,
+        setRoomInfo,
+        categoryList,
+        setCategoryList,
+        placeInfo,
+        addPlaceInfo,
+      }}
     >
       {children}
     </CourseContext.Provider>

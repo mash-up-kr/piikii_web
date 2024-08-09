@@ -7,7 +7,6 @@ import { CategoryChip } from "../_components/CategoryChip";
 import { InputWithLabel } from "../_components/InputWithLabel";
 import { InputWithImage } from "../_components/InputWithImage";
 import { useCourseContext } from "@/providers/course-provider";
-
 const AddDetailPage = () => {
   const router = useRouter();
   const [place, setPlace] = useState("");
@@ -18,7 +17,7 @@ const AddDetailPage = () => {
   const [memoContent, setMemoContent] = useState("");
   const [selectedChip, setSelectedChip] = useState<number | null>(null);
   const [pictures, setPictures] = useState<string[]>([]);
-  const { categoryList } = useCourseContext();
+  const { categoryList, placeInfo } = useCourseContext();
 
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);

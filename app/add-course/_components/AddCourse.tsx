@@ -23,7 +23,9 @@ const AddCourse = () => {
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
   const { clipboardText } = useCopyPasted();
-  const [autoData, setAutoData] = useState<PlaceAutoCompleteResponse>();
+  const [autoData, setAutoData] = useState<PlaceAutoCompleteResponse | null>(
+    null
+  );
   const [showInput, setShowInput] = useState(true);
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
@@ -47,27 +49,33 @@ const AddCourse = () => {
   const fetchAutoCompleteData = async (url: PlaceAutoCompleteUrlRequest) => {
     try {
       const copiedData = await originPlaceApi.postOriginPlace(url);
-      console.log(copiedData);
-      setAutoData(copiedData);
+      return copiedData;
     } catch (error) {
       console.error("Error fetching copiedData:", error);
+      return null;
     }
   };
 
   useEffect(() => {
     fetchCoursePageData(roomUid);
   }, []);
-
   useEffect(() => {
-    if (!isMobile && clipboardText) {
-      setShowInput(false);
-      const requestData: PlaceAutoCompleteUrlRequest = {
-        url: clipboardText,
-      };
-      fetchAutoCompleteData(requestData);
-    } else {
-      setShowInput(true);
-    }
+    const fetchData = async () => {
+      if (!isMobile && clipboardText) {
+        setShowInput(false);
+        const requestData: PlaceAutoCompleteUrlRequest = {
+          url: clipboardText,
+        };
+        const copiedData = await fetchAutoCompleteData(requestData);
+        if (copiedData) {
+          setAutoData(copiedData);
+        }
+      } else {
+        setShowInput(true);
+      }
+    };
+
+    fetchData();
   }, [clipboardText, isMobile]);
 
   const [touchStartX, setTouchStartX] = useState(0);
@@ -94,6 +102,10 @@ const AddCourse = () => {
 
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
+  };
+
+  const handleAddButtonClick = () => {
+    router.push("/add-course/detail");
   };
 
   return (
@@ -133,10 +145,20 @@ const AddCourse = () => {
               alt="arrow"
               width={32}
               height={32}
+              onClick={() => handleAddButtonClick()}
             />
           </div>
         ) : (
-          <CardForCopiedContent place={""} images={[]} />
+          autoData && (
+            <CardForCopiedContent
+              name={autoData.data.name}
+              url={autoData.data.url}
+              placeImageUrls={autoData.data.placeImageUrls}
+              starGrade={autoData.data.starGrade}
+              reviewCount={autoData.data.reviewCount}
+              origin={autoData.data.origin}
+            />
+          )
         )}
       </div>
       <div

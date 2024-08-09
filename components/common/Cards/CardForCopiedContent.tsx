@@ -1,14 +1,55 @@
+"use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { CardInfoProps } from "@/model";
+import { useCourseContext } from "@/providers/course-provider";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-export const CardForCopiedContent: React.FC<CardInfoProps> = ({
-  place,
-  rating,
+export type PlaceAutoCompleteData = {
+  name: string;
+  url: string;
+  placeImageUrls: {
+    contents: string[];
+  };
+  address?: string;
+  phoneNumber?: string;
+  starGrade?: number;
+  reviewCount: number;
+  category?: string;
+  origin: "AVOCADO" | "LEMON" | "MANUAL";
+};
+
+export type CardForCopiedContentProps = PlaceAutoCompleteData;
+
+export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
+  name,
+  url,
+  placeImageUrls,
+  address,
+  phoneNumber,
+  starGrade,
   reviewCount,
-  images,
-  onButtonClick,
+  category,
+  origin,
 }) => {
+  const router = useRouter();
+  const { addPlaceInfo } = useCourseContext();
+
+  const onButtonClick = () => {
+    addPlaceInfo({
+      name,
+      url,
+      placeImageUrls,
+      address,
+      phoneNumber,
+      starGrade,
+      reviewCount,
+      category,
+      origin,
+    });
+
+    router.push("/add-course/detail");
+  };
+
   return (
     <Card
       className={`group flex flex-col w-[335px] h-[104px] items-start justify-center cursor-pointer p-[12px] rounded-[16px] bg-[#FFF7F2] hover:bg-[#FFF1EB] active:bg-[#FFEAE1]  text-[#FF601C] hover:text-[#DD4808] active:text-[#BF3900]`}
@@ -16,7 +57,7 @@ export const CardForCopiedContent: React.FC<CardInfoProps> = ({
       <CardContent className="flex flex-col w-[295px] h-[80px]">
         <div className="flex flex-row w-full h-full">
           <Image
-            src={images[0]}
+            src={placeImageUrls.contents[0]}
             alt="food"
             className="rounded-lg"
             width={80}
@@ -29,7 +70,7 @@ export const CardForCopiedContent: React.FC<CardInfoProps> = ({
                 복사한 장소 추가하기
               </span>
               <span className="flex-row w-full max-w-[170px] inline-block whitespace-nowrap overflow-hidden text-ellipsis h-[21px] text-[14px] text-black font-semibold items-center">
-                {place}
+                {name}
               </span>
               <div className="flex flex-row gap-x-[2px] w-full h-[18px] items-center justify-start">
                 <div className="flex flex-row w-[12px] h-[12px]">
@@ -42,7 +83,7 @@ export const CardForCopiedContent: React.FC<CardInfoProps> = ({
                   />
                 </div>
                 <span className="w-[24px] h-[18px] text-[12px] text-[#363A3C] font-semibold">
-                  {rating}
+                  {starGrade}
                 </span>
                 <span className="w-[31px] h-[18px] text-[12px] text-[#363A3C] opacity-50">
                   ({reviewCount})
@@ -56,7 +97,7 @@ export const CardForCopiedContent: React.FC<CardInfoProps> = ({
               <Image
                 src={"svg/icon-x-mono.svg"}
                 alt="plusIcon"
-                className=""
+                className="rotate-45"
                 width={18}
                 height={18}
                 priority
