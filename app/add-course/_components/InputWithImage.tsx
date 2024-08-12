@@ -1,13 +1,27 @@
+"use client";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  onFilesChange?: (files: string[]) => void;
+}
 
 const InputWithImage = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type, onFilesChange, ...props }, ref) => {
     const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+    const [pendingFiles, setPendingFiles] = useState<string[]>([]);
+
+    useEffect(() => {
+      if (pendingFiles.length > 0 && onFilesChange) {
+        onFilesChange([...uploadedFiles, ...pendingFiles]);
+        setUploadedFiles((prevFiles) =>
+          [...prevFiles, ...pendingFiles].slice(0, 3)
+        );
+        setPendingFiles([]);
+      }
+    }, [pendingFiles, onFilesChange, uploadedFiles]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
@@ -15,14 +29,18 @@ const InputWithImage = React.forwardRef<HTMLInputElement, InputProps>(
         const newFiles = Array.from(files).map((file) =>
           URL.createObjectURL(file)
         );
-        setUploadedFiles((prevFiles) =>
-          [...prevFiles, ...newFiles].slice(0, 3)
-        );
+        setPendingFiles(newFiles);
       }
     };
 
     const handleDeleteFile = (index: number) => {
-      setUploadedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+      setUploadedFiles((prevFiles) => {
+        const updatedFiles = prevFiles.filter((_, i) => i !== index);
+        if (onFilesChange) {
+          onFilesChange(updatedFiles);
+        }
+        return updatedFiles;
+      });
     };
 
     return (
@@ -30,7 +48,6 @@ const InputWithImage = React.forwardRef<HTMLInputElement, InputProps>(
         {uploadedFiles.length < 3 && (
           <input
             type={type}
-            // 수정 필요
             className={cn("flex rounded-lg border", className)}
             onChange={handleFileChange}
             ref={ref}

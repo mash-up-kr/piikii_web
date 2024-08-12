@@ -5,6 +5,7 @@ import {
   AddPlaceRequestDto,
   ModifyPlaceRequestDto,
   PlaceResponseDto,
+  ScheduleTypeGroupResponse,
 } from "./types/dto";
 
 class PlaceApi {
@@ -17,7 +18,7 @@ class PlaceApi {
     roomUid,
   }: {
     roomUid: string;
-  }): Promise<ResponseForm> => {
+  }): Promise<ScheduleTypeGroupResponse> => {
     const { data } = await this.axios({
       method: "GET",
       url: `/rooms/${roomUid}/places`,
