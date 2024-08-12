@@ -11,6 +11,8 @@ interface CourseContextType {
   setCategoryList: (data: ScheduleResponse[] | null) => void;
   placeInfo: PlaceAutoCompleteData[];
   addPlaceInfo: (place: PlaceAutoCompleteData) => void;
+  isClipboardText: boolean;
+  setIsClipboardText: (isClipboardText: boolean) => void;
 }
 
 const CourseContext = createContext<CourseContextType | undefined>(undefined);
@@ -23,6 +25,7 @@ export const CourseProvider: React.FC<{ children: ReactNode }> = ({
     null
   );
   const [placeInfo, setPlaceInfo] = useState<PlaceAutoCompleteData[]>([]);
+  const [isClipboardText, setIsClipboardText] = useState(false);
 
   const addPlaceInfo = (newPlace: PlaceAutoCompleteData) => {
     setPlaceInfo((prevPlaces) => [...prevPlaces, newPlace]);
@@ -36,6 +39,8 @@ export const CourseProvider: React.FC<{ children: ReactNode }> = ({
         setCategoryList,
         placeInfo,
         addPlaceInfo,
+        isClipboardText,
+        setIsClipboardText,
       }}
     >
       {children}

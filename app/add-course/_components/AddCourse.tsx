@@ -10,13 +10,18 @@ import { Input } from "@/components/common/Input/Input";
 import useIsMobile from "./_hooks/useIsMobile";
 import { CardForCopiedContent } from "@/components/common/Cards/CardForCopiedContent";
 import scheduleApi from "@/apis/schedule/ScheduleApi";
-import { ScheduleResponse } from "@/apis/schedule/types/model";
 import roomApi from "@/apis/room/RoomApi";
-import { RoomResponse, SuccessRoomResponse } from "@/apis/room/types/model";
 import { useCourseContext } from "@/providers/course-provider";
 import originPlaceApi from "@/apis/origin-place/OriginPlaceApi";
 import { PlaceAutoCompleteUrlRequest } from "@/apis/origin-place/types/model";
 import { PlaceAutoCompleteResponse } from "@/apis/origin-place/types/dto";
+import { roomUidStorage } from "@/utils/web-storage/room-uid";
+import placeApi from "@/apis/place/PlaceApi";
+import { CardWithImageSmall } from "@/components/common/Cards/CardWithImageSmall";
+import { ScheduleTypeGroupResponse } from "@/apis/place/types/dto";
+export interface PlacesContainerProps {
+  placesData: ScheduleTypeGroupResponse;
+}
 
 const AddCourse = () => {
   const router = useRouter();
@@ -26,11 +31,31 @@ const AddCourse = () => {
   const [autoData, setAutoData] = useState<PlaceAutoCompleteResponse | null>(
     null
   );
+  const [currentPlacesData, setCurrentPlacesData] =
+    useState<ScheduleTypeGroupResponse | null>(null);
   const [showInput, setShowInput] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
-  const { roomInfo, setRoomInfo, categoryList, setCategoryList } =
-    useCourseContext();
+  const {
+    roomInfo,
+    setRoomInfo,
+    categoryList,
+    setCategoryList,
+    placeInfo,
+    isClipboardText,
+    setIsClipboardText,
+  } = useCourseContext();
+
+  const fetchPlaceData = async (roomUid: string) => {
+    try {
+      const currentPlaces = await placeApi.getPlaces({ roomUid });
+      setCurrentPlacesData(currentPlaces);
+      console.log(currentPlaces, "==============");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const fetchCoursePageData = async (roomUid: string) => {
     try {
@@ -58,11 +83,15 @@ const AddCourse = () => {
 
   useEffect(() => {
     fetchCoursePageData(roomUid);
-  }, []);
+    fetchPlaceData(roomUid);
+    console.log("fetch");
+  }, [placeInfo]);
+
   useEffect(() => {
     const fetchData = async () => {
       if (!isMobile && clipboardText) {
         setShowInput(false);
+        setIsClipboardText(true);
         const requestData: PlaceAutoCompleteUrlRequest = {
           url: clipboardText,
         };
@@ -102,10 +131,34 @@ const AddCourse = () => {
 
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
+    setSelectedCategory(index === selectedCategory ? null : index);
   };
 
-  const handleAddButtonClick = () => {
-    router.push("/add-course/detail");
+  const filteredPlaces =
+    currentPlacesData?.places?.filter(
+      (place) =>
+        selectedCategory === null || place.scheduleId === selectedCategory
+    ) || [];
+
+  const PlaceContainer: React.FC<PlacesContainerProps> = ({ placesData }) => {
+    const { places } = placesData;
+
+    return (
+      <div className="flex flex-wrap gap-x-4">
+        hjhkjhj
+        {places.map((place) => (
+          <div key={place.id} className="w-[calc(50%-16px)] mb-4">
+            <CardWithImageSmall
+              place={place.name}
+              link={place.url}
+              rating={place.starGrade.toString()}
+              reviewCount={100} //임시 data
+              images={place.placeImageUrls.contents}
+            />
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -145,7 +198,6 @@ const AddCourse = () => {
               alt="arrow"
               width={32}
               height={32}
-              onClick={() => handleAddButtonClick()}
             />
           </div>
         ) : (
@@ -163,7 +215,11 @@ const AddCourse = () => {
       </div>
       <div
         className="flex flex-row mt-[8px] mx-[20px] w-[335px] h-[37px] items-center py-[8px] pr-[12px]"
-        onClick={() => router.push("/add-course/detail")}
+        onClick={() =>
+          router.push(
+            `add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`
+          )
+        }
       >
         <div className="flex flex-row items-center justify-start gap-x-[6px] cursor-pointer">
           <Image
@@ -172,7 +228,14 @@ const AddCourse = () => {
             width={20}
             height={20}
           />
-          <p className="w-[52px] text-[14px] font-semibold text-[#B5B9C6]">
+          <p
+            className="w-[52px] text-[14px] font-semibold text-[#B5B9C6]"
+            onClick={() =>
+              router.push(
+                `add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`
+              )
+            }
+          >
             직접 추가
           </p>
         </div>
@@ -219,30 +282,41 @@ const AddCourse = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col w-full h-full items-center justify-center mt-[64px]">
-        <div className="flex flex-col items-center justify-center w-full h-[197px] gap-y-[12px]">
-          <div className="flex w-[108px] h-[104px] items-center justify-center">
-            <Image
-              src={"/png/img_sample.png"}
-              alt="sample"
-              width={108}
-              height={104}
-            />
+      {!currentPlacesData || currentPlacesData?.places == null ? (
+        <div className="flex flex-col w-full h-full items-center justify-center mt-[64px]">
+          <div className="flex flex-col items-center justify-center w-full h-[197px] gap-y-[12px]">
+            <div className="flex w-[108px] h-[104px] items-center justify-center">
+              <Image
+                src={"/png/img_sample.png"}
+                alt="sample"
+                width={108}
+                height={104}
+              />
+            </div>
+            <div className="flex flex-col w-full items-center justify-center text-[14px] text-[#8B95A1]">
+              <p className="flex w-full items-center justify-center">
+                일행을 초대하고
+              </p>
+              <p className="flex w-full items-center justify-center">
+                함께 장소를 추가하세요
+              </p>
+            </div>
+            <Button className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-2 gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]">
+              <Image
+                src={"/svg/ic_wrap.svg"}
+                alt="wrap"
+                width={16}
+                height={16}
+              />
+              <p>일행 초대</p>
+            </Button>
           </div>
-          <div className="flex flex-col w-full items-center justify-center text-[14px] text-[#8B95A1]">
-            <p className="flex w-full items-center justify-center">
-              일행을 초대하고
-            </p>
-            <p className="flex w-full items-center justify-center">
-              함께 장소를 추가하세요
-            </p>
-          </div>
-          <Button className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-2 gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]">
-            <Image src={"/svg/ic_wrap.svg"} alt="wrap" width={16} height={16} />
-            <p>일행 초대</p>
-          </Button>
         </div>
-      </div>
+      ) : (
+        <PlaceContainer
+          placesData={{ ...currentPlacesData, places: filteredPlaces }}
+        />
+      )}
     </div>
   );
 };

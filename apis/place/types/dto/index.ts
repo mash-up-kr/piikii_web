@@ -30,13 +30,20 @@ export interface AddPlaceRequestDto {
   scheduleId: number;
   type: string;
   name: string;
-  url: string;
-  address: string;
-  phoneNumber: string;
-  starGrade: number;
+  url?: string;
+  address?: string | null;
+  phoneNumber?: string | null;
+  starGrade?: number | null;
   memo: string;
-  voteLikeCount: number;
-  voteDislikeCount: number;
+  voteLikeCount?: number | null;
+  voteDislikeCount?: number | null;
+  longitude?: number | null;
+  latitude?: number | null;
+}
+
+export interface CreatePlacePayloadDto {
+  addPlaceRequest: AddPlaceRequestDto;
+  placeImages?: string[];
 }
 
 export interface ModifyPlaceRequestDto {

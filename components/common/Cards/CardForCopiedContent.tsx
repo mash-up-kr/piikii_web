@@ -1,6 +1,7 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCourseContext } from "@/providers/course-provider";
+import { roomUidStorage } from "@/utils/web-storage/room-uid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -47,7 +48,7 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
       origin,
     });
 
-    router.push("/add-course/detail");
+    router.push(`add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`);
   };
 
   return (

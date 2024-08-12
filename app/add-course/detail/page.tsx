@@ -1,28 +1,54 @@
 "use client";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CategoryChip } from "../_components/CategoryChip";
 import { InputWithLabel } from "../_components/InputWithLabel";
 import { InputWithImage } from "../_components/InputWithImage";
 import { useCourseContext } from "@/providers/course-provider";
+import placeApi from "@/apis/place/PlaceApi";
+import { AddPlaceRequestDto } from "@/apis/place/types/dto";
+import { CardWithAutoCompleteData } from "@/components/common/Cards/CardWithAutoCompleteData";
+
 const AddDetailPage = () => {
   const router = useRouter();
   const [place, setPlace] = useState("");
-  const [link, setLink] = useState("");
+  const [url, setUrl] = useState("");
   const [openingHours, setOpeningHours] = useState("");
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [memoContent, setMemoContent] = useState("");
   const [selectedChip, setSelectedChip] = useState<number | null>(null);
   const [pictures, setPictures] = useState<string[]>([]);
-  const { categoryList, placeInfo } = useCourseContext();
+  const searchParams = useSearchParams();
+  const roomUid = searchParams.get("roomUid") || "";
+  const { categoryList, isClipboardText, placeInfo } = useCourseContext();
+  console.log(categoryList, placeInfo);
 
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
   };
 
+  useEffect(() => {
+    console.log(
+      place,
+      url,
+      address,
+      phoneNumber,
+      openingHours,
+      memoContent,
+      selectedChip
+    );
+  }, [
+    place,
+    url,
+    address,
+    phoneNumber,
+    openingHours,
+    memoContent,
+    selectedChip,
+  ]);
   const handleInputChange =
     (setter: React.Dispatch<React.SetStateAction<string>>) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,17 +57,44 @@ const AddDetailPage = () => {
       }
     };
 
-  const handleFileChange = (files: FileList | null) => {
-    if (files) {
-      const newFiles = Array.from(files).map((file) =>
-        URL.createObjectURL(file)
-      );
-      setPictures((prevPictures) => [...prevPictures, ...newFiles].slice(0, 3));
-    }
-  };
+  const selectedCategory = categoryList?.find(
+    (category) => category.scheduleId === selectedChip
+  );
 
-  const handleDeleteFile = (index: number) => {
-    setPictures((prevPictures) => prevPictures.filter((_, i) => i !== index));
+  const onCompleteButtonClick = async () => {
+    if (!place || !selectedChip || !selectedCategory) {
+      return;
+    }
+
+    const payload: AddPlaceRequestDto = {
+      scheduleId: selectedCategory.scheduleId,
+      type: selectedCategory.name,
+      name: place,
+      url: url || "",
+      address: address || "",
+      phoneNumber: phoneNumber || "",
+      starGrade: 0,
+      memo: memoContent || "",
+      voteLikeCount: 0,
+      voteDislikeCount: 0,
+      longitude: 0,
+      latitude: 0,
+    };
+
+    try {
+      const response = await placeApi.createPlace({
+        roomUid,
+        payload: {
+          addPlaceRequest: payload,
+          placeImages: pictures,
+        },
+      });
+
+      console.log("장소 생성 성공", response);
+      router.push("/add-course");
+    } catch (error) {
+      console.error("장소 생성 실패:", error, payload, selectedCategory);
+    }
   };
 
   return (
@@ -62,7 +115,10 @@ const AddDetailPage = () => {
           </div>
         }
         rightSlot={
-          <p className="flex py-[16px] px-[12px] cursor-pointer text-semibold-15 text-[#FF601C]">
+          <p
+            className="flex py-[16px] px-[12px] cursor-pointer text-semibold-15 text-[#FF601C]"
+            onClick={onCompleteButtonClick}
+          >
             완료
           </p>
         }
@@ -96,79 +152,102 @@ const AddDetailPage = () => {
           </div>
         </div>
         <div className="flex flex-col w-full h-[184px] gap-y-[32px]">
-          <div className="flex flex-col gap-y-[12px]">
-            <div className="flex flex-row items-center w-[90px] h-[24px] gap-x-[6px]">
-              <p className="w-[59px] font-bold text-[#292E31] text-[16px]">
-                장소 이름
+          {isClipboardText === true ? (
+            <div className="flex flex-col items-start justify-center gap-y-[12px]">
+              <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                메모
               </p>
-              <p className="w-[25px] font-bold text-[#FF601C] text-[14px]">
-                필수
-              </p>
-            </div>
-            <div className="flex flex-col items-start justify-center">
               <InputWithLabel
-                type="text"
-                placeholder="상호명을 적어주세요"
-                value={place}
-                onChange={handleInputChange(setPlace)}
+                type="link"
+                placeholder="일행에게 메모를 남겨주세요"
+                iconSrc="/svg/ic_memo_mono.svg"
+                value={memoContent}
+                onChange={handleInputChange(setMemoContent)}
               />
+              <CardWithAutoCompleteData />
             </div>
-            <div className="flex flex-col items-start justify-center">
-              <InputWithImage
-                className="w-[80px] h-[80px]"
-                id="picture"
-                type="file"
-                multiple
-              />
+          ) : (
+            <div className="gap-y-[32px] flex flex-col">
+              <div className="flex flex-col gap-y-[12px]">
+                <div className="flex flex-row items-center w-[90px] h-[24px] gap-x-[6px]">
+                  <p className="w-[59px] font-bold text-[#292E31] text-[16px]">
+                    장소 이름
+                  </p>
+                  <p className="w-[25px] font-bold text-[#FF601C] text-[14px]">
+                    필수
+                  </p>
+                </div>
+                <div className="flex flex-col items-start justify-center">
+                  <InputWithLabel
+                    type="text"
+                    placeholder="상호명을 적어주세요"
+                    value={place}
+                    onChange={handleInputChange(setPlace)}
+                  />
+                </div>
+                <div className="flex flex-col items-start justify-center">
+                  <InputWithImage
+                    className="w-[80px] h-[80px]"
+                    id="picture"
+                    type="file"
+                    onFilesChange={setPictures}
+                    multiple
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-start justify-center gap-y-[12px]">
+                <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                  링크
+                </p>
+                <InputWithLabel
+                  type="link"
+                  placeholder="링크를 붙여주세요"
+                  iconSrc="/svg/ic_link.svg"
+                  value={url}
+                  onChange={handleInputChange(setUrl)}
+                />
+              </div>
+              <div className="flex flex-col items-start justify-center gap-y-[12px]">
+                <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                  영업정보
+                </p>
+                <InputWithLabel
+                  type="link"
+                  placeholder="영업 시간을 남겨주세요"
+                  iconSrc="/svg/ic_clock_mono.svg"
+                  value={openingHours}
+                  onChange={handleInputChange(setOpeningHours)}
+                />
+                <InputWithLabel
+                  type="link"
+                  placeholder="주소를 남겨주세요"
+                  iconSrc="/svg/ic_pin_location_mono.svg"
+                  value={address}
+                  onChange={handleInputChange(setAddress)}
+                />
+                <InputWithLabel
+                  type="link"
+                  placeholder="전화번호를 남겨주세요"
+                  iconSrc="/svg/ic_call_mono.svg"
+                  value={phoneNumber}
+                  onChange={handleInputChange(setPhoneNumber)}
+                />
+              </div>
+              <div className="flex flex-col items-start justify-center gap-y-[12px]">
+                <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                  메모
+                </p>
+                <InputWithLabel
+                  type="link"
+                  placeholder="일행에게 메모를 남겨주세요"
+                  iconSrc="/svg/ic_memo_mono.svg"
+                  value={memoContent}
+                  onChange={handleInputChange(setMemoContent)}
+                />
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col items-start justify-center gap-y-[12px]">
-            <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
-              링크
-            </p>
-            <InputWithLabel
-              type="link"
-              placeholder="링크를 붙여주세요"
-              iconSrc="/svg/ic_link.svg"
-              value={link}
-              onChange={handleInputChange(setLink)}
-            />
-          </div>
-          <div className="flex flex-col items-start justify-center gap-y-[12px]">
-            <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
-              영업정보
-            </p>
-            <InputWithLabel
-              type="link"
-              placeholder="영업 시간을 남겨주세요"
-              iconSrc="/svg/ic_clock_mono.svg"
-              value={openingHours}
-              onChange={handleInputChange(setOpeningHours)}
-            />
-            <InputWithLabel
-              type="link"
-              placeholder="주소를 남겨주세요"
-              iconSrc="/svg/ic_pin_location_mono.svg"
-              value={address}
-              onChange={handleInputChange(setAddress)}
-            />
-            <InputWithLabel
-              type="link"
-              placeholder="전화번호를 남겨주세요"
-              iconSrc="/svg/ic_call_mono.svg"
-              value={phoneNumber}
-              onChange={handleInputChange(setPhoneNumber)}
-            />
-          </div>
-          <div className="flex flex-col items-start justify-center">
-            <InputWithLabel
-              type="link"
-              placeholder="일행에게 메모를 남겨주세요"
-              iconSrc="/svg/ic_memo_mono.svg"
-              value={memoContent}
-              onChange={handleInputChange(setMemoContent)}
-            />
-          </div>
+          )}
         </div>
       </div>
     </div>
