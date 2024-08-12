@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState, TouchEvent, useEffect } from "react";
+import React, { useRef, useState, TouchEvent, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -12,27 +12,19 @@ import { CardForCopiedContent } from "@/components/common/Cards/CardForCopiedCon
 import scheduleApi from "@/apis/schedule/ScheduleApi";
 import roomApi from "@/apis/room/RoomApi";
 import { useCourseContext } from "@/providers/course-provider";
-import originPlaceApi from "@/apis/origin-place/OriginPlaceApi";
-import { PlaceAutoCompleteUrlRequest } from "@/apis/origin-place/types/model";
-import { PlaceAutoCompleteResponse } from "@/apis/origin-place/types/dto";
 import { roomUidStorage } from "@/utils/web-storage/room-uid";
-import placeApi from "@/apis/place/PlaceApi";
-import { CardWithImageSmall } from "@/components/common/Cards/CardWithImageSmall";
-import { ScheduleTypeGroupResponse } from "@/apis/place/types/dto";
-export interface PlacesContainerProps {
-  placesData: ScheduleTypeGroupResponse;
-}
+import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
+import { useCreatePlace } from "@/apis/origin-place/OriginPlaceApi.mutation";
+import { PlaceContainer } from "./PlaceContainer";
+import { useGetRoomQuery } from "@/apis/room/RoomApi.query";
+import { useGetCourseQuery } from "@/apis/course/CourseApi.query";
 
 const AddCourse = () => {
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
   const { clipboardText } = useCopyPasted();
-  const [autoData, setAutoData] = useState<PlaceAutoCompleteResponse | null>(
-    null
-  );
-  const [currentPlacesData, setCurrentPlacesData] =
-    useState<ScheduleTypeGroupResponse | null>(null);
+  const [placeUrl, setPlaceUrl] = useState("");
   const [showInput, setShowInput] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const searchParams = useSearchParams();
@@ -43,25 +35,44 @@ const AddCourse = () => {
     categoryList,
     setCategoryList,
     placeInfo,
+    setPlaceInfo,
     isClipboardText,
     setIsClipboardText,
+    autoData,
+    setAutoData,
   } = useCourseContext();
 
-  const fetchPlaceData = async (roomUid: string) => {
-    try {
-      const currentPlaces = await placeApi.getPlaces({ roomUid });
-      setCurrentPlacesData(currentPlaces);
-      console.log(currentPlaces, "==============");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { data: currentPlacesData } = useGetPlacesQuery({
+    variables: { roomUid },
+  });
+
+  const { mutate: createPlaceMutate } = useCreatePlace({
+    options: {
+      onSuccess: (res) => {
+        if (res) {
+          setAutoData(res);
+        }
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    },
+  });
+
+  const filteredPlaces = useMemo(() => {
+    return (
+      currentPlacesData?.places?.filter(
+        (place) =>
+          selectedCategory === null || place.scheduleId === selectedCategory
+      ) || []
+    );
+  }, [currentPlacesData?.places, selectedCategory]);
 
   const fetchCoursePageData = async (roomUid: string) => {
     try {
       const currentSchedule = await scheduleApi.readSchedules(roomUid);
       const currentRoom = await roomApi.readRoom(roomUid);
-      console.log("Schedules:", currentSchedule);
+
       setCategoryList(currentSchedule.data.schedules);
       setRoomInfo(currentRoom.data);
       return;
@@ -71,41 +82,27 @@ const AddCourse = () => {
     }
   };
 
-  const fetchAutoCompleteData = async (url: PlaceAutoCompleteUrlRequest) => {
-    try {
-      const copiedData = await originPlaceApi.postOriginPlace(url);
-      return copiedData;
-    } catch (error) {
-      console.error("Error fetching copiedData:", error);
-      return null;
-    }
-  };
-
   useEffect(() => {
     fetchCoursePageData(roomUid);
-    fetchPlaceData(roomUid);
-    console.log("fetch");
-  }, [placeInfo]);
+  }, [placeInfo, categoryList]);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!isMobile && clipboardText) {
         setShowInput(false);
         setIsClipboardText(true);
-        const requestData: PlaceAutoCompleteUrlRequest = {
-          url: clipboardText,
-        };
-        const copiedData = await fetchAutoCompleteData(requestData);
-        if (copiedData) {
-          setAutoData(copiedData);
-        }
+        createPlaceMutate({ url: clipboardText });
+      } else if (placeUrl) {
+        setShowInput(false);
+        setIsClipboardText(true);
+        createPlaceMutate({ url: placeUrl });
       } else {
         setShowInput(true);
       }
     };
 
     fetchData();
-  }, [clipboardText, isMobile]);
+  }, [clipboardText, isMobile, placeUrl]);
 
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
@@ -132,33 +129,6 @@ const AddCourse = () => {
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
     setSelectedCategory(index === selectedCategory ? null : index);
-  };
-
-  const filteredPlaces =
-    currentPlacesData?.places?.filter(
-      (place) =>
-        selectedCategory === null || place.scheduleId === selectedCategory
-    ) || [];
-
-  const PlaceContainer: React.FC<PlacesContainerProps> = ({ placesData }) => {
-    const { places } = placesData;
-
-    return (
-      <div className="flex flex-wrap gap-x-4">
-        hjhkjhj
-        {places.map((place) => (
-          <div key={place.id} className="w-[calc(50%-16px)] mb-4">
-            <CardWithImageSmall
-              place={place.name}
-              link={place.url}
-              rating={place.starGrade.toString()}
-              reviewCount={100} //임시 data
-              images={place.placeImageUrls.contents}
-            />
-          </div>
-        ))}
-      </div>
-    );
   };
 
   return (
@@ -192,12 +162,23 @@ const AddCourse = () => {
             <Input
               className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
               placeholder="네이버, 카카오 링크를 넣어주세요"
+              value={placeUrl}
+              onChange={(e) => setPlaceUrl(e.target.value)}
             />
             <Image
               src={"/png/ic_arrow_left_circle_32.png"}
               alt="arrow"
               width={32}
               height={32}
+              onClick={() => {
+                if (placeUrl) {
+                  router.push(
+                    `add-course/detail?roomUid=${
+                      roomUidStorage?.get()?.roomUid
+                    }`
+                  );
+                }
+              }}
             />
           </div>
         ) : (

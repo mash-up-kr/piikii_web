@@ -1,20 +1,24 @@
 "use client";
 import { Card, CardHeader } from "@/components/ui/card";
+import { useCourseContext } from "@/providers/course-provider";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export const CardWithAutoCompleteData = () => {
   const router = useRouter();
-  const link = "https://naver.me/5IFskD5U";
+  const { placeInfo } = useCourseContext();
+
   return (
-    <div className="flex flex-col gap-y-[8px]">
-      <p className="w-[59px] font-bold text-[#747B89] text-[16px]">일식</p>
+    <div className="flex flex-col w-full gap-y-[8px]">
+      <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+        {placeInfo[0]?.category}
+      </p>
       <Card className=" border-none shadow-none">
-        <div className="flex flex-col w-[295px] h-[139px]">
+        <div className="flex flex-col w-full h-[139px]">
           <div className="flex gap-x-[8px]">
             <CardHeader className="w-full">
               <div className="flex w-full gap-x-[8px] items-center h-[31px] text-semibold-22">
-                <div className="flex items-center">돈카춘 홍대점</div>
+                <div className="flex items-center">{placeInfo[0]?.name}</div>
                 <div className="flex gap-x-[4px] items-center">
                   <div className="flex w-[16px] h-[16px]">
                     <Image
@@ -26,13 +30,15 @@ export const CardWithAutoCompleteData = () => {
                       unoptimized
                     />
                   </div>
-                  <div className="text-[14px]">4.5 (30)</div>
+                  <div className="text-[14px]">
+                    {placeInfo[0]?.starGrade} ({placeInfo[0]?.reviewCount})
+                  </div>
                 </div>
               </div>
             </CardHeader>
           </div>
-          <div className="flex flex-row gap-x-[9px] py-[15px]">
-            {/* {images.map((src, index) => (
+          <div className="flex flex-row w-full gap-x-[9px] my-[16px]">
+            {placeInfo[0]?.placeImageUrls.contents.map((src, index) => (
               <Image
                 key={index}
                 src={src}
@@ -42,14 +48,14 @@ export const CardWithAutoCompleteData = () => {
                 height={92}
                 priority
               />
-            ))} */}
+            ))}
           </div>
         </div>
       </Card>
-      {link ? (
+      {placeInfo[0]?.url ? (
         <button
-          className="flex flex-row mt-[12px] items-center justify-center w-full h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
-          onClick={() => router.push(link)}
+          className="flex flex-row mt-[32px] items-center justify-center w-full h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
+          onClick={() => router.push(placeInfo[0]?.url)}
         >
           <div className="w-full h-[18px] opacity-80 text-[12px] font-semibold">
             링크 바로가기

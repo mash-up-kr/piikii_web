@@ -98,11 +98,10 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
               <Image
                 src={"svg/icon-x-mono.svg"}
                 alt="plusIcon"
-                className="rotate-45"
-                width={18}
-                height={18}
+                className="z-9999"
+                width={24}
+                height={24}
                 priority
-                unoptimized
               />
             </button>
           </div>

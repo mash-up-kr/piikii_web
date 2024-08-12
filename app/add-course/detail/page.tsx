@@ -13,7 +13,7 @@ import { CardWithAutoCompleteData } from "@/components/common/Cards/CardWithAuto
 
 const AddDetailPage = () => {
   const router = useRouter();
-  const [place, setPlace] = useState("");
+  const [placeName, setPlaceName] = useState("");
   const [url, setUrl] = useState("");
   const [openingHours, setOpeningHours] = useState("");
   const [address, setAddress] = useState("");
@@ -23,32 +23,13 @@ const AddDetailPage = () => {
   const [pictures, setPictures] = useState<string[]>([]);
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
-  const { categoryList, isClipboardText, placeInfo } = useCourseContext();
-  console.log(categoryList, placeInfo);
+  const { categoryList, isClipboardText, setIsClipboardText, placeInfo } =
+    useCourseContext();
 
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
   };
 
-  useEffect(() => {
-    console.log(
-      place,
-      url,
-      address,
-      phoneNumber,
-      openingHours,
-      memoContent,
-      selectedChip
-    );
-  }, [
-    place,
-    url,
-    address,
-    phoneNumber,
-    openingHours,
-    memoContent,
-    selectedChip,
-  ]);
   const handleInputChange =
     (setter: React.Dispatch<React.SetStateAction<string>>) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,18 +43,21 @@ const AddDetailPage = () => {
   );
 
   const onCompleteButtonClick = async () => {
-    if (!place || !selectedChip || !selectedCategory) {
+    if (!placeName || !selectedChip || !selectedCategory) {
       return;
     }
 
     const payload: AddPlaceRequestDto = {
       scheduleId: selectedCategory.scheduleId,
       type: selectedCategory.name,
-      name: place,
-      url: url || "",
+      name: placeInfo && placeInfo[0] ? placeInfo[0].name : placeName,
+      url: placeInfo && placeInfo[0] ? placeInfo[0].url : url || undefined,
       address: address || "",
-      phoneNumber: phoneNumber || "",
-      starGrade: 0,
+      phoneNumber:
+        placeInfo && placeInfo[0]
+          ? placeInfo[0].phoneNumber
+          : phoneNumber || null,
+      starGrade: placeInfo && placeInfo[0] ? placeInfo[0].starGrade : 0,
       memo: memoContent || "",
       voteLikeCount: 0,
       voteDislikeCount: 0,
@@ -111,7 +95,12 @@ const AddDetailPage = () => {
               width={24}
               height={24}
             />
-            <p className="text-semibold-15 text-neutral-700">장소 추가하기</p>
+            <p
+              className="text-semibold-15 text-neutral-700"
+              onClick={() => setIsClipboardText(false)}
+            >
+              장소 추가하기
+            </p>
           </div>
         }
         rightSlot={
@@ -181,8 +170,8 @@ const AddDetailPage = () => {
                   <InputWithLabel
                     type="text"
                     placeholder="상호명을 적어주세요"
-                    value={place}
-                    onChange={handleInputChange(setPlace)}
+                    value={placeName}
+                    onChange={handleInputChange(setPlaceName)}
                   />
                 </div>
                 <div className="flex flex-col items-start justify-center">
