@@ -304,23 +304,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
                 height={104}
               />
             </div>
-            <div className="flex flex-col w-full items-center justify-center text-[14px] text-[#8B95A1]">
-              <p className="flex w-full items-center justify-center">
-                일행을 초대하고
-              </p>
-              <p className="flex w-full items-center justify-center">
-                함께 장소를 추가하세요
-              </p>
-            </div>
-            <Button className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-2 gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]">
-              <Image
-                src={"/svg/ic_wrap.svg"}
-                alt="wrap"
-                width={16}
-                height={16}
-              />
-              <p>일행 초대</p>
-            </Button>
           </div>
           <div className="flex flex-col w-full items-center justify-center text-[14px] text-[#8B95A1]">
             <p className="flex w-full items-center justify-center">
