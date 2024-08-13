@@ -1,5 +1,6 @@
 import { ScheduleResponse } from "@/apis/schedule/types/model";
 import { Card } from "@/components/ui/card";
+import { iconInfo } from "@/lib/utils";
 import Image from "next/image";
 
 type CardWithCourseProps = {
@@ -7,15 +8,16 @@ type CardWithCourseProps = {
 };
 
 const CardWithCourse = ({ item }: CardWithCourseProps) => {
+  const findIcon = (type: string) => {
+    const icon = iconInfo.find((icon) => icon.type === type);
+    return icon ? icon.icon : null;
+  };
+
   return (
     <Card className="flex flex-row items-center justify-between w-[303px] h-[56px] py-[16px] px-[24px] rounded-[12px]">
       <div className="flex gap-x-[6px]">
+        <label>{findIcon(item.type)}</label>
         <label className="w-[120px] h-[24px]">{item.name}</label>
-        {/* <label>{item.name}</label> */}
-        {/* index 확인을 위한 임시 label을 추가 */}
-        <label className="flex justify-center items-center font-bold text-[10px]">
-          index: {item.sequence}
-        </label>
       </div>
       <Image
         src="/svg/ic_arrow_up_down.svg"

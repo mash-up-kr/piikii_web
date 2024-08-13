@@ -11,6 +11,9 @@ import { useToast } from "@/components/common/Toast/use-toast";
 import { useCourseContext } from "@/providers/course-provider";
 import { ScheduleResponse } from "@/apis/schedule/types/model";
 import scheduleApi from "@/apis/schedule/ScheduleApi";
+import { useRouter, useSearchParams } from "next/navigation";
+import { RegisterSchedulesRequest } from "@/apis/schedule/types/dto";
+import { iconInfo } from "@/lib/utils";
 
 export type OrderType = "food" | "dessert" | "beer" | "play";
 export type OrderType2 = "DISH" | "DESSERT" | "ALCOHOL" | "ARCADE";
@@ -88,6 +91,9 @@ const DragAndDropArea: React.FC = () => {
   );
   const [isDisabled, setIsDisabled] = useState(false);
   const toast = useToast();
+  const searchParams = useSearchParams();
+  const roomUid = searchParams.get("roomUid") || "";
+  const router = useRouter();
 
   const handleClickDisabledButton = () => {
     if (isDisabled) {
@@ -100,13 +106,32 @@ const DragAndDropArea: React.FC = () => {
     return;
   };
 
-  const createNewSchedule = async (roomUid: string) => {
+  const prepareSchedulesForApi = (
+    roomUid: string,
+    schedules: ScheduleResponse[]
+  ): RegisterSchedulesRequest => {
+    return {
+      roomUid: roomUid,
+      schedules: schedules.map((schedule) => ({
+        scheduleId: schedule.scheduleId,
+        name: schedule.name,
+        type: schedule.type,
+        sequence: schedule.sequence,
+      })),
+    };
+  };
+
+  const changeSchedule = async (roomUid: string) => {
     try {
-      const createdSchedule = await scheduleApi.readSchedules(roomUid);
-      setCategoryList(createdSchedule.data.schedules);
-      return;
+      const requestPayload = prepareSchedulesForApi(roomUid, columns);
+      const response = await scheduleApi.createSchedules(requestPayload);
+
+      if (response) {
+        //setcategory를
+        router.back();
+      }
     } catch (error) {
-      console.error("Error creating schedules:", error);
+      console.error("Error changing schedules:", error);
       return null;
     }
   };
@@ -153,32 +178,26 @@ const DragAndDropArea: React.FC = () => {
     console.log(categoryList);
   }, [categoryList]);
 
-  // const handleItemClick = (newItem: ScheduleResponse) => {
-  //   const updatedList = generateUniqueTitles([
-  //     ...columns,
-  //     {
-  //       ...newItem,
-  //       sequence: columns.length + 1,
-  //     },
-  //   ]);
-
-  //   setCategoryList(updatedList);
-  // };
+  const findLabelForType = (type: OrderType2): string => {
+    const icon = iconInfo.find((icon) => icon.type === type);
+    return icon ? icon.label : type;
+  };
 
   const handleItemClick = (type: OrderType2) => {
+    const label = findLabelForType(type);
     const lastItem = columns[columns.length - 1];
     const newScheduleId = lastItem.scheduleId + 1;
     const newItem: ScheduleResponse = {
       scheduleId: newScheduleId,
       type,
-      name: `${type} ${columns.length + 1}차`,
+      name: `${label} ${columns.length + 1}차`,
       sequence: columns.length + 1,
     };
 
     const existingItems = columns.filter((item) => item.type === type);
 
     if (existingItems.length > 0) {
-      newItem.name = `${type} ${existingItems.length + 1}차`;
+      newItem.name = `${label} ${existingItems.length + 1}차`;
     }
 
     const updatedList = generateUniqueTitles([...columns, newItem]);
@@ -239,7 +258,7 @@ const DragAndDropArea: React.FC = () => {
               handleClickDisabledButton();
               return;
             } else {
-              // createNewSchedule()
+              changeSchedule(roomUid);
             }
           }}
         >

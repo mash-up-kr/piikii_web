@@ -9,7 +9,7 @@ import { InputWithImage } from "../../_components/InputWithImage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCourseContext } from "@/providers/course-provider";
 import { AddPlaceRequestDto } from "@/apis/place/types/dto";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import placeApi from "@/apis/place/PlaceApi";
 
 const PlaceDetail: React.FC = () => {
@@ -42,6 +42,12 @@ const PlaceDetail: React.FC = () => {
   const selectedCategory = categoryList?.find(
     (category) => category.scheduleId === selectedChip
   );
+
+  useEffect(() => {
+    if (placeInfo && placeInfo[0]) {
+      setPlaceName(placeInfo[0].name);
+    }
+  }, [placeInfo]);
 
   const onCompleteButtonClick = async () => {
     if (!placeName || !selectedChip || !selectedCategory) {
