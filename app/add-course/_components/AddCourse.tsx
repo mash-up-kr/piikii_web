@@ -17,8 +17,13 @@ import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
 import { useCreatePlace } from "@/apis/origin-place/OriginPlaceApi.mutation";
 import { PlaceContainer } from "./PlaceContainer";
 import useShare from "@/hooks/useShare";
+import { RoomResponse } from "@/apis/room/types/model";
 
-const AddCourse = () => {
+export interface AddCourseProps {
+  data: RoomResponse;
+}
+
+const AddCourse = ({ data }: AddCourseProps) => {
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
