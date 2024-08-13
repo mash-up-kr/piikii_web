@@ -6,20 +6,30 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { CategoryChip } from "./CategoryChip";
 import useCopyPasted from "../_hooks/useCopyPasted";
-import { Input } from "@/components/common/Input/Input";
-import useIsMobile from "./_hooks/useIsMobile";
-import { CardForCopiedContent } from "@/components/common/Cards/CardForCopiedContent";
-import scheduleApi from "@/apis/schedule/ScheduleApi";
-import roomApi from "@/apis/room/RoomApi";
-import { useCourseContext } from "@/providers/course-provider";
-import { roomUidStorage } from "@/utils/web-storage/room-uid";
-import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
-import { useCreatePlace } from "@/apis/origin-place/OriginPlaceApi.mutation";
-import { PlaceContainer } from "./PlaceContainer";
-import { useGetRoomQuery } from "@/apis/room/RoomApi.query";
-import { useGetCourseQuery } from "@/apis/course/CourseApi.query";
+import useShare from "@/hooks/useShare";
+import { RoomResponse } from "@/apis/room/types/model";
 
-const AddCourse = () => {
+// 사용자가 설정한 데이터라고 가정
+const initialColumns: ColumnsType = {
+  course: {
+    id: "course",
+    list: {
+      food: [{ globalIndex: 0, title: "음식점", type: "food", icon: "🍔" }],
+      dessert: [{ globalIndex: 1, title: "카페", type: "dessert", icon: "🥨" }],
+      beer: [
+        { globalIndex: 2, title: "술 1차", type: "dessert", icon: "🍻" },
+        { globalIndex: 3, title: "술 2차", type: "dessert", icon: "🍻" },
+      ],
+      play: [{ globalIndex: 4, title: "놀거리", type: "play", icon: "🕹️" }],
+    },
+  },
+};
+
+export interface AddCourseProps {
+  data: RoomResponse;
+}
+
+const AddCourse = ({ data }: AddCourseProps) => {
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
@@ -130,6 +140,8 @@ const AddCourse = () => {
     setSelectedChip(index === selectedChip ? null : index);
     setSelectedCategory(index === selectedCategory ? null : index);
   };
+
+  const { onShare } = useShare();
 
   return (
     <div className="flex flex-col">
@@ -292,6 +304,27 @@ const AddCourse = () => {
               <p>일행 초대</p>
             </Button>
           </div>
+          <div className="flex flex-col w-full items-center justify-center text-[14px] text-[#8B95A1]">
+            <p className="flex w-full items-center justify-center">
+              일행을 초대하고
+            </p>
+            <p className="flex w-full items-center justify-center">
+              함께 장소를 추가하세요
+            </p>
+          </div>
+          <Button
+            className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-2 gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]"
+            onClick={async () =>
+              await onShare({
+                url: location.href,
+                title: data.name,
+                text: data.message,
+              })
+            }
+          >
+            <Image src={"/svg/ic_wrap.svg"} alt="wrap" width={16} height={16} />
+            <p>일행 초대</p>
+          </Button>
         </div>
       ) : (
         <PlaceContainer
