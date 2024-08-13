@@ -17,9 +17,8 @@ import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
 import { useCreatePlace } from "@/apis/origin-place/OriginPlaceApi.mutation";
 import { PlaceContainer } from "./PlaceContainer";
 import useShare from "@/hooks/useShare";
-import { RoomResponse } from "@/apis/room/types/model";
 
-const AddCourse = ({ data }: AddCourseProps) => {
+const AddCourse = () => {
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
@@ -61,7 +60,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
     );
   }, [currentPlacesData]);
 
-
   const { mutate: createPlaceMutate } = useCreatePlace({
     options: {
       onSuccess: (res) => {
@@ -74,7 +72,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
       },
     },
   });
-
 
   const filteredPlaces = useMemo(() => {
     if (
@@ -93,7 +90,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
     const allPlaces = currentPlacesData.data.flatMap((item) => item.places);
     return allPlaces.filter((place) => place.scheduleId === selectedCategory);
   }, [currentPlacesData, selectedCategory]);
-
 
   const fetchCoursePageData = async (roomUid: string) => {
     try {
@@ -345,16 +341,16 @@ const AddCourse = ({ data }: AddCourseProps) => {
         </div>
       ) : (
         categoryList && (
-        <PlaceContainer
-          placesData={{
-            scheduleId: selectedCategory ?? categoryList[0]?.scheduleId,
-            scheduleName:
-              categoryList?.find(
-                (category) => category.scheduleId === selectedCategory
-              )?.name || categoryList[0]?.name,
-            places: filteredPlaces,
-          }}
-        />
+          <PlaceContainer
+            placesData={{
+              scheduleId: selectedCategory ?? categoryList[0]?.scheduleId,
+              scheduleName:
+                categoryList?.find(
+                  (category) => category.scheduleId === selectedCategory
+                )?.name || categoryList[0]?.name,
+              places: filteredPlaces,
+            }}
+          />
         )
       )}
     </div>
