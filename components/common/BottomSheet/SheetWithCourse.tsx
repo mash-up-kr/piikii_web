@@ -7,20 +7,17 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Image from "next/image";
-import { useState } from "react";
+import {
+  OrderType,
+  OrderType2,
+} from "@/app/edit-course/_components/DragAndDropArea";
 import { iconInfo } from "@/lib/utils";
-import { OrderType } from "@/app/edit-course/_components/DragAndDropArea";
 
 interface SheetWithCourseProps {
-  handleItemClick: (type: OrderType) => void;
+  handleItemClick: (type: OrderType2) => void;
 }
 
 export function SheetWithCourse({ handleItemClick }: SheetWithCourseProps) {
-  const [isSheetOpen, setIsSheetOpen] = useState(true);
-  const toggleSheet = () => {
-    setIsSheetOpen((prev) => !prev);
-  };
-
   return (
     <div className="">
       <Sheet key={"bottom"}>
@@ -54,8 +51,8 @@ export function SheetWithCourse({ handleItemClick }: SheetWithCourseProps) {
             <div className="flex flex-col items-start">
               {iconInfo.map((item) => (
                 <button
-                  key={item.label}
-                  onClick={() => handleItemClick(item.type as OrderType)}
+                  key={item.type}
+                  onClick={() => handleItemClick(item.type as OrderType2)}
                   className="flex w-[375px] h-[59px] items-center py-[16px] px-[20px] active:bg-[#FFF7F2]"
                 >
                   <div className="flex flex-row max-w-[68px] h-[27px] gap-x-[8px]">

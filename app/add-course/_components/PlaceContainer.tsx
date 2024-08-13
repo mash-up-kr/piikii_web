@@ -9,6 +9,7 @@ export const PlaceContainer: React.FC<PlacesContainerProps> = ({
   placesData,
 }) => {
   const { places } = placesData;
+  console.log(places, "========");
 
   return (
     <div className="flex flex-wrap gap-x-4">

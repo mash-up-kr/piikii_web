@@ -6,28 +6,18 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { CategoryChip } from "./CategoryChip";
 import useCopyPasted from "../_hooks/useCopyPasted";
+import { Input } from "@/components/common/Input/Input";
+import useIsMobile from "./_hooks/useIsMobile";
+import { CardForCopiedContent } from "@/components/common/Cards/CardForCopiedContent";
+import scheduleApi from "@/apis/schedule/ScheduleApi";
+import roomApi from "@/apis/room/RoomApi";
+import { useCourseContext } from "@/providers/course-provider";
+import { roomUidStorage } from "@/utils/web-storage/room-uid";
+import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
+import { useCreatePlace } from "@/apis/origin-place/OriginPlaceApi.mutation";
+import { PlaceContainer } from "./PlaceContainer";
 import useShare from "@/hooks/useShare";
 import { RoomResponse } from "@/apis/room/types/model";
-
-// 사용자가 설정한 데이터라고 가정
-const initialColumns: ColumnsType = {
-  course: {
-    id: "course",
-    list: {
-      food: [{ globalIndex: 0, title: "음식점", type: "food", icon: "🍔" }],
-      dessert: [{ globalIndex: 1, title: "카페", type: "dessert", icon: "🥨" }],
-      beer: [
-        { globalIndex: 2, title: "술 1차", type: "dessert", icon: "🍻" },
-        { globalIndex: 3, title: "술 2차", type: "dessert", icon: "🍻" },
-      ],
-      play: [{ globalIndex: 4, title: "놀거리", type: "play", icon: "🕹️" }],
-    },
-  },
-};
-
-export interface AddCourseProps {
-  data: RoomResponse;
-}
 
 const AddCourse = ({ data }: AddCourseProps) => {
   const router = useRouter();
@@ -56,6 +46,22 @@ const AddCourse = ({ data }: AddCourseProps) => {
     variables: { roomUid },
   });
 
+  const hasPlaces = useMemo(() => {
+    if (
+      !currentPlacesData ||
+      !Array.isArray(currentPlacesData.data) ||
+      currentPlacesData.data.length === 0
+    ) {
+      console.error("currentPlacesData is not in expected format or is empty.");
+      return false;
+    }
+
+    return currentPlacesData.data.some(
+      (schedule) => Array.isArray(schedule.places) && schedule.places.length > 0
+    );
+  }, [currentPlacesData]);
+
+
   const { mutate: createPlaceMutate } = useCreatePlace({
     options: {
       onSuccess: (res) => {
@@ -69,14 +75,25 @@ const AddCourse = ({ data }: AddCourseProps) => {
     },
   });
 
+
   const filteredPlaces = useMemo(() => {
-    return (
-      currentPlacesData?.places?.filter(
-        (place) =>
-          selectedCategory === null || place.scheduleId === selectedCategory
-      ) || []
-    );
-  }, [currentPlacesData?.places, selectedCategory]);
+    if (
+      !currentPlacesData ||
+      !currentPlacesData?.data ||
+      !Array.isArray(currentPlacesData?.data) ||
+      currentPlacesData?.data[0]?.places?.length === 0
+    ) {
+      return [];
+    }
+
+    if (selectedCategory === null) {
+      const defaultPlaces = currentPlacesData.data[0]?.places || [];
+      return defaultPlaces;
+    }
+    const allPlaces = currentPlacesData.data.flatMap((item) => item.places);
+    return allPlaces.filter((place) => place.scheduleId === selectedCategory);
+  }, [currentPlacesData, selectedCategory]);
+
 
   const fetchCoursePageData = async (roomUid: string) => {
     try {
@@ -94,7 +111,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   useEffect(() => {
     fetchCoursePageData(roomUid);
-  }, [placeInfo, categoryList]);
+  }, [roomUid]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -275,7 +292,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
           </div>
         </div>
       </div>
-      {!currentPlacesData || currentPlacesData?.places == null ? (
+      {!hasPlaces ? (
         <div className="flex flex-col w-full h-full items-center justify-center mt-[64px]">
           <div className="flex flex-col items-center justify-center w-full h-[197px] gap-y-[12px]">
             <div className="flex w-[108px] h-[104px] items-center justify-center">
@@ -327,9 +344,18 @@ const AddCourse = ({ data }: AddCourseProps) => {
           </Button>
         </div>
       ) : (
+        categoryList && (
         <PlaceContainer
-          placesData={{ ...currentPlacesData, places: filteredPlaces }}
+          placesData={{
+            scheduleId: selectedCategory ?? categoryList[0]?.scheduleId,
+            scheduleName:
+              categoryList?.find(
+                (category) => category.scheduleId === selectedCategory
+              )?.name || categoryList[0]?.name,
+            places: filteredPlaces,
+          }}
         />
+        )
       )}
     </div>
   );
