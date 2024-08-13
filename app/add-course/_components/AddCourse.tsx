@@ -16,8 +16,10 @@ import { roomUidStorage } from "@/utils/web-storage/room-uid";
 import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
 import { useCreatePlace } from "@/apis/origin-place/OriginPlaceApi.mutation";
 import { PlaceContainer } from "./PlaceContainer";
+import useShare from "@/hooks/useShare";
+import { RoomResponse } from "@/apis/room/types/model";
 
-const AddCourse = () => {
+const AddCourse = ({ data }: AddCourseProps) => {
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
@@ -59,9 +61,6 @@ const AddCourse = () => {
     );
   }, [currentPlacesData]);
 
-  useEffect(() => {
-    console.log(currentPlacesData, hasPlaces, "places");
-  }, [currentPlacesData, hasPlaces]);
 
   const { mutate: createPlaceMutate } = useCreatePlace({
     options: {
@@ -76,14 +75,6 @@ const AddCourse = () => {
     },
   });
 
-  // const filteredPlaces = useMemo(() => {
-  //   return (
-  //     currentPlacesData?.places?.filter(
-  //       (place) =>
-  //         selectedCategory === null || place.scheduleId === selectedCategory
-  //     ) || []
-  //   );
-  // }, [currentPlacesData?.places, selectedCategory]);
 
   const filteredPlaces = useMemo(() => {
     if (
@@ -103,9 +94,6 @@ const AddCourse = () => {
     return allPlaces.filter((place) => place.scheduleId === selectedCategory);
   }, [currentPlacesData, selectedCategory]);
 
-  useEffect(() => {
-    console.log(selectedCategory, selectedChip, filteredPlaces);
-  }, [selectedCategory, filteredPlaces]);
 
   const fetchCoursePageData = async (roomUid: string) => {
     try {
@@ -169,6 +157,8 @@ const AddCourse = () => {
     setSelectedChip(index === selectedChip ? null : index);
     setSelectedCategory(index === selectedCategory ? null : index);
   };
+
+  const { onShare } = useShare();
 
   return (
     <div className="flex flex-col">
@@ -331,11 +321,33 @@ const AddCourse = () => {
               <p>일행 초대</p>
             </Button>
           </div>
+          <div className="flex flex-col w-full items-center justify-center text-[14px] text-[#8B95A1]">
+            <p className="flex w-full items-center justify-center">
+              일행을 초대하고
+            </p>
+            <p className="flex w-full items-center justify-center">
+              함께 장소를 추가하세요
+            </p>
+          </div>
+          <Button
+            className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-2 gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]"
+            onClick={async () =>
+              await onShare({
+                url: location.href,
+                title: data.name,
+                text: data.message,
+              })
+            }
+          >
+            <Image src={"/svg/ic_wrap.svg"} alt="wrap" width={16} height={16} />
+            <p>일행 초대</p>
+          </Button>
         </div>
       ) : (
+        categoryList && (
         <PlaceContainer
           placesData={{
-            scheduleId: selectedCategory ?? categoryList[0]?.scheduleId, // 현재 선택된 카테고리의 scheduleId
+            scheduleId: selectedCategory ?? categoryList[0]?.scheduleId,
             scheduleName:
               categoryList?.find(
                 (category) => category.scheduleId === selectedCategory
@@ -343,6 +355,7 @@ const AddCourse = () => {
             places: filteredPlaces,
           }}
         />
+        )
       )}
     </div>
   );
