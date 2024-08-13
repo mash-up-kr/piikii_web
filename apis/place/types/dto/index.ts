@@ -23,6 +23,11 @@ export interface ScheduleTypeGroupResponse {
   places: PlaceResponseDto[];
 }
 
+export interface TotalScheduleResponse {
+  data: ScheduleTypeGroupResponse[];
+  timestamp: number;
+}
+
 /**
  * API Payloads
  */

@@ -16,8 +16,6 @@ import { roomUidStorage } from "@/utils/web-storage/room-uid";
 import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
 import { useCreatePlace } from "@/apis/origin-place/OriginPlaceApi.mutation";
 import { PlaceContainer } from "./PlaceContainer";
-import { useGetRoomQuery } from "@/apis/room/RoomApi.query";
-import { useGetCourseQuery } from "@/apis/course/CourseApi.query";
 
 const AddCourse = () => {
   const router = useRouter();
@@ -46,6 +44,25 @@ const AddCourse = () => {
     variables: { roomUid },
   });
 
+  const hasPlaces = useMemo(() => {
+    if (
+      !currentPlacesData ||
+      !Array.isArray(currentPlacesData.data) ||
+      currentPlacesData.data.length === 0
+    ) {
+      console.error("currentPlacesData is not in expected format or is empty.");
+      return false;
+    }
+
+    return currentPlacesData.data.some(
+      (schedule) => Array.isArray(schedule.places) && schedule.places.length > 0
+    );
+  }, [currentPlacesData]);
+
+  useEffect(() => {
+    console.log(currentPlacesData, hasPlaces, "places");
+  }, [currentPlacesData, hasPlaces]);
+
   const { mutate: createPlaceMutate } = useCreatePlace({
     options: {
       onSuccess: (res) => {
@@ -59,14 +76,36 @@ const AddCourse = () => {
     },
   });
 
+  // const filteredPlaces = useMemo(() => {
+  //   return (
+  //     currentPlacesData?.places?.filter(
+  //       (place) =>
+  //         selectedCategory === null || place.scheduleId === selectedCategory
+  //     ) || []
+  //   );
+  // }, [currentPlacesData?.places, selectedCategory]);
+
   const filteredPlaces = useMemo(() => {
-    return (
-      currentPlacesData?.places?.filter(
-        (place) =>
-          selectedCategory === null || place.scheduleId === selectedCategory
-      ) || []
-    );
-  }, [currentPlacesData?.places, selectedCategory]);
+    if (
+      !currentPlacesData ||
+      !currentPlacesData?.data ||
+      !Array.isArray(currentPlacesData?.data) ||
+      currentPlacesData?.data[0]?.places?.length === 0
+    ) {
+      return [];
+    }
+
+    if (selectedCategory === null) {
+      const defaultPlaces = currentPlacesData.data[0]?.places || [];
+      return defaultPlaces;
+    }
+    const allPlaces = currentPlacesData.data.flatMap((item) => item.places);
+    return allPlaces.filter((place) => place.scheduleId === selectedCategory);
+  }, [currentPlacesData, selectedCategory]);
+
+  useEffect(() => {
+    console.log(selectedCategory, selectedChip, filteredPlaces);
+  }, [selectedCategory, filteredPlaces]);
 
   const fetchCoursePageData = async (roomUid: string) => {
     try {
@@ -84,7 +123,7 @@ const AddCourse = () => {
 
   useEffect(() => {
     fetchCoursePageData(roomUid);
-  }, [placeInfo, categoryList]);
+  }, [roomUid]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -263,7 +302,7 @@ const AddCourse = () => {
           </div>
         </div>
       </div>
-      {!currentPlacesData || currentPlacesData?.places == null ? (
+      {!hasPlaces ? (
         <div className="flex flex-col w-full h-full items-center justify-center mt-[64px]">
           <div className="flex flex-col items-center justify-center w-full h-[197px] gap-y-[12px]">
             <div className="flex w-[108px] h-[104px] items-center justify-center">
@@ -295,7 +334,14 @@ const AddCourse = () => {
         </div>
       ) : (
         <PlaceContainer
-          placesData={{ ...currentPlacesData, places: filteredPlaces }}
+          placesData={{
+            scheduleId: selectedCategory ?? categoryList[0]?.scheduleId, // 현재 선택된 카테고리의 scheduleId
+            scheduleName:
+              categoryList?.find(
+                (category) => category.scheduleId === selectedCategory
+              )?.name || categoryList[0]?.name,
+            places: filteredPlaces,
+          }}
         />
       )}
     </div>
