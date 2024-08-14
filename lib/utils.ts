@@ -3,6 +3,11 @@ import {
   ValueType,
 } from "@/app/edit-course/_components/DragAndDropArea";
 import { Size } from "@/model";
+import {
+  BadgeInfoType,
+  BadgeMapType,
+  BadgeType,
+} from "@/providers/badge-provider";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -27,10 +32,13 @@ export const getSizeClasses = (size: Size) => {
 export const flattenColumns = (columns: ColumnsType): ValueType[] => {
   return Object.values(columns.course.list).flat();
 };
+// export const flattenColumns = (badgeList: BadgeInfoType[]): BadgeInfoType[] => {
+//   return Array.from(badgeList.values()).flat();
+// };
 
 export const iconInfo = [
-  { icon: "🍔", label: "음식", type: "food" },
-  { icon: "🥨", label: "디저트", type: "dessert" },
-  { icon: "🍺", label: "술", type: "beer" },
-  { icon: "🕹️", label: "놀거리", type: "play" },
+  { icon: "🍔", label: "음식", type: "DISH" },
+  { icon: "🥨", label: "디저트", type: "DESSERT" },
+  { icon: "🍺", label: "술", type: "ALCOHOL" },
+  { icon: "🕹️", label: "놀거리", type: "ARCADE" },
 ];

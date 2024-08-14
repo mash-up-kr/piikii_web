@@ -4,12 +4,16 @@ import { DragDropContext, DropResult, Draggable } from "react-beautiful-dnd";
 import Image from "next/image";
 import CardWithCourse from "@/components/common/Cards/CardWithCourse";
 import { SheetWithCourse } from "@/components/common/BottomSheet/SheetWithCourse";
-import { flattenColumns, iconInfo } from "@/lib/utils";
+
 import { StrictModeDroppable } from "./Droppable";
 import { Button } from "@/components/common/Button/Button";
 import { useToast } from "@/components/common/Toast/use-toast";
+import { useCourseContext } from "@/providers/course-provider";
+import { ScheduleResponse } from "@/apis/schedule/types/model";
+import scheduleApi from "@/apis/schedule/ScheduleApi";
 
 export type OrderType = "food" | "dessert" | "beer" | "play";
+export type OrderType2 = "DISH" | "DESSERT" | "ALCOHOL" | "ARCADE";
 
 export type ValueType = {
   globalIndex: number;
@@ -25,60 +29,50 @@ export type ColumnsType = {
   };
 };
 
-const addItemToColumns = (
-  prevColumns: ColumnsType,
-  newItem: ValueType
-): ColumnsType => {
-  const updatedColumns = {
-    ...prevColumns,
-    course: {
-      ...prevColumns.course,
-      list: {
-        ...prevColumns.course.list,
-        [newItem.type]: [...prevColumns.course.list[newItem.type], newItem],
-      },
-    },
-  };
-  return generateUniqueTitles(updatedColumns);
+const extractNumberFromTitle = (title: string) => {
+  const match = title.match(/(\d+)차$/);
+  return match ? parseInt(match[1], 10) : null;
 };
 
-const updateColumnsOnDelete = (
-  prevColumns: ColumnsType,
-  globalIndexToDelete: number
-): ColumnsType => {
-  const updatedList: ValueType[] = flattenColumns(prevColumns).filter(
-    (item) => item.globalIndex !== globalIndexToDelete
-  );
+const generateUniqueTitles = (
+  columns: ScheduleResponse[]
+): ScheduleResponse[] => {
+  const groupedByType = columns.reduce((acc, item) => {
+    if (!acc[item.type]) {
+      acc[item.type] = [];
+    }
+    acc[item.type].push(item);
+    return acc;
+  }, {} as Record<OrderType2, ScheduleResponse[]>);
 
-  const newList: Record<OrderType, ValueType[]> = {
-    food: [],
-    dessert: [],
-    beer: [],
-    play: [],
-  };
+  return columns.map((item) => {
+    const itemsOfType = groupedByType[item.type];
 
-  updatedList.forEach((item, index) => {
-    const newIndex =
-      item.globalIndex > globalIndexToDelete
-        ? item.globalIndex - 1
-        : item.globalIndex;
-    newList[item.type].push({ ...item, globalIndex: newIndex });
+    const sortedItems = itemsOfType
+      .map((i) => ({
+        ...i,
+        number: extractNumberFromTitle(i.name) || 0,
+      }))
+      .sort((a, b) => a.number - b.number);
+
+    const newNumber =
+      sortedItems.findIndex((i) => i.scheduleId === item.scheduleId) + 1;
+
+    return {
+      ...item,
+      name:
+        sortedItems.length > 1
+          ? `${item.name.split(" ")[0]} ${newNumber}차`
+          : item.name.split(" ")[0],
+    };
   });
-
-  return {
-    ...prevColumns,
-    course: {
-      ...prevColumns.course,
-      list: newList,
-    },
-  };
 };
 
 const reorder = (
-  list: ValueType[],
+  list: ScheduleResponse[],
   startIndex: number,
   endIndex: number
-): ValueType[] => {
+): ScheduleResponse[] => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
 
@@ -86,42 +80,11 @@ const reorder = (
   return result;
 };
 
-const generateUniqueTitles = (columns: ColumnsType): ColumnsType => {
-  const updatedColumns = { ...columns };
-  Object.keys(updatedColumns.course.list).forEach((category) => {
-    updatedColumns.course.list[category as OrderType].forEach((item, index) => {
-      if (updatedColumns.course.list[category as OrderType].length > 1) {
-        item.title = `${item.title.split(" ")[0]} ${index + 1}차`;
-      } else {
-        item.title = item.title.split(" ")[0];
-      }
-    });
-  });
-  return updatedColumns;
-};
-
 const DragAndDropArea: React.FC = () => {
-  // 사용자가 설정한 데이터라고 가정
-  const initialColumns: ColumnsType = {
-    course: {
-      id: "course",
-      list: {
-        food: [
-          { globalIndex: 0, title: "음식", type: "food", icon: "🍔" },
-          { globalIndex: 1, title: "음식", type: "food", icon: "🍔" },
-        ],
-        dessert: [
-          { globalIndex: 2, title: "디저트", type: "dessert", icon: "🥨" },
-        ],
-        beer: [],
-        play: [],
-      },
-    },
-  };
-  const updatedInitialColumns = generateUniqueTitles(initialColumns);
-  const [columns, setColumns] = useState(updatedInitialColumns);
+  const { categoryList, setCategoryList } = useCourseContext();
+  const [columns, setColumns] = useState<ScheduleResponse[]>([]);
   const [itemCount, setItemCount] = useState(
-    flattenColumns(updatedInitialColumns).length
+    categoryList ? categoryList.length : 0
   );
   const [isDisabled, setIsDisabled] = useState(false);
   const toast = useToast();
@@ -137,71 +100,90 @@ const DragAndDropArea: React.FC = () => {
     return;
   };
 
+  const createNewSchedule = async (roomUid: string) => {
+    try {
+      const createdSchedule = await scheduleApi.readSchedules(roomUid);
+      setCategoryList(createdSchedule.data.schedules);
+      return;
+    } catch (error) {
+      console.error("Error creating schedules:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
-    setColumns(updatedInitialColumns);
-  }, []);
+    setColumns(categoryList ?? []);
+    setItemCount((categoryList ?? []).length);
+  }, [categoryList]);
 
   useEffect(() => {
     setIsDisabled(itemCount === 0);
   }, [itemCount]);
 
-  const allItems = useMemo(() => {
-    return flattenColumns(columns).sort(
-      (a, b) => a.globalIndex - b.globalIndex
-    );
-  }, [columns]);
-
   const onDragEnd = (result: DropResult) => {
-    if (!result.destination) {
-      return;
-    }
+    if (!result.destination) return;
 
     const sourceIndex = result.source.index;
     const destinationIndex = result.destination.index;
 
-    const reorderedItems = reorder(allItems, sourceIndex, destinationIndex);
+    const reorderedItems = reorder(columns, sourceIndex, destinationIndex);
 
-    const newColumns = { ...columns };
-    const newList: Record<OrderType, ValueType[]> = {
-      food: [],
-      dessert: [],
-      beer: [],
-      play: [],
-    };
+    const updatedList = reorderedItems.map((item, index) => ({
+      ...item,
+      sequence: index + 1,
+    }));
 
-    reorderedItems.forEach((item, index) => {
-      item.globalIndex = index;
-      newList[item.type].push(item);
-    });
-
-    newColumns.course.list = newList;
-    setColumns(newColumns);
+    setCategoryList(updatedList);
   };
 
-  const handleItemDelete = (globalIndexToDelete: number) => {
-    setColumns((prevColumns) => {
-      const updatedColumns = updateColumnsOnDelete(
-        prevColumns,
-        globalIndexToDelete
-      );
-      return generateUniqueTitles(updatedColumns);
-    });
-    setItemCount(itemCount - 1);
+  const handleItemDelete = (sequence: number) => {
+    const filteredList = columns.filter((item) => item.sequence !== sequence);
+
+    const updatedList = generateUniqueTitles(
+      filteredList.map((item, index) => ({
+        ...item,
+        sequence: index + 1,
+      }))
+    );
+
+    setCategoryList(updatedList);
   };
 
-  const handleItemClick = (type: OrderType) => {
-    const icon = iconInfo.find((item) => item.type === type);
-    if (!icon) return;
+  useEffect(() => {
+    console.log(categoryList);
+  }, [categoryList]);
 
-    const newItem: ValueType = {
-      globalIndex: itemCount,
-      title: `${icon.label}`,
-      type: type,
-      icon: icon.icon,
+  // const handleItemClick = (newItem: ScheduleResponse) => {
+  //   const updatedList = generateUniqueTitles([
+  //     ...columns,
+  //     {
+  //       ...newItem,
+  //       sequence: columns.length + 1,
+  //     },
+  //   ]);
+
+  //   setCategoryList(updatedList);
+  // };
+
+  const handleItemClick = (type: OrderType2) => {
+    const lastItem = columns[columns.length - 1];
+    const newScheduleId = lastItem.scheduleId + 1;
+    const newItem: ScheduleResponse = {
+      scheduleId: newScheduleId,
+      type,
+      name: `${type} ${columns.length + 1}차`,
+      sequence: columns.length + 1,
     };
 
-    setColumns((prevColumns) => addItemToColumns(prevColumns, newItem));
-    setItemCount(itemCount + 1);
+    const existingItems = columns.filter((item) => item.type === type);
+
+    if (existingItems.length > 0) {
+      newItem.name = `${type} ${existingItems.length + 1}차`;
+    }
+
+    const updatedList = generateUniqueTitles([...columns, newItem]);
+
+    setCategoryList(updatedList);
   };
 
   return (
@@ -214,10 +196,10 @@ const DragAndDropArea: React.FC = () => {
               ref={provided.innerRef}
               className="flex flex-col gap-y-[16px]"
             >
-              {allItems.map((item: ValueType, index: number) => (
+              {columns.map((item: ScheduleResponse, index: number) => (
                 <Draggable
-                  key={index}
-                  draggableId={`item-${item.type}-${item.globalIndex}`}
+                  key={item.scheduleId}
+                  draggableId={`item-${item.type}-${item.scheduleId}`}
                   index={index}
                 >
                   {(provided) => (
@@ -234,7 +216,7 @@ const DragAndDropArea: React.FC = () => {
                         height={16}
                         priority
                         unoptimized
-                        onClick={() => handleItemDelete(item.globalIndex)}
+                        onClick={() => handleItemDelete(item.sequence)}
                       />
                       <CardWithCourse item={item} />
                     </div>
@@ -256,8 +238,9 @@ const DragAndDropArea: React.FC = () => {
             if (isDisabled) {
               handleClickDisabledButton();
               return;
+            } else {
+              // createNewSchedule()
             }
-            //else일 경우 API call
           }}
         >
           바꿨어요
