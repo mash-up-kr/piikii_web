@@ -1,4 +1,5 @@
 import { PlaceAutoCompleteResponse } from "@/apis/origin-place/types/dto";
+import { TotalScheduleResponse } from "@/apis/place/types/dto";
 import { RoomResponse } from "@/apis/room/types/model";
 import { ScheduleResponse } from "@/apis/schedule/types/model";
 import { PlaceAutoCompleteData } from "@/components/common/Cards/CardForCopiedContent";
@@ -9,7 +10,11 @@ const useCourseState = () => {
   const [categoryList, setCategoryList] = useState<ScheduleResponse[] | null>(
     null
   );
-  const [placeInfo, setPlaceInfo] = useState<PlaceAutoCompleteData[]>([]);
+  const [roomPlacesInfo, setRoomPlacesInfo] =
+    useState<TotalScheduleResponse | null>(null);
+  const [autoPlaceInfo, setAutoPlaceInfo] = useState<PlaceAutoCompleteData[]>(
+    []
+  );
   const [isClipboardText, setIsClipboardText] = useState(false);
   const [autoData, setAutoData] = useState<PlaceAutoCompleteResponse | null>(
     null
@@ -17,12 +22,14 @@ const useCourseState = () => {
 
   return {
     roomInfo,
+    roomPlacesInfo,
     categoryList,
-    placeInfo,
+    autoPlaceInfo,
     isClipboardText,
     setRoomInfo,
+    setRoomPlacesInfo,
     setCategoryList,
-    setPlaceInfo,
+    setAutoPlaceInfo,
     setIsClipboardText,
     autoData,
     setAutoData,

@@ -5,32 +5,36 @@ import { PlaceAutoCompleteData } from "@/components/common/Cards/CardForCopiedCo
 const useCourseHandler = () => {
   const {
     roomInfo,
+    roomPlacesInfo,
     categoryList,
     isClipboardText,
-    placeInfo,
+    autoPlaceInfo,
     autoData,
     setCategoryList,
     setIsClipboardText,
     setRoomInfo,
-    setPlaceInfo,
+    setRoomPlacesInfo,
+    setAutoPlaceInfo,
     setAutoData,
   } = useCourseState();
 
   const addPlaceInfo = (newPlace: PlaceAutoCompleteData) => {
-    setPlaceInfo((prevPlaces) => [...prevPlaces, newPlace]);
+    setAutoPlaceInfo((prevPlaces) => [...prevPlaces, newPlace]);
   };
 
   return {
     addPlaceInfo,
     roomInfo,
+    roomPlacesInfo,
     categoryList,
     isClipboardText,
-    placeInfo,
+    autoPlaceInfo,
     autoData,
     setCategoryList,
     setIsClipboardText,
     setRoomInfo,
-    setPlaceInfo,
+    setRoomPlacesInfo,
+    setAutoPlaceInfo,
     setAutoData,
   };
 };

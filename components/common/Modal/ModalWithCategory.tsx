@@ -1,7 +1,7 @@
 import { Button } from "../Button/Button";
 
 interface ModalWithCategoryProps {
-  modalText: JSX.Element;
+  modalText?: JSX.Element;
   onLeftButtonText: string;
   onRightButtonText: string;
   onLeftButtonClick: () => void;

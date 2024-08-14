@@ -87,8 +87,9 @@ const reorder = (
 const DragAndDropArea: React.FC = () => {
   const [selectedSequence, setSelectedSequence] = useState<number | null>(null);
   const [selectedItemText, setSelectedItemText] = useState<string | null>("");
+  const [selectedPlaceNumber, setSelectedPlaceNumber] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { categoryList, setCategoryList } = useCourseContext();
+  const { roomPlacesInfo, categoryList, setCategoryList } = useCourseContext();
   const [columns, setColumns] = useState<ScheduleResponse[]>([]);
   const [itemCount, setItemCount] = useState(
     categoryList ? categoryList.length : 0
@@ -98,7 +99,16 @@ const DragAndDropArea: React.FC = () => {
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
   const router = useRouter();
-
+  const modalText =
+    selectedPlaceNumber > 0 ? (
+      <>
+        '{selectedItemText}' 카테고리를 삭제하면
+        <br />
+        {`등록한 ${selectedPlaceNumber}개 후보지 모두 사라져요`}
+      </>
+    ) : (
+      <>'{selectedItemText}' 카테고리를 삭제할까요?</>
+    );
   const handleClickDisabledButton = () => {
     if (isDisabled) {
       console.log(isDisabled);
@@ -168,6 +178,15 @@ const DragAndDropArea: React.FC = () => {
   const onDeleteButtonClick = (item: ScheduleResponse) => {
     setSelectedSequence(item.sequence);
     setSelectedItemText(item.name);
+
+    const matchedSchedule = roomPlacesInfo?.filter(
+      (place) => place.scheduleId === item.scheduleId
+    );
+
+    if (matchedSchedule) {
+      setSelectedPlaceNumber(matchedSchedule.length);
+    }
+
     setIsModalOpen(true);
   };
 
@@ -269,13 +288,7 @@ const DragAndDropArea: React.FC = () => {
       </DragDropContext>
       {isModalOpen && (
         <ModalWithCategory
-          modalText={
-            <>
-              {selectedItemText}을 삭제하면
-              <br />
-              등록한 후보지 모두 사라져요
-            </>
-          }
+          modalText={modalText}
           onLeftButtonText="취소"
           onRightButtonText="네, 삭제할래요"
           onLeftButtonClick={onCancelDelete}
