@@ -19,6 +19,10 @@ import { useCreatePlace } from "@/apis/origin-place/OriginPlaceApi.mutation";
 import { PlaceContainer } from "./PlaceContainer";
 import useShare from "@/hooks/useShare";
 import { RoomResponse } from "@/apis/room/types/model";
+import {
+  PlaceResponseDto,
+  ScheduleTypeGroupResponse,
+} from "@/apis/place/types/dto";
 
 export interface AddCourseProps {
   data: RoomResponse;
@@ -54,14 +58,14 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const hasPlaces = useMemo(() => {
     if (
       !currentPlacesData ||
-      !Array.isArray(currentPlacesData.data) ||
-      currentPlacesData.data.length === 0
+      !Array.isArray(currentPlacesData) ||
+      currentPlacesData.length === 0
     ) {
       console.error("currentPlacesData is not in expected format or is empty.");
       return false;
     }
 
-    return currentPlacesData.data.some(
+    return currentPlacesData.some(
       (schedule) => Array.isArray(schedule.places) && schedule.places.length > 0
     );
   }, [currentPlacesData]);
@@ -82,18 +86,19 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const filteredPlaces = useMemo(() => {
     if (
       !currentPlacesData ||
-      !currentPlacesData?.data ||
-      !Array.isArray(currentPlacesData?.data) ||
-      currentPlacesData?.data[0]?.places?.length === 0
+      !Array.isArray(currentPlacesData) ||
+      currentPlacesData?.length === 0
     ) {
       return [];
     }
 
     if (selectedCategory === null) {
-      const defaultPlaces = currentPlacesData.data[0]?.places || [];
+      const defaultPlaces = currentPlacesData || [];
       return defaultPlaces;
     }
-    const allPlaces = currentPlacesData.data.flatMap((item) => item.places);
+    const allPlaces: PlaceResponseDto[] = currentPlacesData.flatMap(
+      (item) => item.places
+    );
     return allPlaces.filter((place) => place.scheduleId === selectedCategory);
   }, [currentPlacesData, selectedCategory]);
 
