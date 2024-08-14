@@ -111,13 +111,13 @@ export default function MotionCard({
       >
         <CardWithImage
           place={data.name}
-          rating={data.starGrade.toString()}
-          reviewCount={100}
+          rating={data.starGrade?.toString() ?? "-"}
+          reviewCount={data.reviewCount ?? 0}
           images={data.placeImageUrls.contents}
           info={[
             { label: "음식", value: "한식" },
             { label: "가격대", value: "만원 미만" },
-            { label: "위치", value: "강남역" },
+            { label: "메모", value: data.memo ?? "-" },
           ]}
           noShadow={hideShadow}
         />
