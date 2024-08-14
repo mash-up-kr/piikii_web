@@ -6,18 +6,20 @@ import FullScreenLoader from "@/components/common/FullScreenLoader";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import Title from "@/components/common/Title";
 import { useToast } from "@/components/common/Toast/use-toast";
+import useRoomUid from "@/hooks/useRoomUid";
+import createUUID from "@/utils/createUid";
 import { roomUidStorage } from "@/utils/web-storage/room-uid";
+import { userUidStorage } from "@/utils/web-storage/user-uid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useIsClient } from "usehooks-ts";
 
 export default function VoteStart() {
   const router = useRouter();
   const toast = useToast();
   const isClient = useIsClient();
-
-  const roomUid = useMemo(() => roomUidStorage?.get()?.roomUid, []);
+  const roomUid = useRoomUid();
 
   const { data, isLoading, isError } = useGetPlacesQuery({
     variables: {
@@ -42,6 +44,17 @@ export default function VoteStart() {
 
     router.push(`/vote?roomUid=${roomUid}`);
   };
+
+  /**
+   * Set userUid to storage if it doesn't exist
+   */
+  useEffect(() => {
+    const userUid = userUidStorage?.get()?.userUid;
+
+    if (!userUid) {
+      userUidStorage?.set({ userUid: createUUID() });
+    }
+  }, []);
 
   if (isLoading || isError || !isClient) return <FullScreenLoader />;
 

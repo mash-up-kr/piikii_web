@@ -7,6 +7,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "picsum.photos",
       },
+      {
+        protocol: "https",
+        hostname: "kr.object.ncloudstorage.com"
+      }
     ],
   },
 };

@@ -24,7 +24,7 @@ export default function MotionCardActionButtons({
         )}
         onClick={() => onClickButton(SwipeDirection.LEFT)}
       >
-        <Image src="/svg/icon-x-mono.svg" width={27} height={27} alt="X" />
+        <Image src="/svg/icon-x-mono-red.svg" width={27} height={27} alt="X" />
       </Button>
 
       {voteType === VoteType.VOTE_PENDING && (
