@@ -32,9 +32,6 @@ export const getSizeClasses = (size: Size) => {
 export const flattenColumns = (columns: ColumnsType): ValueType[] => {
   return Object.values(columns.course.list).flat();
 };
-// export const flattenColumns = (badgeList: BadgeInfoType[]): BadgeInfoType[] => {
-//   return Array.from(badgeList.values()).flat();
-// };
 
 export const iconInfo = [
   { icon: "🍔", label: "음식", type: "DISH" },

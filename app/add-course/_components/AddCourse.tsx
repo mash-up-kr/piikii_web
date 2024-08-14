@@ -219,7 +219,8 @@ const AddCourse = ({ data }: AddCourseProps) => {
               name={autoData.data.name}
               url={autoData.data.url}
               placeImageUrls={autoData.data.placeImageUrls}
-              starGrade={autoData.data.starGrade}
+              // starGrade={autoData.data.starGrade} starGrade가 response에 없음
+              starGrade={4.45}
               reviewCount={autoData.data.reviewCount}
               origin={autoData.data.origin}
             />
@@ -291,13 +292,13 @@ const AddCourse = ({ data }: AddCourseProps) => {
               alt="plus"
               width={16}
               height={16}
-              onClick={() => router.push("/edit-course")}
+              onClick={() => router.push(`edit-course?roomUid=${roomUid}`)}
             />
           </div>
         </div>
       </div>
       {!hasPlaces ? (
-        <div className="flex flex-col w-full h-full items-center justify-center mt-[64px]">
+        <div className="flex flex-col w-full h-full items-center justify-center mt-[56px]">
           <div className="flex flex-col items-center justify-center w-full h-[197px] gap-y-[12px]">
             <div className="flex w-[108px] h-[104px] items-center justify-center">
               <Image
@@ -315,7 +316,16 @@ const AddCourse = ({ data }: AddCourseProps) => {
                 함께 장소를 추가하세요
               </p>
             </div>
-            <Button className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-2 gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]">
+            <Button
+              className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-2 gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]"
+              onClick={async () =>
+                await onShare({
+                  url: location.href,
+                  title: data.name,
+                  text: data.message,
+                })
+              }
+            >
               <Image
                 src={"/svg/ic_wrap.svg"}
                 alt="wrap"
@@ -325,28 +335,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
               <p>일행 초대</p>
             </Button>
           </div>
-          <div className="flex flex-col w-full items-center justify-center text-[14px] text-[#8B95A1]">
-            <p className="flex w-full items-center justify-center">
-              일행을 초대하고
-            </p>
-            <p className="flex w-full items-center justify-center">
-              함께 장소를 추가하세요
-            </p>
-          </div>
-
-          <Button
-            className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-2 gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]"
-            onClick={async () =>
-              await onShare({
-                url: location.href,
-                title: data.name,
-                text: data.message,
-              })
-            }
-          >
-            <Image src={"/svg/ic_wrap.svg"} alt="wrap" width={16} height={16} />
-            <p>일행 초대</p>
-          </Button>
         </div>
       ) : (
         categoryList && (
