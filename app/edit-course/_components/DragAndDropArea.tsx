@@ -102,13 +102,14 @@ const DragAndDropArea: React.FC = () => {
   const modalText =
     selectedPlaceNumber > 0 ? (
       <>
-        '{selectedItemText}' 카테고리를 삭제하면
+        &apos;{selectedItemText}&apos; 카테고리를 삭제하면
         <br />
         {`등록한 ${selectedPlaceNumber}개 후보지 모두 사라져요`}
       </>
     ) : (
-      <>'{selectedItemText}' 카테고리를 삭제할까요?</>
+      <>&apos;{selectedItemText}&apos; 카테고리를 삭제할까요?</>
     );
+
   const handleClickDisabledButton = () => {
     if (isDisabled) {
       console.log(isDisabled);
@@ -179,7 +180,7 @@ const DragAndDropArea: React.FC = () => {
     setSelectedSequence(item.sequence);
     setSelectedItemText(item.name);
 
-    const matchedSchedule = roomPlacesInfo?.filter(
+    const matchedSchedule = roomPlacesInfo?.flatMap(
       (place) => place.scheduleId === item.scheduleId
     );
 
