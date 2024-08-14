@@ -1,8 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import localFont from "next/font/local";
 
-const inter = Inter({ subsets: ["latin"] });
+import "./globals.css";
+import { ClientProvider } from "@/components/providers/ClientProvider";
+import { Toaster } from "@/components/common/Toast/toaster";
+import LandingPage from "./landing";
+import { CourseProvider } from "@/providers/course-provider";
+
+const Pretendard = localFont({
+  src: "../static/fonts/PretendardVariable.woff2",
+  display: "swap",
+  variable: "--font-pretendard",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,8 +24,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="ko">
+      <body
+        className={`${Pretendard.className} w-screen flex justify-center lg:justify-end bg-landing-background`}
+      >
+        <ClientProvider>
+          <div className="w-full justify-center lg:block hidden">
+            <LandingPage />
+          </div>
+          <CourseProvider>
+            <div className="max-w-[375px] w-full bg-neutral-0 relative h-dvh overflow-y-auto overflow-x-hidden xl:mr-[218px]">
+              {children}
+            </div>
+          </CourseProvider>
+        </ClientProvider>
+        <Toaster />
+      </body>
     </html>
   );
 }
