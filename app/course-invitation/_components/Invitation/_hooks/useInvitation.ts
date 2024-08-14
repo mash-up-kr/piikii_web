@@ -91,8 +91,7 @@ const useInvitation = () => {
     return {
       name,
       message,
-      // TODO: env로 프론트 도메인 기입
-      thumbnailLink: `http://localhost:3000/png/${thumbnail.src}`,
+      thumbnailLink: `${process.env.NEXT_PUBLIC_DNS_URL}/png/${thumbnail.src}`,
       password,
     };
   };
