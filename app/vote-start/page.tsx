@@ -1,7 +1,6 @@
 "use client";
 
 import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
-import { useGetRoomQuery } from "@/apis/room/RoomApi.query";
 import { Button } from "@/components/common/Button/Button";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
@@ -11,10 +10,12 @@ import { roomUidStorage } from "@/utils/web-storage/room-uid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
+import { useIsClient } from "usehooks-ts";
 
 export default function VoteStart() {
   const router = useRouter();
   const toast = useToast();
+  const isClient = useIsClient();
 
   const roomUid = useMemo(() => roomUidStorage?.get()?.roomUid, []);
 
@@ -39,10 +40,10 @@ export default function VoteStart() {
       return;
     }
 
-    router.push("/vote");
+    router.push(`/vote?roomUid=${roomUid}`);
   };
 
-  if (isLoading || isError) return <FullScreenLoader />;
+  if (isLoading || isError || !isClient) return <FullScreenLoader />;
 
   return (
     <div className="flex flex-col h-full">
