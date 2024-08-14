@@ -13,6 +13,7 @@ export interface CardSizeProps {
 }
 
 export interface CardInfoProps {
+  origin: "AVOCADO" | "LEMON" | "MANUAL";
   place: string;
   link?: string;
   rating?: string;

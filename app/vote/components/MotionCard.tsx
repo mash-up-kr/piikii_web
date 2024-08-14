@@ -110,6 +110,7 @@ export default function MotionCard({
         whileDrag={{ cursor: "grabbing" }}
       >
         <CardWithImage
+          origin={data.origin}
           place={data.name}
           rating={data.starGrade?.toString() ?? "-"}
           reviewCount={data.reviewCount ?? 0}

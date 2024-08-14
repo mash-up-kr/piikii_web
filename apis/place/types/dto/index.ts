@@ -13,7 +13,7 @@ export interface PlaceResponseDto {
   address?: string;
   phoneNumber?: string;
   starGrade?: number;
-  origin: string;
+  origin: "AVOCADO" | "LEMON" | "MANUAL";
   memo?: string;
   reviewCount?: number;
 }

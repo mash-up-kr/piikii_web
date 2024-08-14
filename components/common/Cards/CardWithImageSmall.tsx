@@ -4,12 +4,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CardInfoProps } from "@/model";
 
 export const CardWithImageSmall: React.FC<CardInfoProps> = ({
+  origin,
   place,
   link,
   rating,
   reviewCount,
   images,
 }) => {
+  const originLogoSrc = React.useMemo(
+    () =>
+      origin === "AVOCADO" ? "/svg/naver-icon.svg" : "/svg/kakao-icon.svg",
+    [origin]
+  );
+
   return (
     <Card className="ml-10 flex flex-col items-start justify-center w-[160px] h-[157px] cursor-pointer">
       <CardContent className="flex flex-col w-full gap-y-[8px]">
@@ -30,8 +37,8 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
 
           <div className="flex flex-row w-[71px] h-[18px gap-x-[2px] items-center">
             <Image
-              src="/png/naver.png"
-              alt="naver"
+              src={originLogoSrc}
+              alt="logo"
               width={12}
               height={12}
               priority
