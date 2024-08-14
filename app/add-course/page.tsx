@@ -2,7 +2,9 @@ import React from "react";
 import { Metadata, ResolvingMetadata } from "next";
 import { redirect } from "next/navigation";
 import AddCourse from "./_components/AddCourse";
+
 import { SuccessRoomResponse } from "@/apis/room/types/model";
+
 
 type Props = {
   searchParams: { [key: string]: string | string[] | undefined };
@@ -19,6 +21,7 @@ export async function generateMetadata(
   { searchParams }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+
   const roomUid = searchParams.roomUid as string;
   const room = await getRoom(roomUid);
 
@@ -39,6 +42,7 @@ export async function generateMetadata(
     },
   };
 }
+
 
 const AddCoursePage = async ({ searchParams }: Props) => {
   const hasRoomUid = !!searchParams.roomUid;
