@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useRef, useState, TouchEvent, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -187,6 +188,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
           <p className="text-[#FF601C]">투표 후 코스</p>
           <p>를 추천받아요</p>
         </div>
+
         {showInput ? (
           <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FFF7F2] border-2 border-[#FFF1EB] rounded-[32px] items-center">
             <Input
@@ -253,6 +255,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
         </div>
       </div>
       <div className="flex w-[375px] h-[12px] bg-[#F9FAFB] my-[20px]" />
+
       <div className="flex flex-row justify-between items-center">
         <div
           className="flex flex-start pl-[20px] w-full h-[37px] items-center gap-x-[8px] overflow-x-scroll scrollbar-hide"

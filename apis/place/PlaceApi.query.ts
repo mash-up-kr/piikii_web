@@ -13,10 +13,14 @@ export const useGetPlacesQuery = (
   params: UseQueryParams<typeof placeApi.getPlaces>
 ) => {
   const queryKey = PLACE_API_QUERY_KEY.GET_PLACES(params.variables);
-
-  return useQuery({
+  const query = useQuery({
     queryKey,
     queryFn: () => placeApi.getPlaces(params.variables),
     ...params?.options,
   });
+
+  return {
+    ...query,
+    data: query.data?.data,
+  };
 };

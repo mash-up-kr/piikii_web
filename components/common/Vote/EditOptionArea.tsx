@@ -34,6 +34,7 @@ const EditOptionArea = ({ initialColumns, placesInfo }: VoteAreaProps) => {
           <CardWithSelectedOption
             key={index}
             selected={selectedCard === index}
+            origin={placeInfo.origin}
             place={placeInfo.place}
             link={placeInfo.link}
             rating={placeInfo.rating}

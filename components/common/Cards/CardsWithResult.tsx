@@ -2,8 +2,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { CardInfoProps } from "@/model";
 import Image from "next/image";
+import { useMemo } from "react";
 
 export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
+  origin,
   place,
   rating,
   reviewCount,
@@ -11,6 +13,12 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
   onButtonClick,
   selected,
 }) => {
+  const originLogoSrc = useMemo(
+    () =>
+      origin === "AVOCADO" ? "/svg/naver-icon.svg" : "/svg/kakao-icon.svg",
+    [origin]
+  );
+
   return (
     <Card
       className={`flex flex-col w-[335px] h-[104px] items-start justify-center cursor-pointer p-[12px] rounded-[16px] group-active:border-2 group-active:border-[#FF601C]`}
@@ -39,8 +47,8 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
               </div>
               <div className="flex flex-row w-[183px] h-[24px] gap-x-[2px] items-center">
                 <Image
-                  src="/png/naver.png"
-                  alt="naver"
+                  src={originLogoSrc}
+                  alt="logo"
                   width={12}
                   height={12}
                   className="items-center"
