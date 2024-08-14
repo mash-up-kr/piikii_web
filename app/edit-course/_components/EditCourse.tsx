@@ -3,16 +3,28 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import DragAndDropArea from "./DragAndDropArea";
+import { useState } from "react";
+import { ModalWithCategory } from "@/components/common/Modal/ModalWithCategory";
 
 const EditCourse = () => {
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleLeftButtonClick = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleRightButtonClick = () => {
+    setIsModalOpen(false);
+    router.back();
+  };
   return (
     <div className="flex flex-col min-h-screen">
       <NavigationBar
         leftSlot={
           <div
             className="flex py-[16px] px-[12px] cursor-pointer"
-            onClick={() => router.back()}
+            onClick={() => setIsModalOpen(true)}
           >
             <Image
               src="/png/ic_arrow_left_24.png"
@@ -30,6 +42,21 @@ const EditCourse = () => {
       <div className="flex flex-grow flex-col items-center justify-center w-[335px] mx-[20px]">
         <DragAndDropArea />
       </div>
+      {isModalOpen && (
+        <ModalWithCategory
+          modalText={
+            <>
+              이 페이지를 벗어나면
+              <br />
+              변경한 순서가 저장되지 않아요
+            </>
+          }
+          onLeftButtonText="취소"
+          onRightButtonText="확인"
+          onLeftButtonClick={handleLeftButtonClick}
+          onRightButtonClick={handleRightButtonClick}
+        />
+      )}
     </div>
   );
 };
