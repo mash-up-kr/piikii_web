@@ -14,6 +14,7 @@ import scheduleApi from "@/apis/schedule/ScheduleApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { RegisterSchedulesRequest } from "@/apis/schedule/types/dto";
 import { iconInfo } from "@/lib/utils";
+import { ModalWithCategory } from "@/components/common/Modal/ModalWithCategory";
 
 export type OrderType = "food" | "dessert" | "beer" | "play";
 export type OrderType2 = "DISH" | "DESSERT" | "ALCOHOL" | "ARCADE";
@@ -84,6 +85,9 @@ const reorder = (
 };
 
 const DragAndDropArea: React.FC = () => {
+  const [selectedSequence, setSelectedSequence] = useState<number | null>(null);
+  const [selectedItemText, setSelectedItemText] = useState<string | null>("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { categoryList, setCategoryList } = useCourseContext();
   const [columns, setColumns] = useState<ScheduleResponse[]>([]);
   const [itemCount, setItemCount] = useState(
@@ -161,6 +165,12 @@ const DragAndDropArea: React.FC = () => {
     setCategoryList(updatedList);
   };
 
+  const onDeleteButtonClick = (item: ScheduleResponse) => {
+    setSelectedSequence(item.sequence);
+    setSelectedItemText(item.name);
+    setIsModalOpen(true);
+  };
+
   const handleItemDelete = (sequence: number) => {
     const filteredList = columns.filter((item) => item.sequence !== sequence);
 
@@ -174,6 +184,16 @@ const DragAndDropArea: React.FC = () => {
     setCategoryList(updatedList);
   };
 
+  const onConfirmDelete = () => {
+    if (selectedSequence !== null) {
+      handleItemDelete(selectedSequence);
+    }
+    setIsModalOpen(false);
+  };
+
+  const onCancelDelete = () => {
+    setIsModalOpen(false);
+  };
   useEffect(() => {
     console.log(categoryList);
   }, [categoryList]);
@@ -235,7 +255,7 @@ const DragAndDropArea: React.FC = () => {
                         height={16}
                         priority
                         unoptimized
-                        onClick={() => handleItemDelete(item.sequence)}
+                        onClick={() => onDeleteButtonClick(item)}
                       />
                       <CardWithCourse item={item} />
                     </div>
@@ -247,6 +267,21 @@ const DragAndDropArea: React.FC = () => {
           )}
         </StrictModeDroppable>
       </DragDropContext>
+      {isModalOpen && (
+        <ModalWithCategory
+          modalText={
+            <>
+              {selectedItemText}을 삭제하면
+              <br />
+              등록한 후보지 모두 사라져요
+            </>
+          }
+          onLeftButtonText="취소"
+          onRightButtonText="네, 삭제할래요"
+          onLeftButtonClick={onCancelDelete}
+          onRightButtonClick={onConfirmDelete}
+        />
+      )}
       {itemCount < 5 && <SheetWithCourse handleItemClick={handleItemClick} />}
       <div className="flex mt-auto justify-center w-[375px] h-[86px]">
         <Button
