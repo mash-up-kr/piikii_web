@@ -1,4 +1,3 @@
-"use client";
 import React, { Suspense } from "react";
 
 import EditCourse from "./_components/EditCourse";
