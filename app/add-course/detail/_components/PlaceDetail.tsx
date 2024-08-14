@@ -24,7 +24,7 @@ const PlaceDetail: React.FC = () => {
   const [pictures, setPictures] = useState<string[]>([]);
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
-  const { categoryList, isClipboardText, setIsClipboardText, placeInfo } =
+  const { categoryList, isClipboardText, setIsClipboardText, autoPlaceInfo } =
     useCourseContext();
 
   const handleChipClick = (index: number) => {
@@ -44,10 +44,10 @@ const PlaceDetail: React.FC = () => {
   );
 
   useEffect(() => {
-    if (placeInfo && placeInfo[0]) {
-      setPlaceName(placeInfo[0].name);
+    if (autoPlaceInfo && autoPlaceInfo[0]) {
+      setPlaceName(autoPlaceInfo[0].name);
     }
-  }, [placeInfo]);
+  }, [autoPlaceInfo]);
 
   const onCompleteButtonClick = async () => {
     if (!placeName || !selectedChip || !selectedCategory) {
@@ -57,14 +57,19 @@ const PlaceDetail: React.FC = () => {
     const payload: AddPlaceRequestDto = {
       scheduleId: selectedCategory.scheduleId,
       type: selectedCategory.name,
-      name: placeInfo && placeInfo[0] ? placeInfo[0].name : placeName,
-      url: placeInfo && placeInfo[0] ? placeInfo[0].url : url || undefined,
+      name:
+        autoPlaceInfo && autoPlaceInfo[0] ? autoPlaceInfo[0].name : placeName,
+      url:
+        autoPlaceInfo && autoPlaceInfo[0]
+          ? autoPlaceInfo[0].url
+          : url || undefined,
       address: address || "",
       phoneNumber:
-        placeInfo && placeInfo[0]
-          ? placeInfo[0].phoneNumber
+        autoPlaceInfo && autoPlaceInfo[0]
+          ? autoPlaceInfo[0].phoneNumber
           : phoneNumber || null,
-      starGrade: placeInfo && placeInfo[0] ? placeInfo[0].starGrade : 0,
+      starGrade:
+        autoPlaceInfo && autoPlaceInfo[0] ? autoPlaceInfo[0].starGrade : 0,
       memo: memoContent || "",
       voteLikeCount: 0,
       voteDislikeCount: 0,

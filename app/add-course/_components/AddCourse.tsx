@@ -41,10 +41,11 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const {
     roomInfo,
     setRoomInfo,
+    setRoomPlacesInfo,
     categoryList,
     setCategoryList,
-    placeInfo,
-    setPlaceInfo,
+    autoPlaceInfo,
+    setAutoPlaceInfo,
     isClipboardText,
     setIsClipboardText,
     autoData,
@@ -54,6 +55,12 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const { data: currentPlacesData } = useGetPlacesQuery({
     variables: { roomUid },
   });
+
+  useEffect(() => {
+    if (currentPlacesData) {
+      setRoomPlacesInfo(currentPlacesData);
+    }
+  }, [currentPlacesData, setRoomPlacesInfo]);
 
   const hasPlaces = useMemo(() => {
     if (

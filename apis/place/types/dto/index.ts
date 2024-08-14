@@ -24,7 +24,7 @@ export interface ScheduleTypeGroupResponse {
   places: PlaceResponseDto[];
 }
 
-export interface TotalScheduleResponse {
+export interface SuccessPlaceTypeGroupResponse {
   data: ScheduleTypeGroupResponse[];
   timestamp: number;
 }
