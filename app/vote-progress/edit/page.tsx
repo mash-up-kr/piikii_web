@@ -3,6 +3,7 @@
 import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import EditOptionArea from "@/components/common/Vote/EditOptionArea";
+import { CardInfoProps } from "@/model";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -82,7 +83,7 @@ const placesInfo = [
       { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
     ],
   },
-];
+] as CardInfoProps[];
 
 export default function VoteEditPage() {
   const router = useRouter();

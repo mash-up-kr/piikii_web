@@ -2,7 +2,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CardInfoProps, PendingCardListProps } from "@/model";
 import Image from "next/image";
 
-export const PendingCard: React.FC<CardInfoProps> = ({ place, images }) => {
+export const PendingCard: React.FC<Omit<CardInfoProps, "origin">> = ({
+  place,
+  images,
+}) => {
   return (
     <Card className="flex flex-col items-center justify-center w-[52px] h-[77px]">
       <CardContent className="flex flex-col gap-y-[8px]">

@@ -9,6 +9,7 @@ import ResultArea from "@/components/common/Vote/ResultArea";
 import { Button } from "@/components/common/Button/Button";
 import { PasswordInputSheet } from "@/components/common/BottomSheet/PasswordInputSheet";
 import useCloseVote from "./_hooks/useCloseVote";
+import { CardInfoProps } from "@/model";
 
 const initialColumns: ColumnsType = {
   course: {
@@ -86,7 +87,7 @@ const placesInfo = [
       { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
     ],
   },
-];
+] as CardInfoProps[];
 
 const VoteProgressPage = () => {
   const { passwordSheet, handlePassword, onSubmit } = useCloseVote();

@@ -19,7 +19,7 @@ class PlaceApi {
     roomUid,
   }: {
     roomUid: string;
-  }): Promise<ScheduleTypeGroupResponse> => {
+  }): Promise<TotalScheduleResponse> => {
     const { data } = await this.axios({
       method: "GET",
       url: `/rooms/${roomUid}/places`,
