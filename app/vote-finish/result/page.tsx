@@ -11,6 +11,7 @@ import { PasswordInputSheet } from "@/components/common/BottomSheet/PasswordInpu
 import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import useCloseVote from "@/app/vote-progress/_hooks/useCloseVote";
 import { useRouter } from "next/navigation";
+import { CardInfoProps } from "@/model";
 
 const initialColumns: ColumnsType = {
   course: {
@@ -88,7 +89,7 @@ const placesInfo = [
       { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
     ],
   },
-];
+] as CardInfoProps[];
 
 const VoteResult = () => {
   const router = useRouter();

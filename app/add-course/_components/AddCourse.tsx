@@ -93,9 +93,11 @@ const AddCourse = ({ data }: AddCourseProps) => {
     }
 
     if (selectedCategory === null) {
-      const defaultPlaces = currentPlacesData || [];
+      const defaultPlaces =
+        currentPlacesData.flatMap((item) => item.places) || [];
       return defaultPlaces;
     }
+
     const allPlaces: PlaceResponseDto[] = currentPlacesData.flatMap(
       (item) => item.places
     );

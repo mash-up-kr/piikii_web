@@ -28,10 +28,11 @@ export default function VoteStart() {
     options: { enabled: !!roomUid },
   });
 
-  const totalPlaceCount = useMemo(
-    () => data?.reduce((acc, cur) => acc + cur.places.length, 0),
-    [data]
-  );
+  const totalPlaceCount = useMemo(() => {
+    if (data) {
+      return data?.reduce((acc, cur) => acc + cur.places.length, 0);
+    }
+  }, [data]);
 
   const handleStartVote = () => {
     if (!roomUid || !data) {
