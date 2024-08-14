@@ -25,6 +25,11 @@ export default function VoteStart() {
     options: { enabled: !!roomUid },
   });
 
+  const totalPlaceCount = useMemo(
+    () => data?.reduce((acc, cur) => acc + cur.places.length, 0),
+    [data]
+  );
+
   const handleStartVote = () => {
     if (!roomUid || !data) {
       toast.toast({
@@ -73,7 +78,7 @@ export default function VoteStart() {
             subtitle={
               data && (
                 <p className="text-neutral-600">
-                  후보가 {data.places.length}곳으로 추려졌어요
+                  후보가 {totalPlaceCount}곳으로 추려졌어요
                 </p>
               )
             }
