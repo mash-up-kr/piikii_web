@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { CategoryChoiceState } from "../model";
+import { CategoryChoiceState, PlaceOption } from "../model";
 
 interface Props {
-  list: any[];
+  list: PlaceOption[];
 }
 
 export default function HoldingOptionAvatarList({ list }: Props) {
@@ -23,11 +23,11 @@ export default function HoldingOptionAvatarList({ list }: Props) {
               className="flex flex-col w-[52px] gap-y-[8px] text-semibold-11"
             >
               <Image
-                src={item.images[0]}
+                src={item.placeImageUrls.contents[0] ?? "/png/food.png"}
                 width={52}
                 height={52}
                 alt="option-image"
-                className="rounded-full"
+                className="rounded-full w-[52px] h-[52px]"
               />
               <p className="overflow-ellipsis text-center text-neutral-900">
                 {item.name}

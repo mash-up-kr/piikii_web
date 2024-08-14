@@ -3,12 +3,17 @@
 import { useCallback, useEffect, useState } from "react";
 import MotionCard from "./MotionCard";
 import { AnimatePresence, motion } from "framer-motion";
-import { CategoryChoiceState, SwipeDirection, VoteType } from "../model";
+import {
+  CategoryChoiceState,
+  PlaceOption,
+  SwipeDirection,
+  VoteType,
+} from "../model";
 import MotionCardActionButtons from "./MotionCardActionButtons";
 
 interface Props {
   voteType: VoteType;
-  optionList: any[];
+  optionList: PlaceOption[];
   onUpdateOption: (option: any) => void;
 }
 

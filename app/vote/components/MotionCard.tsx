@@ -1,17 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { SwipeDirection } from "../model";
+import { PlaceOption, SwipeDirection } from "../model";
 import Image from "next/image";
 import { Z_INDEX } from "@/lib/constants";
 import CardWithImage from "@/components/common/Cards/CardWithImage";
 import { get } from "http";
 import { useMotionValue, useTransform, motion } from "framer-motion";
+import { PlaceResponseDto } from "@/apis/place/types/dto";
 
 interface Props {
   index: number;
   direction: SwipeDirection | null;
-  data: any;
+  data: PlaceOption | null;
   onSwipeCard: (direction: SwipeDirection) => void;
   hideShadow: boolean;
 }
@@ -109,14 +110,15 @@ export default function MotionCard({
         whileDrag={{ cursor: "grabbing" }}
       >
         <CardWithImage
+          origin={data.origin}
           place={data.name}
-          rating={data.rating.toString()}
-          reviewCount={100}
-          images={data.images}
+          rating={data.starGrade?.toString() ?? "-"}
+          reviewCount={data.reviewCount ?? 0}
+          images={data.placeImageUrls.contents}
           info={[
             { label: "음식", value: "한식" },
             { label: "가격대", value: "만원 미만" },
-            { label: "위치", value: "강남역" },
+            { label: "메모", value: data.memo ?? "-" },
           ]}
           noShadow={hideShadow}
         />

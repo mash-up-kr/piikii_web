@@ -4,20 +4,56 @@ import Step from "@/components/common/Step";
 import MotionCardContainer from "./components/MotionCardContainer";
 import Title from "@/components/common/Title";
 import { useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/common/Button/Button";
-import Image from "next/image";
 import { Z_INDEX } from "@/lib/constants";
-import { TEMP_ROOM_CATEGORIES } from "./sample-data";
-import { CategoryChoiceState, VoteType } from "./model";
+import {
+  CategoryChoiceState,
+  PlaceOption,
+  PlaceVoteResult,
+  VoteType,
+} from "./model";
 import HoldingOptionAvatarList from "./components/HoldingOptionAvatarList";
 import OnboardingOverlay from "./components/OnboardingOverlay";
+import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
+import FullScreenLoader from "@/components/common/FullScreenLoader";
+import { useIsClient } from "usehooks-ts";
+import useRoomUid from "@/hooks/useRoomUid";
+import { useRouter } from "next/navigation";
+import { useCastVote } from "@/apis/vote/VoteApi.mutation";
+import useUserUid from "@/hooks/useUserUid";
+import { VoteCastResultDto, VoteSaveRequestDto } from "@/apis/vote/types/dto";
 
 export default function Page() {
-  const [isOverlayVisible, setIsOverlayVisible] = useState<boolean>(true);
+  const router = useRouter();
+  const isClient = useIsClient();
+  const roomUid = useRoomUid();
+  const userUid = useUserUid();
 
+  const {
+    data: placeData,
+    isLoading,
+    isError,
+  } = useGetPlacesQuery({
+    variables: {
+      roomUid: roomUid ?? "",
+    },
+    options: { enabled: !!roomUid },
+  });
+
+  const { mutate: castVote } = useCastVote({
+    options: {
+      onSuccess: (data) => {
+        console.log("onSuccess", data);
+      },
+      onError: (error) => {
+        console.log("onError", error);
+      },
+    },
+  });
+
+  const [isOverlayVisible, setIsOverlayVisible] = useState<boolean>(true);
   const [curScheduleIndex, setCurStageIndex] = useState<number>(0);
 
-  const [resultData, setResultData] = useState<any>({
+  const [resultData, setResultData] = useState<PlaceVoteResult>({
     likeList: [],
     dislikeList: [],
     holdList: [],
@@ -31,15 +67,17 @@ export default function Page() {
     [resultData]
   );
 
-  const [tempHoldOptions, setTempHoldOptions] = useState<any[]>([]);
-  const [tempPendingOptions, setTempPendingOptions] = useState<any[]>(
-    TEMP_ROOM_CATEGORIES[curScheduleIndex].options.filter(
-      (option) => option.state === CategoryChoiceState.PENDING
-    )
+  const [tempHoldOptions, setTempHoldOptions] = useState<PlaceOption[]>([]);
+  const [tempPendingOptions, setTempPendingOptions] = useState<PlaceOption[]>(
+    []
   );
 
   const voteState = useMemo(() => {
     const pendingOptionsLen = tempPendingOptions.length;
+
+    if (pendingOptionsLen === 0 && resultDataLen === 0) {
+      return VoteType.VOTE_PENDING;
+    }
 
     if (resultDataLen !== pendingOptionsLen) {
       return VoteType.VOTE_PENDING;
@@ -112,8 +150,52 @@ export default function Page() {
   };
 
   useEffect(() => {
+    if (!userUid || !roomUid) {
+      router.replace("/vote-start");
+    }
+  }, [roomUid, router, userUid]);
+
+  useEffect(() => {
+    const handleCastVote = async (
+      roomUid: string,
+      payload: VoteSaveRequestDto
+    ) => {
+      castVote({
+        roomUid,
+        payload,
+      });
+    };
+
+    if (!placeData || !roomUid || !userUid) return;
+
     if (voteState === VoteType.VOTE_DONE) {
-      console.log("VOTE DONE", { resultData });
+      const votes = [
+        ...resultData.dislikeList.map((option) => ({
+          placeId: option.id,
+          voteResult: "DISAGREE" as VoteCastResultDto,
+        })),
+        ...resultData.likeList.map((option) => ({
+          placeId: option.id,
+          voteResult: "AGREE" as VoteCastResultDto,
+        })),
+      ];
+
+      // NOTE: to be removed
+      console.log("VOTE DONE", {
+        resultData,
+        payloadData: {
+          roomUid,
+          payload: {
+            userUid,
+            votes,
+          },
+        },
+      });
+
+      handleCastVote(roomUid, {
+        userUid,
+        votes,
+      });
 
       setResultData({
         likeList: [],
@@ -122,27 +204,45 @@ export default function Page() {
       });
 
       setTempHoldOptions([]);
-      setCurStageIndex((prev) => prev + 1);
+
+      if (placeData.length - 1 === curScheduleIndex) {
+        router.push("/vote-progress");
+      } else {
+        setCurStageIndex((prev) => prev + 1);
+      }
     }
-  }, [resultData, voteState]);
+  }, [
+    castVote,
+    curScheduleIndex,
+    placeData,
+    resultData,
+    roomUid,
+    router,
+    userUid,
+    voteState,
+  ]);
 
   useEffect(() => {
-    setTempPendingOptions(
-      TEMP_ROOM_CATEGORIES[curScheduleIndex].options.filter(
-        (option) => option.state === CategoryChoiceState.PENDING
-      )
-    );
-  }, [curScheduleIndex]);
+    if (placeData) {
+      setTempPendingOptions(
+        placeData[curScheduleIndex].places.map((place, index) => ({
+          ...place,
+          state: CategoryChoiceState.PENDING,
+          index,
+        }))
+      );
+    }
+  }, [curScheduleIndex, placeData]);
+
+  if (isLoading || isError || !isClient || !placeData)
+    return <FullScreenLoader />;
 
   return (
     <div className="h-dvh bg-primary-100 pt-[8px] flex flex-col justify-start relative">
       {/* Header */}
       <div className="relative px-[20px]" style={{ zIndex: Z_INDEX.HEADER }}>
         {/* Step */}
-        <Step
-          curStep={curScheduleIndex}
-          totalSteps={TEMP_ROOM_CATEGORIES.length}
-        />
+        <Step curStep={curScheduleIndex} totalSteps={placeData.length} />
 
         <div className="h-[77px] flex items-start mt-[31px]">
           {/* Title */}
@@ -151,7 +251,7 @@ export default function Page() {
               title={
                 <span className="text-neutral-700">
                   <span className="text-primary-700">
-                    {TEMP_ROOM_CATEGORIES[curScheduleIndex].stageName}
+                    {placeData[curScheduleIndex].scheduleName}
                   </span>
                   을 투표해주세요
                 </span>

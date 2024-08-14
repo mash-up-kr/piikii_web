@@ -6,15 +6,16 @@ export interface PlaceResponseDto {
   roomUid: string;
   scheduleId: number;
   name: string;
-  url: string;
+  url?: string;
   placeImageUrls: {
     contents: string[];
   };
-  address: string;
-  phoneNumber: string;
-  starGrade: number;
-  origin: string;
-  memo: string;
+  address?: string;
+  phoneNumber?: string;
+  starGrade?: number;
+  origin: "AVOCADO" | "LEMON" | "MANUAL";
+  memo?: string;
+  reviewCount?: number;
 }
 
 export interface ScheduleTypeGroupResponse {

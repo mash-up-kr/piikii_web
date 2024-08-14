@@ -6,6 +6,7 @@ import { cn, getSizeClasses } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 export const CardWithImage: React.FC<CardInfoProps> = ({
+  origin,
   place,
   link,
   rating,
@@ -16,6 +17,12 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
   cardClassName,
 }) => {
   const router = useRouter();
+
+  const originLogoSrc = React.useMemo(
+    () =>
+      origin === "AVOCADO" ? "/svg/naver-icon.svg" : "/svg/kakao-icon.svg",
+    [origin]
+  );
 
   return (
     <Card
@@ -33,8 +40,8 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
               <div className="flex gap-x-[4px] items-center">
                 <div className="flex w-[16px] h-[16px]">
                   <Image
-                    src="/png/naver.png"
-                    alt="naver"
+                    src={originLogoSrc}
+                    alt="logo"
                     width={16}
                     height={16}
                     priority

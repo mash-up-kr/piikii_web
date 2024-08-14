@@ -48,7 +48,7 @@ const LandingPage = () => {
                 onClick={() => router.push("https://map.naver.com/p/")}
               >
                 <Image
-                  src="/png/naver.png"
+                  src="/svg/naver-icon.svg"
                   alt="naver"
                   width={16}
                   height={16}
@@ -61,7 +61,7 @@ const LandingPage = () => {
                 onClick={() => router.push("https://map.kakao.com/")}
               >
                 <Image
-                  src="/svg/kakao.svg"
+                  src="/svg/kakao-icon.svg"
                   alt="kakao"
                   width={16}
                   height={16}

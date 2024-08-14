@@ -61,6 +61,7 @@ const ResultArea = ({ initialColumns, placesInfo }: VoteAreaProps) => {
             </div>
             {expandedCards.includes(index) && (
               <CardWithImage
+                origin={placeInfo.origin}
                 info={placeInfo.info}
                 place={placeInfo.place}
                 link={placeInfo.link}
