@@ -233,8 +233,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
               name={autoData.data.name}
               url={autoData.data.url}
               placeImageUrls={autoData.data.placeImageUrls}
-              // starGrade={autoData.data.starGrade} starGrade가 response에 없음
-              starGrade={4.45}
+              starGrade={autoData.data.starGrade}
               reviewCount={autoData.data.reviewCount}
               origin={autoData.data.origin}
             />
@@ -280,13 +279,14 @@ const AddCourse = ({ data }: AddCourseProps) => {
         >
           {categoryList?.map(
             (item) =>
-              item.scheduleId &&
+              item.scheduleId !== null &&
+              item.scheduleId !== undefined &&
               item.name && (
                 <CategoryChip
                   key={item.scheduleId}
                   title={item.name}
                   selected={selectedChip === item.scheduleId}
-                  onClick={() => handleChipClick(item.scheduleId)}
+                  onClick={() => handleChipClick(item.scheduleId as number)}
                 />
               )
           )}
@@ -354,7 +354,8 @@ const AddCourse = ({ data }: AddCourseProps) => {
         categoryList && (
           <PlaceContainer
             placesData={{
-              scheduleId: selectedCategory ?? categoryList[0]?.scheduleId,
+              scheduleId:
+                selectedCategory ?? (categoryList[0]?.scheduleId as number),
               scheduleName:
                 categoryList?.find(
                   (category) => category.scheduleId === selectedCategory

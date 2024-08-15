@@ -55,7 +55,7 @@ const PlaceDetail: React.FC = () => {
     }
 
     const payload: AddPlaceRequestDto = {
-      scheduleId: selectedCategory.scheduleId,
+      scheduleId: selectedCategory.scheduleId as number,
       type: selectedCategory.name,
       name:
         autoPlaceInfo && autoPlaceInfo[0] ? autoPlaceInfo[0].name : placeName,
@@ -139,13 +139,14 @@ const PlaceDetail: React.FC = () => {
           <div className="flex flex-row w-[252px] h-[98px] gap-x-[8px]">
             {categoryList?.map(
               (item) =>
-                item.scheduleId &&
+                item.scheduleId !== null &&
+                item.scheduleId !== undefined &&
                 item.name && (
                   <CategoryChip
                     key={item.scheduleId}
                     title={item.name}
                     selected={selectedChip === item.scheduleId}
-                    onClick={() => handleChipClick(item.scheduleId)}
+                    onClick={() => handleChipClick(item.scheduleId as number)}
                   />
                 )
             )}
