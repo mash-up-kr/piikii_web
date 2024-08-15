@@ -225,10 +225,9 @@ const DragAndDropArea: React.FC = () => {
 
   const handleItemClick = (type: OrderType2) => {
     const label = findLabelForType(type);
-    const lastItem = columns[columns.length - 1];
-    const newScheduleId = lastItem.scheduleId + 1;
+
     const newItem: ScheduleResponse = {
-      scheduleId: newScheduleId,
+      scheduleId: null,
       type,
       name: `${label} ${columns.length + 1}차`,
       sequence: columns.length + 1,

@@ -4,7 +4,7 @@ export type ResponseForm = {
 };
 
 export type ScheduleResponse = {
-  scheduleId: number;
+  scheduleId?: number | null;
   name: string;
   sequence: number;
   type: "ARCADE" | "DISH" | "DESSERT" | "ALCOHOL";
