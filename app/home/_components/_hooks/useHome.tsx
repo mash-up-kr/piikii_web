@@ -41,15 +41,17 @@ const useHome = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
+  const onRouteCourseInvitation = () => {
+    router.push("/course-invitation");
+  };
+
   const handleNext = () => {
     const idx = current - 1;
 
     if (idx < 2) {
       api?.scrollTo(idx + 1);
       return;
-    } else {
-      router.push("/course-invitation");
-    }
+    } else onRouteCourseInvitation();
   };
 
   useEffect(() => {
@@ -68,6 +70,7 @@ const useHome = () => {
     setApi,
     setCurrent,
     handleNext,
+    onRouteCourseInvitation,
   };
 };
 

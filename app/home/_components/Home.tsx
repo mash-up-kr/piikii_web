@@ -14,7 +14,8 @@ import useHome, { SLIDE_LIST } from "./_hooks/useHome";
 const LOGO = "/png/img_logo_sample.png";
 
 const Home = () => {
-  const { api, current, setApi, handleNext } = useHome();
+  const { api, current, setApi, handleNext, onRouteCourseInvitation } =
+    useHome();
 
   return (
     <>
@@ -23,7 +24,7 @@ const Home = () => {
           <div className="flex items-center">
             <Image src={LOGO} width={34} height={15} alt="logo" />
           </div>
-          <p className="text-bold-15 text-primary-700 cursor-pointer">
+          <p className="text-bold-15 text-primary-700 cursor-pointer" onClick={onRouteCourseInvitation}>
             건너뛰기
           </p>
         </div>
