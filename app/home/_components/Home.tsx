@@ -11,20 +11,17 @@ import Image from "next/image";
 import React, { Children } from "react";
 import useHome, { SLIDE_LIST } from "./_hooks/useHome";
 
+const LOGO = "/png/img_logo_sample.png";
+
 const Home = () => {
   const { api, current, setApi, handleNext } = useHome();
 
   return (
     <>
       <BasisSection className="bg-primary-100 h-[100vh]">
-        <div className="flex justify-between items-center h-[56px]  py-[8px] px-[12px]">
-          <div className="w-[100px] h-[40px] bg-neutral-200 flex justify-center items-center">
-            <Image
-              src="/png/ic_picture_24.png"
-              width={24}
-              height={24}
-              alt="ic_picture_24.png"
-            />
+        <div className="flex justify-between items-center h-[56px] py-[8px] px-[20px]">
+          <div className="flex items-center">
+            <Image src={LOGO} width={34} height={15} alt="logo" />
           </div>
           <p className="text-bold-15 text-primary-700 cursor-pointer">
             건너뛰기
