@@ -13,7 +13,7 @@ export const CategoryChip: React.FC<ChipProps> = ({
 }) => {
   return (
     <Badge
-      className="max-w-[87px] h-[37px] flex-shrink-0 text-[14px]"
+      className="max-w-[87px] h-[37px] flex-shrink-0 text-[14px] cursor-pointer"
       variant={selected ? "selected" : "default"}
       onClick={onClick}
     >

@@ -9,9 +9,11 @@ export class ScheduleApi {
     if (axios) this.axios = axios;
   }
 
-  readSchedules = async (
-    roomUid: string
-  ): Promise<SuccessSchedulesResponse> => {
+  readSchedules = async ({
+    roomUid,
+  }: {
+    roomUid: string;
+  }): Promise<SuccessSchedulesResponse> => {
     const { data } = await this.axios({
       method: "GET",
       url: `/rooms/${roomUid}/schedules`,

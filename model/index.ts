@@ -1,3 +1,4 @@
+import { VoteResultByScheduleResponseDto } from "@/apis/vote/types/dto";
 import {
   ColumnsType,
   OrderType,
@@ -18,6 +19,7 @@ export interface CardInfoProps {
   link?: string;
   rating?: string;
   reviewCount?: number;
+  voteCount?: number;
   images: string[];
   info?: { label: string; value: string }[];
   onButtonClick?: () => void;
@@ -47,6 +49,21 @@ export interface PendingCardListProps {
 }
 
 export interface VoteAreaProps {
-  initialColumns: ColumnsType;
-  placesInfo: CardInfoProps[];
+  schedules: {
+    scheduleId: number;
+    scheduleName: string;
+  }[];
+  selectedSchedule: VoteResultByScheduleResponseDto;
+  onClickSchedule: (scheduleId: number) => void;
+}
+
+export interface EditOptionAreaProps {
+  schedules: {
+    scheduleId: number;
+    scheduleName: string;
+  }[];
+  selectedSchedule: VoteResultByScheduleResponseDto;
+  selectedPlaces: Record<number, number>;
+  onClickSchedule: (scheduleId: number) => void;
+  onClickPlaceCard: (scheduleId: number, placeId: number) => void;
 }
