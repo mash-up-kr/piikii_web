@@ -25,6 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <link rel="icon" href="/favicon.ico" sizes="any" />
       <body
         className={`${Pretendard.className} w-screen flex justify-center lg:justify-end bg-landing-background`}
       >
