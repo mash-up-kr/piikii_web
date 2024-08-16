@@ -1,18 +1,17 @@
 "use client";
+
 import { CategoryChip } from "@/app/add-course/_components/CategoryChip";
 import CardWithImage from "@/components/common/Cards/CardWithImage";
 import Image from "next/image";
-import { flattenColumns } from "@/lib/utils";
-import { useState } from "react";
+import react from "react";
 import { VoteAreaProps } from "@/model";
 
-const ResultArea = ({ initialColumns, placesInfo }: VoteAreaProps) => {
-  const [selectedChip, setSelectedChip] = useState<number | null>(null);
-  const [expandedCards, setExpandedCards] = useState<number[]>([]);
-
-  const handleChipClick = (index: number) => {
-    setSelectedChip(index === selectedChip ? null : index);
-  };
+const ResultArea = ({
+  schedules,
+  selectedSchedule,
+  onClickSchedule,
+}: VoteAreaProps) => {
+  const [expandedCards, setExpandedCards] = react.useState<number[]>([]);
 
   const handleArrowClick = (index: number) => {
     setExpandedCards((prev) =>
@@ -23,17 +22,17 @@ const ResultArea = ({ initialColumns, placesInfo }: VoteAreaProps) => {
   return (
     <div className="flex flex-col w-[335px] h-[631px] mx-[20px] gap-y-[26px]">
       <div className="flex flex-row w-[252px] h-[37px] gap-x-[8px]">
-        {flattenColumns(initialColumns).map((item) => (
+        {schedules.map((item) => (
           <CategoryChip
-            key={item.globalIndex}
-            title={item.title}
-            selected={selectedChip === item.globalIndex}
-            onClick={() => handleChipClick(item.globalIndex)}
+            key={item.scheduleId}
+            title={item.scheduleName}
+            selected={selectedSchedule.scheduleId === item.scheduleId}
+            onClick={() => onClickSchedule(item.scheduleId)}
           />
         ))}
       </div>
       <div className="flex flex-col gap-y-[12px]">
-        {placesInfo.map((placeInfo, index) => (
+        {selectedSchedule.places.map((placeInfo, index) => (
           <div key={index}>
             <div
               className={`flex flex-row rounded-[12px] ${
@@ -44,9 +43,9 @@ const ResultArea = ({ initialColumns, placesInfo }: VoteAreaProps) => {
                 <span className="w-[20px] h-[20px] items-center bg-black text-[12px] font-semibold text-white flex justify-center rounded-[64px]">
                   {index + 1}
                 </span>
-                <span>{placeInfo.place}</span>{" "}
+                <span>{placeInfo.name}</span>{" "}
                 <span className="flex w-[21px] items-center h-[21px] text-[14px] opacity-[0.5] text-[#363A3C]">
-                  6명
+                  {placeInfo.countOfAgree}
                 </span>
               </div>
               <button onClick={() => handleArrowClick(index)}>
@@ -62,12 +61,15 @@ const ResultArea = ({ initialColumns, placesInfo }: VoteAreaProps) => {
             {expandedCards.includes(index) && (
               <CardWithImage
                 origin={placeInfo.origin}
-                info={placeInfo.info}
-                place={placeInfo.place}
-                link={placeInfo.link}
-                rating={placeInfo.rating}
-                reviewCount={placeInfo.reviewCount}
-                images={placeInfo.images || []}
+                info={[
+                  { label: "음식", value: "한식" },
+                  { label: "가격대", value: "만원 미만" },
+                  { label: "메모", value: placeInfo.memo ?? "-" },
+                ]}
+                place={placeInfo.name}
+                link={placeInfo.url}
+                rating={placeInfo.starGrade.toString() ?? "0"}
+                images={placeInfo.thumbnailLinks.contents || []}
               />
             )}
           </div>

@@ -3,7 +3,7 @@ import { AxiosInstance } from "axios";
 import { ResponseForm } from "../common/model";
 import {
   VoteDeadlineSetRequestDto,
-  VoteResultByScheduleResponseDto,
+  VoteResultResponseDto,
   VoteSaveRequestDto,
   VoteStatusResponseDto,
 } from "./types/dto";
@@ -18,7 +18,7 @@ class VoteApi {
     roomUid,
   }: {
     roomUid: string;
-  }): Promise<ResponseForm<VoteResultByScheduleResponseDto>> => {
+  }): Promise<ResponseForm<VoteResultResponseDto>> => {
     const { data } = await this.axios({
       method: "GET",
       url: `/rooms/${roomUid}/votes`,

@@ -18,3 +18,10 @@ export type SuccessSchedulesResponse = {
   data: SchedulesResponse;
   timestamp: number;
 };
+
+export const ScheduleResponseStringMap = {
+  ARCADE: "놀거리",
+  DISH: "식당",
+  DESSERT: "카페 ",
+  ALCOHOL: "술",
+};

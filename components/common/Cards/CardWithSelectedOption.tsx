@@ -9,6 +9,7 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
   place,
   rating,
   reviewCount,
+  voteCount,
   images,
   onButtonClick,
   selected,
@@ -39,9 +40,9 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
                 <span className="flex flex-row w-full max-w-[134px] whitespace-nowrap overflow-hidden text-ellipsis h-[21px] text-[16px] text-black font-semibold items-center">
                   {place}
                 </span>
-                <Badge className="flex w-[25px] h-[21px] px-[5px] py-[3px] border-none text-[10px] rounded-[6px] bg-[#F4EFFF]">
-                  <span className="w-[15px] h-[15px] text-[#622DBC] font-semibold">
-                    6명
+                <Badge className="flex h-[21px] px-[5px] py-[3px] border-none text-[10px] rounded-[6px] bg-[#F4EFFF]">
+                  <span className="flex whitespace-nowrap h-[15px] text-[#622DBC] font-semibold">
+                    {voteCount}명
                   </span>
                 </Badge>
               </div>
@@ -58,16 +59,16 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
                   {rating}
                 </span>
                 <span className="text-[14px] min-w-[36px] h-[18px] items-center flex text-[#B5B9C6]">
-                  ({reviewCount})
+                  ({reviewCount ?? "-"})
                 </span>
               </div>
 
-              <div className="flex flex-row w-[183px] h-[79px] py-[4px] pr-[8px] mt-[8px] gap-x-[2px]">
+              <div className="flex flex-row w-[183px] h-[79px] py-[4px] pr-[8px] mt-[8px] gap-x-[2px] items-center">
                 <span className="w-[46px] h-[15px] text-[10px] text-[#747B89]">
                   자세히 보기
                 </span>
                 <Image
-                  src={"svg/ic_arrow_right.svg"}
+                  src={"/svg/ic_arrow_right.svg"}
                   alt="arrow"
                   width={10}
                   height={10}
@@ -86,7 +87,7 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
             >
               {selected && (
                 <Image
-                  src={"png/ic_check_circle-1_24.png"}
+                  src={"/svg/icon-check-circle-mono.svg"}
                   alt="check"
                   className=""
                   width={24}

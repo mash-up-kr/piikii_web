@@ -2,45 +2,44 @@
 import { CategoryChip } from "@/app/add-course/_components/CategoryChip";
 import { CardWithSelectedOption } from "@/components/common/Cards/CardWithSelectedOption";
 import { flattenColumns } from "@/lib/utils";
-import { VoteAreaProps } from "@/model";
+import { EditOptionAreaProps, VoteAreaProps } from "@/model";
 import { useState } from "react";
 
-const EditOptionArea = ({ initialColumns, placesInfo }: VoteAreaProps) => {
-  const [selectedChip, setSelectedChip] = useState<number | null>(null);
-  const [selectedCard, setSelectedCard] = useState<number | null>(null);
-
-  const handleChipClick = (index: number) => {
-    setSelectedChip(index === selectedChip ? null : index);
-  };
-
-  const handleCardClick = (index: number) => {
-    setSelectedCard(index === selectedCard ? null : index);
-  };
-
+const EditOptionArea = ({
+  schedules,
+  selectedSchedule,
+  selectedPlaces,
+  onClickSchedule,
+  onClickPlaceCard,
+}: EditOptionAreaProps) => {
   return (
     <div className="flex flex-col w-[335px] h-[631px] mx-[20px] gap-y-[26px]">
       <div className="flex flex-row w-[252px] h-[37px] gap-x-[8px]">
-        {flattenColumns(initialColumns).map((item) => (
+        {schedules.map((item) => (
           <CategoryChip
-            key={item.globalIndex}
-            title={item.title}
-            selected={selectedChip === item.globalIndex}
-            onClick={() => handleChipClick(item.globalIndex)}
+            key={item.scheduleId}
+            title={item.scheduleName}
+            selected={selectedSchedule.scheduleId === item.scheduleId}
+            onClick={() => onClickSchedule(item.scheduleId)}
           />
         ))}
       </div>
       <div className="flex flex-col gap-y-[12px]">
-        {placesInfo.map((placeInfo, index) => (
+        {selectedSchedule.places.map((placeInfo, index) => (
           <CardWithSelectedOption
             key={index}
-            selected={selectedCard === index}
+            selected={
+              selectedPlaces[selectedSchedule.scheduleId] === placeInfo.placeId
+            }
             origin={placeInfo.origin}
-            place={placeInfo.place}
-            link={placeInfo.link}
-            rating={placeInfo.rating}
-            reviewCount={placeInfo.reviewCount}
-            images={placeInfo.images || []}
-            onButtonClick={() => handleCardClick(index)}
+            place={placeInfo.name}
+            link={placeInfo.url}
+            rating={placeInfo.starGrade.toString() ?? "0"}
+            images={placeInfo.thumbnailLinks.contents || []}
+            voteCount={placeInfo.countOfAgree}
+            onButtonClick={() =>
+              onClickPlaceCard(selectedSchedule.scheduleId, placeInfo.placeId)
+            }
           />
         ))}
       </div>

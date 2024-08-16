@@ -16,7 +16,7 @@ export interface VotePlaceResponseDto {
   address: string;
   phoneNumber: string;
   starGrade: number;
-  origin: string;
+  origin: "AVOCADO" | "LEMON" | "MANUAL";
   memo: string;
   countOfAgree: number;
 }
@@ -28,7 +28,7 @@ export interface VoteResultByScheduleResponseDto {
 }
 
 export interface VoteResultResponseDto {
-  result: VoteResultByScheduleResponseDto;
+  result: VoteResultByScheduleResponseDto[];
 }
 
 export interface VoteStatusResponseDto {
