@@ -1,27 +1,44 @@
 "use client";
 
 import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
+import { useGetRoomQuery } from "@/apis/room/RoomApi.query";
 import { Button } from "@/components/common/Button/Button";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import Title from "@/components/common/Title";
 import { useToast } from "@/components/common/Toast/use-toast";
 import useRoomUid from "@/hooks/useRoomUid";
+import useShare from "@/hooks/useShare";
 import createUUID from "@/utils/createUid";
-import { roomUidStorage } from "@/utils/web-storage/room-uid";
 import { userUidStorage } from "@/utils/web-storage/user-uid";
+import dayjs from "dayjs";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useIsClient } from "usehooks-ts";
+import { setCookie } from "../actions";
 
 export default function VoteStart() {
   const router = useRouter();
   const toast = useToast();
   const isClient = useIsClient();
   const roomUid = useRoomUid();
+  const { onShare } = useShare();
 
-  const { data, isLoading, isError } = useGetPlacesQuery({
+  const {
+    data: roomData,
+    isLoading: isRoomDataLoading,
+    isError: isRoomDataError,
+  } = useGetRoomQuery({
+    variables: roomUid ?? "",
+    options: { enabled: !!roomUid },
+  });
+
+  const {
+    data: placeData,
+    isLoading: isPlaceDataLoading,
+    isError: isPlaceDataError,
+  } = useGetPlacesQuery({
     variables: {
       roomUid: roomUid ?? "",
     },
@@ -29,13 +46,13 @@ export default function VoteStart() {
   });
 
   const totalPlaceCount = useMemo(() => {
-    if (data) {
-      return data?.reduce((acc, cur) => acc + cur.places.length, 0);
+    if (placeData) {
+      return placeData?.reduce((acc, cur) => acc + cur.places.length, 0);
     }
-  }, [data]);
+  }, [placeData]);
 
   const handleStartVote = () => {
-    if (!roomUid || !data) {
+    if (!roomUid || !placeData) {
       toast.toast({
         variants: "warning",
         title: "투표를 진행 할 방을 찾을 수 없습니다.",
@@ -52,19 +69,39 @@ export default function VoteStart() {
   useEffect(() => {
     const userUid = userUidStorage?.get()?.userUid;
 
+    const setUserUidCookie = async (userUid: string) => {
+      await setCookie("userUid", userUid);
+    };
+
     if (!userUid) {
-      userUidStorage?.set({ userUid: createUUID() });
+      const newUserUid = createUUID();
+      userUidStorage?.set({ userUid: newUserUid });
+      setUserUidCookie(newUserUid);
     }
   }, []);
 
-  if (isLoading || isError || !isClient) return <FullScreenLoader />;
+  if (isPlaceDataLoading || isRoomDataLoading || isPlaceDataError || !isClient)
+    return <FullScreenLoader />;
 
   return (
     <div className="flex flex-col h-full">
       <NavigationBar
-        title="투표 시작"
+        title={roomData?.data.name ?? "투표 시작"}
         rightSlot={
-          <button className="flex justify-center items-center">
+          <button
+            className="flex justify-center items-center"
+            onClick={async () =>
+              await onShare({
+                url: `${window.location.origin}/vote-start?roomUid=${roomUid}`,
+                title: roomData?.data.name,
+                text: `‘${roomData?.data.name}’ 투표 시작❗ ${dayjs(
+                  roomData?.data.voteDeadline ?? new Date()
+                )
+                  .locale("ko")
+                  .format("DD일 dddd A h시 mm분")}에 투표가 마감돼요`,
+              })
+            }
+          >
             <Image
               src={"/svg/ic_wrap_gray.svg"}
               alt="wrap"
@@ -91,7 +128,7 @@ export default function VoteStart() {
               </>
             }
             subtitle={
-              data && (
+              placeData && (
                 <p className="text-neutral-600">
                   후보가 {totalPlaceCount}곳으로 추려졌어요
                 </p>
