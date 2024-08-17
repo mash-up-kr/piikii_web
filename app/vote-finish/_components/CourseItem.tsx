@@ -2,7 +2,7 @@
 
 import { useToast } from "@/components/common/Toast/use-toast";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { distance, motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
@@ -109,8 +109,39 @@ export default function CourseItem({
         </motion.div>
       )}
 
+      {/* Distance To Next Location */}
+      {distanceToNextLocation && (
+        <div className="flex justify-start items-center gap-x-[8px] pt-[10px]">
+          <Image src="/svg/ic_walk.svg" width={32} height={32} alt="walk" />
+          <div className="flex items-center text-semibold-12 ml-[-8px]">
+            <Image
+              src={bubblePolygonSrc}
+              width={8}
+              height={6}
+              unoptimized
+              alt="bubble-polygon"
+            />
+            <span
+              className={cn("px-[6px] py-[4px] rounded-[6px]", bubbleColor)}
+            >
+              {distanceToNextLocation}m
+            </span>
+            {distanceToNextLocation >= 1500 && (
+              <span className="ml-[8px] text-secondary-dislike-900">
+                조금 멀어요
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Course Top Section */}
-      <div className="flex gap-x-[8px] min-h-[144px]">
+      <div
+        className={cn(
+          "flex gap-x-[8px] min-h-[144px]",
+          index !== 0 && "mt-[21px]"
+        )}
+      >
         {/* Top-Left Section */}
         <div className="flex flex-col gap-y-[12px]">
           <Image
@@ -186,23 +217,6 @@ export default function CourseItem({
               </button>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Distance To Next Location */}
-      <div className="flex justify-start items-center gap-x-[8px] pt-[10px]">
-        <Image src="/svg/ic_walk.svg" width={32} height={32} alt="walk" />
-        <div className="flex items-center text-semibold-12 ml-[-8px]">
-          <Image
-            src={bubblePolygonSrc}
-            width={8}
-            height={6}
-            unoptimized
-            alt="bubble-polygon"
-          />
-          <span className={cn("px-[6px] py-[4px] rounded-[6px]", bubbleColor)}>
-            {distanceToNextLocation}m
-          </span>
         </div>
       </div>
     </div>

@@ -16,6 +16,7 @@ export interface PlaceResponseDto {
   origin: "AVOCADO" | "LEMON" | "MANUAL";
   memo?: string;
   reviewCount?: number;
+  confirmed?: boolean;
 }
 
 export interface ScheduleTypeGroupResponse {

@@ -1,98 +1,71 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import Image from "next/image";
 import Title from "@/components/common/Title";
 import ResultArea from "@/components/common/Vote/ResultArea";
-import { Button } from "@/components/common/Button/Button";
-import { PasswordInputSheet } from "@/components/common/BottomSheet/PasswordInputSheet";
-import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
-import useCloseVote from "@/app/vote-progress/_hooks/useCloseVote";
 import { useRouter } from "next/navigation";
-import { CardInfoProps } from "@/model";
-
-const initialColumns: ColumnsType = {
-  course: {
-    id: "course",
-    list: {
-      food: [{ globalIndex: 0, title: "음식점", type: "food", icon: "🍔" }],
-      dessert: [{ globalIndex: 1, title: "카페", type: "dessert", icon: "🥨" }],
-      beer: [
-        { globalIndex: 2, title: "술 1차", type: "dessert", icon: "🥨" },
-        { globalIndex: 3, title: "술 2차", type: "dessert", icon: "🥨" },
-      ],
-      play: [{ globalIndex: 4, title: "놀거리", type: "play", icon: "🥨" }],
-    },
-  },
-};
-
-const placesInfo = [
-  {
-    place: "옥소반 상암점",
-    link: "abcd",
-    rating: "4.01",
-    reviewCount: 433,
-    images: ["/png/food.png"],
-    info: [
-      { label: "영업시간", value: "11:00 - 21:00" },
-      { label: "브레이크 타임", value: "15:00 - 17:00" },
-      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
-    ],
-  },
-  {
-    place: "스타벅스 강남점",
-    link: "efgh",
-    rating: "4.5",
-    reviewCount: 1200,
-    images: ["/png/food.png"],
-    info: [
-      { label: "영업시간", value: "11:00 - 21:00" },
-      { label: "브레이크 타임", value: "15:00 - 17:00" },
-      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
-    ],
-  },
-  {
-    place: "맥도날드 홍대점",
-    link: "ijkl",
-    rating: "3.8",
-    reviewCount: 530,
-    images: ["/png/food.png"],
-    info: [
-      { label: "영업시간", value: "11:00 - 21:00" },
-      { label: "브레이크 타임", value: "15:00 - 17:00" },
-      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
-    ],
-  },
-  {
-    place: "빕스 여의도점",
-    link: "mnop",
-    rating: "4.2",
-    reviewCount: 870,
-    images: ["/png/food.png"],
-    info: [
-      { label: "영업시간", value: "11:00 - 21:00" },
-      { label: "브레이크 타임", value: "15:00 - 17:00" },
-      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
-    ],
-  },
-  {
-    place: "이디야 커피 신촌점",
-    link: "qrst",
-    rating: "4.0",
-    reviewCount: 300,
-    images: ["/png/food.png"],
-    info: [
-      { label: "영업시간", value: "11:00 - 21:00" },
-      { label: "브레이크 타임", value: "15:00 - 17:00" },
-      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
-    ],
-  },
-] as CardInfoProps[];
+import { useGetVotesQuery } from "@/apis/vote/VoteApi.query";
+import { VoteResultByScheduleResponseDto } from "@/apis/vote/types/dto";
+import useRoomUid from "@/hooks/useRoomUid";
+import { useIsClient } from "usehooks-ts";
+import FullScreenLoader from "@/components/common/FullScreenLoader";
+import { useGetRoomQuery } from "@/apis/room/RoomApi.query";
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
 
 const VoteResult = () => {
   const router = useRouter();
+  const isClient = useIsClient();
+  const roomUid = useRoomUid();
+
+  const {
+    data: roomData,
+    isLoading: isRoomDataLoading,
+    isError: isRoomDataError,
+  } = useGetRoomQuery({
+    variables: roomUid ?? "",
+    options: { enabled: !!roomUid },
+  });
+
+  const {
+    data: voteData,
+    isLoading: isVoteDataLoading,
+    isError: isVoteDataError,
+  } = useGetVotesQuery({
+    variables: {
+      roomUid: roomUid ?? "",
+    },
+    options: { enabled: !!roomUid },
+  });
+
+  const [selectedSchedule, setSelectedSchedule] =
+    React.useState<VoteResultByScheduleResponseDto>();
+
+  const votedSchedules = useMemo(
+    () => voteData?.data.result ?? [],
+    [voteData?.data.result]
+  );
+
+  useEffect(() => {
+    if (votedSchedules) {
+      setSelectedSchedule(votedSchedules[0]);
+    }
+  }, [votedSchedules]);
+
+  if (
+    !isClient ||
+    isRoomDataLoading ||
+    isVoteDataLoading ||
+    isRoomDataError ||
+    isVoteDataError ||
+    !roomData ||
+    !voteData ||
+    !selectedSchedule
+  )
+    return <FullScreenLoader />;
 
   return (
     <div className="relative">
@@ -125,7 +98,10 @@ const VoteResult = () => {
             alt="twinkle"
           />
           <p className="flex-1 pl-[4px] text-semibold-14 text-secondary-like-700">
-            19일 일요일 오후 6시 00분에 마감된 투표입니다
+            {dayjs(roomData.data.voteDeadline)
+              .locale("ko")
+              .format("DD일 dddd A h시 mm분")}
+            에 마감된 투표입니다
           </p>
         </div>
 
@@ -138,7 +114,20 @@ const VoteResult = () => {
         </div>
 
         <div className="pt-[32px] pb-[16px]">
-          <ResultArea initialColumns={initialColumns} placesInfo={placesInfo} />
+          <ResultArea
+            schedules={
+              votedSchedules?.map(({ scheduleId, scheduleName }) => ({
+                scheduleId,
+                scheduleName,
+              })) ?? []
+            }
+            selectedSchedule={selectedSchedule}
+            onClickSchedule={(scheduleId) => {
+              setSelectedSchedule(
+                votedSchedules?.find((v) => v.scheduleId === scheduleId)
+              );
+            }}
+          />
         </div>
       </div>
     </div>

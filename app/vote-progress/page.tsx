@@ -62,9 +62,16 @@ const VoteProgressPage = () => {
     React.useState<VoteResultByScheduleResponseDto>();
 
   const votedSchedules = useMemo(
-    () => voteData?.data.result,
+    () => voteData?.data.result ?? [],
     [voteData?.data.result]
   );
+
+  const totalCountOfVote = useMemo(() => {
+    const firstIndexSchedule = votedSchedules[0];
+    const firstIndexPlace = firstIndexSchedule?.places[0];
+
+    return firstIndexPlace?.countOfVote ?? 0;
+  }, [votedSchedules]);
 
   useEffect(() => {
     if (votedSchedules) {
@@ -85,7 +92,7 @@ const VoteProgressPage = () => {
     !voteData ||
     !selectedSchedule
   )
-    return <FullScreenLoader />;
+    return <FullScreenLoader label={`투표 결과를\n집계하고 있어요`} />;
 
   return (
     <div className="relative">
@@ -118,7 +125,7 @@ const VoteProgressPage = () => {
 
         <div className="pt-[33px] px-[20px]">
           <Title
-            title={<span>-명이 투표를 진행했어요</span>}
+            title={<span>{totalCountOfVote}명이 투표를 진행했어요</span>}
             subtitle={
               <span>
                 {dayjs(roomData.data.voteDeadline)

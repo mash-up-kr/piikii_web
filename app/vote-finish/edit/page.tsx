@@ -1,92 +1,133 @@
 "use client";
 
+import { useUpdateCoursePlace } from "@/apis/course/CourseApi.mutation";
+import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
+import { ScheduleTypeGroupResponse } from "@/apis/place/types/dto";
+import { VoteResultByScheduleResponseDto } from "@/apis/vote/types/dto";
+import { useGetVotesQuery } from "@/apis/vote/VoteApi.query";
 import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
+import FullScreenLoader from "@/components/common/FullScreenLoader";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
+import { useToast } from "@/components/common/Toast/use-toast";
 import EditOptionArea from "@/components/common/Vote/EditOptionArea";
+import useRoomUid from "@/hooks/useRoomUid";
+import useUserUid from "@/hooks/useUserUid";
 import { CardInfoProps } from "@/model";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-const initialColumns: ColumnsType = {
-  course: {
-    id: "course",
-    list: {
-      food: [{ globalIndex: 0, title: "음식점", type: "food", icon: "🍔" }],
-      dessert: [{ globalIndex: 1, title: "카페", type: "dessert", icon: "🥨" }],
-      beer: [
-        { globalIndex: 2, title: "술 1차", type: "dessert", icon: "🥨" },
-        { globalIndex: 3, title: "술 2차", type: "dessert", icon: "🥨" },
-      ],
-      play: [{ globalIndex: 4, title: "놀거리", type: "play", icon: "🥨" }],
-    },
-  },
-};
-
-const placesInfo = [
-  {
-    place: "옥소반 상암점",
-    link: "abcd",
-    rating: "4.01",
-    reviewCount: 433,
-    images: ["/png/food.png"],
-    info: [
-      { label: "영업시간", value: "11:00 - 21:00" },
-      { label: "브레이크 타임", value: "15:00 - 17:00" },
-      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
-    ],
-  },
-  {
-    place: "스타벅스 강남점",
-    link: "efgh",
-    rating: "4.5",
-    reviewCount: 1200,
-    images: ["/png/food.png"],
-    info: [
-      { label: "영업시간", value: "11:00 - 21:00" },
-      { label: "브레이크 타임", value: "15:00 - 17:00" },
-      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
-    ],
-  },
-  {
-    place: "맥도날드 홍대점",
-    link: "ijkl",
-    rating: "3.8",
-    reviewCount: 530,
-    images: ["/png/food.png"],
-    info: [
-      { label: "영업시간", value: "11:00 - 21:00" },
-      { label: "브레이크 타임", value: "15:00 - 17:00" },
-      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
-    ],
-  },
-  {
-    place: "빕스 여의도점",
-    link: "mnop",
-    rating: "4.2",
-    reviewCount: 870,
-    images: ["/png/food.png"],
-    info: [
-      { label: "영업시간", value: "11:00 - 21:00" },
-      { label: "브레이크 타임", value: "15:00 - 17:00" },
-      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
-    ],
-  },
-  {
-    place: "이디야 커피 신촌점",
-    link: "qrst",
-    rating: "4.0",
-    reviewCount: 300,
-    images: ["/png/food.png"],
-    info: [
-      { label: "영업시간", value: "11:00 - 21:00" },
-      { label: "브레이크 타임", value: "15:00 - 17:00" },
-      { label: "메모", value: "새우튀김을 꼭 시켜야 함" },
-    ],
-  },
-] as CardInfoProps[];
+import { useEffect, useMemo, useState } from "react";
+import { useIsClient } from "usehooks-ts";
 
 export default function VoteEditPage() {
   const router = useRouter();
+  const isClient = useIsClient();
+  const roomUid = useRoomUid();
+  const userUid = useUserUid();
+  const toast = useToast();
+
+  const {
+    data: voteData,
+    isLoading: isVoteDataLoading,
+    isError: isVoteDataError,
+  } = useGetVotesQuery({
+    variables: {
+      roomUid: roomUid ?? "",
+    },
+    options: { enabled: !!roomUid },
+  });
+
+  const {
+    data: placeData,
+    isLoading: isPlaceDataLoading,
+    isError: isPlaceDataError,
+  } = useGetPlacesQuery({
+    variables: {
+      roomUid: roomUid ?? "",
+    },
+    options: { enabled: !!roomUid },
+  });
+
+  const { mutate: updateCourse } = useUpdateCoursePlace({
+    options: {
+      onError: () => {
+        toast.toast({
+          title: "코스 수정에 실패했습니다.",
+        });
+      },
+    },
+  });
+
+  const [selectedSchedule, setSelectedSchedule] =
+    useState<VoteResultByScheduleResponseDto>();
+
+  const [selectedPlaces, setSelectedPlaces] = useState<Record<number, number>>(
+    {}
+  );
+
+  const votedSchedules = useMemo(
+    () => voteData?.data.result,
+    [voteData?.data.result]
+  );
+
+  const confirmedPlaces = useMemo(
+    () =>
+      placeData
+        ?.map(({ places }) => {
+          return places
+            .filter((place) => place.confirmed)
+            .map((place) => place.id);
+        })
+        .flat() ?? [],
+    []
+  );
+
+  const handleClickConfirm = () => {
+    Object.values(selectedPlaces).forEach((placeId) => {
+      updateCourse(
+        {
+          roomUid: roomUid ?? "",
+          placeId,
+        },
+        {
+          onSuccess: () => {
+            toast.toast({
+              title: "코스가 수정되었습니다.",
+            });
+            router.back();
+          },
+        }
+      );
+    });
+  };
+
+  useEffect(() => {
+    if (votedSchedules) {
+      setSelectedSchedule(votedSchedules[0]);
+      setSelectedPlaces(
+        votedSchedules.reduce((acc, { scheduleId, places }) => {
+          const selectedPlaceId =
+            places
+              .map((p) => p.placeId)
+              .filter((id) => id in confirmedPlaces)[0] ?? places[0].placeId;
+
+          acc[scheduleId] = selectedPlaceId;
+          return acc;
+        }, {} as Record<number, number>)
+      );
+    }
+  }, [confirmedPlaces, votedSchedules]);
+
+  if (
+    !isClient ||
+    isVoteDataLoading ||
+    isPlaceDataLoading ||
+    isVoteDataError ||
+    isPlaceDataError ||
+    !placeData ||
+    !voteData ||
+    !selectedSchedule
+  )
+    return <FullScreenLoader />;
 
   return (
     <div>
@@ -106,7 +147,7 @@ export default function VoteEditPage() {
           </button>
         }
         rightSlot={
-          <button>
+          <button onClick={handleClickConfirm}>
             <span className="text-bold-15 text-primary-700">완료</span>
           </button>
         }
@@ -115,8 +156,25 @@ export default function VoteEditPage() {
 
       <div className="pt-[56px]">
         <EditOptionArea
-          initialColumns={initialColumns}
-          placesInfo={placesInfo}
+          schedules={
+            votedSchedules?.map(({ scheduleId, scheduleName }) => ({
+              scheduleId,
+              scheduleName,
+            })) ?? []
+          }
+          selectedSchedule={selectedSchedule}
+          selectedPlaces={selectedPlaces}
+          onClickSchedule={(scheduleId) => {
+            setSelectedSchedule(
+              votedSchedules?.find((v) => v.scheduleId === scheduleId)
+            );
+          }}
+          onClickPlaceCard={(scheduleId, placeId) => {
+            setSelectedPlaces((prev) => ({
+              ...prev,
+              [scheduleId]: placeId,
+            }));
+          }}
         />
       </div>
     </div>
