@@ -41,6 +41,9 @@ class PlaceApi {
       method: "POST",
       url: `/rooms/${roomUid}/places`,
       data: payload,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
     return data;
   };

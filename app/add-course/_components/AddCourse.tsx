@@ -35,6 +35,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const { clipboardText } = useCopyPasted();
   const [placeUrl, setPlaceUrl] = useState("");
   const [showInput, setShowInput] = useState(true);
+  const [showAlternateInput, setShowAlternateInput] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
@@ -55,6 +56,16 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const { data: currentPlacesData } = useGetPlacesQuery({
     variables: { roomUid },
   });
+
+  const naverMapRegex = /https?:\/\/naver\.me\/[a-zA-Z0-9]+/;
+  const kakaoMapRegex = /https?:\/\/place\.map\.kakao\.com\/[0-9]+/;
+
+  const validateClipboardText = (text: string) => {
+    return naverMapRegex.test(text) || kakaoMapRegex.test(text);
+  };
+
+  const isValidClipboardText = validateClipboardText(clipboardText);
+  const isValidPlaceUrl = validateClipboardText(placeUrl);
 
   useEffect(() => {
     if (currentPlacesData) {
@@ -113,7 +124,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   const fetchCoursePageData = async (roomUid: string) => {
     try {
-      const currentSchedule = await scheduleApi.readSchedules(roomUid);
+      const currentSchedule = await scheduleApi.readSchedules({ roomUid });
       const currentRoom = await roomApi.readRoom(roomUid);
 
       setCategoryList(currentSchedule.data.schedules);
@@ -131,14 +142,20 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isMobile && clipboardText) {
+      if (!isMobile && isValidClipboardText) {
         setShowInput(false);
         setIsClipboardText(true);
         createPlaceMutate({ url: clipboardText });
-      } else if (placeUrl) {
+      } else if (isValidPlaceUrl) {
         setShowInput(false);
         setIsClipboardText(true);
         createPlaceMutate({ url: placeUrl });
+      } else if (!isValidClipboardText || !isValidPlaceUrl) {
+        setShowInput(false);
+        setShowAlternateInput(true);
+        setTimeout(() => {
+          setShowInput(true);
+        }, 3000);
       } else {
         setShowInput(true);
       }
@@ -190,6 +207,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
             height={16}
             src="/gif/vote_button.gif"
             alt="vote_button.gif"
+            unoptimized
           />
         </Button>
       </div>
@@ -203,7 +221,21 @@ const AddCourse = ({ data }: AddCourseProps) => {
           <p>를 추천받아요</p>
         </div>
 
-        {showInput ? (
+        {showAlternateInput ? (
+          <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] text-[#EC3737] bg-[#FEF1F2] border-2 border-[#FFD6D9] rounded-[32px] items-center">
+            <Input
+              className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
+              placeholder="올바른 링크를 넣어주세요"
+            />
+            <Image
+              src={"/svg/ic_exclamation_circle.svg"}
+              alt="arrow"
+              width={32}
+              height={32}
+              unoptimized
+            />
+          </div>
+        ) : showInput ? (
           <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FFF7F2] border-2 border-[#FFF1EB] rounded-[32px] items-center">
             <Input
               className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
@@ -269,7 +301,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
       </div>
       <div className="flex w-[375px] h-[12px] bg-[#F9FAFB] my-[20px]" />
 
-      <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-row justify-between items-center mb-[20px]">
         <div
           className="flex flex-start pl-[20px] w-full h-[37px] items-center gap-x-[8px] overflow-x-scroll scrollbar-hide"
           ref={sliderRef}

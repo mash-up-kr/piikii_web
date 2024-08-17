@@ -27,6 +27,13 @@ const PlaceDetail: React.FC = () => {
   const { categoryList, isClipboardText, setIsClipboardText, autoPlaceInfo } =
     useCourseContext();
 
+  const categoryImageMap: { [key: string]: string } = {
+    FOOD: "/png/default_food.png",
+    DESSERT: "/png/default_dessert.png",
+    ALCOHOL: "/png/default_alcohol.png",
+    ARCADE: "/png/default_arcade.png",
+  };
+
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
   };
@@ -53,6 +60,7 @@ const PlaceDetail: React.FC = () => {
     if (!placeName || !selectedChip || !selectedCategory) {
       return;
     }
+    const defaultImage = categoryImageMap[selectedCategory.name];
 
     const payload: AddPlaceRequestDto = {
       scheduleId: selectedCategory.scheduleId as number,
@@ -60,17 +68,17 @@ const PlaceDetail: React.FC = () => {
       name:
         autoPlaceInfo && autoPlaceInfo[0] ? autoPlaceInfo[0].name : placeName,
       url:
-        autoPlaceInfo && autoPlaceInfo[0]
-          ? autoPlaceInfo[0].url
-          : url || undefined,
-      address: address || "",
+        autoPlaceInfo && autoPlaceInfo[0] ? autoPlaceInfo[0].url : url || "-",
+      address: address || "-",
       phoneNumber:
         autoPlaceInfo && autoPlaceInfo[0]
           ? autoPlaceInfo[0].phoneNumber
-          : phoneNumber || null,
+          : phoneNumber
+          ? phoneNumber
+          : "-",
       starGrade:
         autoPlaceInfo && autoPlaceInfo[0] ? autoPlaceInfo[0].starGrade : 0,
-      memo: memoContent || "",
+      memo: memoContent || "-",
       voteLikeCount: 0,
       voteDislikeCount: 0,
       longitude: 0,
@@ -82,7 +90,7 @@ const PlaceDetail: React.FC = () => {
         roomUid,
         payload: {
           addPlaceRequest: payload,
-          placeImages: pictures,
+          placeImages: pictures.length > 0 ? pictures : [defaultImage],
         },
       });
 
