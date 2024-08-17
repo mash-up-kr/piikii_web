@@ -11,6 +11,7 @@ import { useCourseContext } from "@/providers/course-provider";
 import { AddPlaceRequestDto } from "@/apis/place/types/dto";
 import { useEffect, useState } from "react";
 import placeApi from "@/apis/place/PlaceApi";
+import { categoryImageMap } from "@/lib/utils";
 
 const PlaceDetail: React.FC = () => {
   const router = useRouter();
@@ -26,13 +27,6 @@ const PlaceDetail: React.FC = () => {
   const roomUid = searchParams.get("roomUid") || "";
   const { categoryList, isClipboardText, setIsClipboardText, autoPlaceInfo } =
     useCourseContext();
-
-  const categoryImageMap: { [key: string]: string } = {
-    FOOD: "/png/default_food.png",
-    DESSERT: "/png/default_dessert.png",
-    ALCOHOL: "/png/default_alcohol.png",
-    ARCADE: "/png/default_arcade.png",
-  };
 
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);

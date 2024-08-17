@@ -114,10 +114,10 @@ export default function VoteEditPage() {
       />
 
       <div className="pt-[56px]">
-        <EditOptionArea
+        {/* <EditOptionArea
           initialColumns={initialColumns}
           placesInfo={placesInfo}
-        />
+        /> */}
       </div>
     </div>
   );

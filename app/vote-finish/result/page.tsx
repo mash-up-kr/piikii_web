@@ -138,7 +138,7 @@ const VoteResult = () => {
         </div>
 
         <div className="pt-[32px] pb-[16px]">
-          <ResultArea initialColumns={initialColumns} placesInfo={placesInfo} />
+          {/* <ResultArea initialColumns={initialColumns} placesInfo={placesInfo} /> */}
         </div>
       </div>
     </div>

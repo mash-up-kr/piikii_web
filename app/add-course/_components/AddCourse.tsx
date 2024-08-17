@@ -36,7 +36,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const [placeUrl, setPlaceUrl] = useState("");
   const [showInput, setShowInput] = useState(true);
   const [showAlternateInput, setShowAlternateInput] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
   const {
@@ -52,7 +52,14 @@ const AddCourse = ({ data }: AddCourseProps) => {
     autoData,
     setAutoData,
   } = useCourseContext();
-
+  const [selectedChip, setSelectedChip] = useState<number | null | undefined>(
+    categoryList && categoryList.length > 0 ? categoryList[0].scheduleId : null
+  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    number | null | undefined
+  >(
+    categoryList && categoryList.length > 0 ? categoryList[0].scheduleId : null
+  );
   const { data: currentPlacesData } = useGetPlacesQuery({
     variables: { roomUid },
   });
@@ -105,21 +112,21 @@ const AddCourse = ({ data }: AddCourseProps) => {
     if (
       !currentPlacesData ||
       !Array.isArray(currentPlacesData) ||
+      categoryList === null ||
       currentPlacesData?.length === 0
     ) {
       return [];
     }
 
     if (selectedCategory === null) {
-      const defaultPlaces =
-        currentPlacesData.flatMap((item) => item.places) || [];
+      const defaultPlaces = currentPlacesData[0]?.places || [];
       return defaultPlaces;
+    } else {
+      const matchingPlaces =
+        currentPlacesData.find((item) => item.scheduleId === selectedCategory)
+          ?.places || [];
+      return matchingPlaces;
     }
-
-    const allPlaces: PlaceResponseDto[] = currentPlacesData.flatMap(
-      (item) => item.places
-    );
-    return allPlaces.filter((place) => place.scheduleId === selectedCategory);
   }, [currentPlacesData, selectedCategory]);
 
   const fetchCoursePageData = async (roomUid: string) => {
@@ -154,7 +161,9 @@ const AddCourse = ({ data }: AddCourseProps) => {
         setShowInput(false);
         setShowAlternateInput(true);
         setTimeout(() => {
+          setShowAlternateInput(false);
           setShowInput(true);
+          setIsClipboardText(false);
         }, 3000);
       } else {
         setShowInput(true);
@@ -166,7 +175,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
-  const [selectedChip, setSelectedChip] = useState<number | null>(null);
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     setTouchStartX(e.targetTouches[0].clientX);
@@ -188,6 +196,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
+
     setSelectedCategory(index === selectedCategory ? null : index);
   };
 
@@ -213,7 +222,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
       </div>
       <div
         className={`flex flex-col px-[20px] w-[335px] ${
-          !showInput ? "h-[148px]" : "h-[103px]"
+          isValidPlaceUrl || isValidClipboardText ? "h-[148px]" : "h-[103px]"
         } mt-[16px]`}
       >
         <div className="flex flex-row w-[224px] font-extrabold h-[31px] text-[22px] mb-[16px]">
@@ -222,10 +231,11 @@ const AddCourse = ({ data }: AddCourseProps) => {
         </div>
 
         {showAlternateInput ? (
-          <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] text-[#EC3737] bg-[#FEF1F2] border-2 border-[#FFD6D9] rounded-[32px] items-center">
+          <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FEF1F2] border-2 border-[#FFD6D9] rounded-[32px] items-center">
             <Input
               className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
               placeholder="올바른 링크를 넣어주세요"
+              disabled={true}
             />
             <Image
               src={"/svg/ic_exclamation_circle.svg"}
@@ -301,7 +311,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
       </div>
       <div className="flex w-[375px] h-[12px] bg-[#F9FAFB] my-[20px]" />
 
-      <div className="flex flex-row justify-between items-center mb-[20px]">
+      <div className="flex flex-row justify-between items-center">
         <div
           className="flex flex-start pl-[20px] w-full h-[37px] items-center gap-x-[8px] overflow-x-scroll scrollbar-hide"
           ref={sliderRef}
@@ -386,14 +396,20 @@ const AddCourse = ({ data }: AddCourseProps) => {
         categoryList && (
           <PlaceContainer
             placesData={{
-              scheduleId:
-                selectedCategory ?? (categoryList[0]?.scheduleId as number),
+              scheduleId: selectedCategory
+                ? selectedCategory
+                : (categoryList[0]?.scheduleId as number),
               scheduleName:
                 categoryList?.find(
                   (category) => category.scheduleId === selectedCategory
                 )?.name || categoryList[0]?.name,
               places: filteredPlaces,
             }}
+            scheduleInfo={
+              categoryList?.find(
+                (category) => category.scheduleId === selectedCategory
+              )?.type || categoryList[0].type
+            }
           />
         )
       )}
