@@ -9,6 +9,7 @@ import {
   CategoryChoiceState,
   PlaceOption,
   PlaceVoteResult,
+  VoteColorTheme,
   VoteType,
 } from "./model";
 import HoldingOptionAvatarList from "./components/HoldingOptionAvatarList";
@@ -21,6 +22,11 @@ import { useRouter } from "next/navigation";
 import { useCastVote } from "@/apis/vote/VoteApi.mutation";
 import useUserUid from "@/hooks/useUserUid";
 import { VoteCastResultDto, VoteSaveRequestDto } from "@/apis/vote/types/dto";
+import { useGetSchedulesQuery } from "@/apis/schedule/ScheduleApi.query";
+import { ScheduleType } from "@/apis/schedule/types/model";
+import VoteStep from "./components/VoteStep";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function Page() {
   const router = useRouter();
@@ -30,14 +36,22 @@ export default function Page() {
 
   const {
     data: placeData,
-    isLoading,
-    isError,
+    isLoading: isPlaceDataLoading,
+    isError: isPlaceDataError,
   } = useGetPlacesQuery({
     variables: {
       roomUid: roomUid ?? "",
     },
     options: { enabled: !!roomUid },
   });
+
+  const { data: scheduleData, isLoading: isScheduleLoading } =
+    useGetSchedulesQuery({
+      variables: {
+        roomUid: roomUid ?? "",
+      },
+      options: { enabled: !!roomUid },
+    });
 
   const { mutate: castVote } = useCastVote({
     options: {
@@ -51,7 +65,8 @@ export default function Page() {
   });
 
   const [isOverlayVisible, setIsOverlayVisible] = useState<boolean>(true);
-  const [curScheduleIndex, setCurStageIndex] = useState<number>(0);
+
+  const [curScheduleIndex, setCurScheduleIndex] = useState<number>(0);
 
   const [resultData, setResultData] = useState<PlaceVoteResult>({
     likeList: [],
@@ -70,6 +85,25 @@ export default function Page() {
   const [tempHoldOptions, setTempHoldOptions] = useState<PlaceOption[]>([]);
   const [tempPendingOptions, setTempPendingOptions] = useState<PlaceOption[]>(
     []
+  );
+
+  const curScheduleType: ScheduleType = useMemo(() => {
+    if (scheduleData && placeData) {
+      const targetSchedule = scheduleData.data.schedules.find(
+        (s) => s.scheduleId === placeData[curScheduleIndex].scheduleId
+      );
+
+      if (targetSchedule) {
+        return targetSchedule.type;
+      }
+    }
+
+    return "DISH";
+  }, [scheduleData, placeData, curScheduleIndex]);
+
+  const colorTheme = useMemo(
+    () => VoteColorTheme[curScheduleType],
+    [curScheduleType]
   );
 
   const voteState = useMemo(() => {
@@ -153,6 +187,8 @@ export default function Page() {
     if (!userUid || !roomUid) {
       router.replace("/vote-start");
     }
+
+    router.prefetch("/vote-progress");
   }, [roomUid, router, userUid]);
 
   useEffect(() => {
@@ -197,18 +233,18 @@ export default function Page() {
         votes,
       });
 
-      setResultData({
-        likeList: [],
-        dislikeList: [],
-        holdList: [],
-      });
-
-      setTempHoldOptions([]);
-
       if (placeData.length - 1 === curScheduleIndex) {
         router.push("/vote-progress");
       } else {
-        setCurStageIndex((prev) => prev + 1);
+        setResultData({
+          likeList: [],
+          dislikeList: [],
+          holdList: [],
+        });
+
+        setTempHoldOptions([]);
+
+        setCurScheduleIndex((prev) => prev + 1);
       }
     }
   }, [
@@ -234,15 +270,31 @@ export default function Page() {
     }
   }, [curScheduleIndex, placeData]);
 
-  if (isLoading || isError || !isClient || !placeData)
+  if (
+    isPlaceDataLoading ||
+    isScheduleLoading ||
+    isPlaceDataError ||
+    !isClient ||
+    !placeData ||
+    !scheduleData
+  )
     return <FullScreenLoader />;
 
   return (
-    <div className="h-dvh bg-primary-100 pt-[8px] flex flex-col justify-start relative">
+    <div
+      className="h-dvh pt-[8px] flex flex-col justify-start relative"
+      style={{
+        background: colorTheme.style.background,
+      }}
+    >
       {/* Header */}
       <div className="relative px-[20px]" style={{ zIndex: Z_INDEX.HEADER }}>
         {/* Step */}
-        <Step curStep={curScheduleIndex} totalSteps={placeData.length} />
+        <VoteStep
+          curScheduleIndex={curScheduleIndex}
+          colorTheme={colorTheme}
+          placeData={placeData}
+        />
 
         <div className="h-[77px] flex items-start mt-[31px]">
           {/* Title */}
@@ -250,7 +302,7 @@ export default function Page() {
             <Title
               title={
                 <span className="text-neutral-700">
-                  <span className="text-primary-700">
+                  <span className={cn(colorTheme.classname.textActive)}>
                     {placeData[curScheduleIndex].scheduleName}
                   </span>
                   을 투표해주세요
@@ -265,10 +317,26 @@ export default function Page() {
              * NOTE: 홀드된 아이템이 있을 경우 홀드된 아이템 리스트를 보여준다
              * - resultData.holdList와 tempHoldList는 다른 용도로 사용이 됌
              */
-            <HoldingOptionAvatarList list={resultData.holdList} />
+            <HoldingOptionAvatarList
+              list={resultData.holdList}
+              voteState={voteState}
+            />
           )}
         </div>
       </div>
+
+      <Image
+        src={colorTheme.img.avatarUrl}
+        height={140}
+        width={140}
+        alt="avatar"
+        className={cn(colorTheme.classname.avatarImg)}
+        style={{
+          zIndex: colorTheme.style.avatarImgZIndex,
+        }}
+        unoptimized
+        priority
+      />
 
       {/* Card Section */}
       <div className="flex justify-center items-center w-full flex-col">
@@ -277,6 +345,7 @@ export default function Page() {
           <MotionCardContainer
             voteType={VoteType.VOTE_PENDING}
             optionList={tempPendingOptions}
+            colorTheme={colorTheme}
             onUpdateOption={handleUpdatePendingOption}
           />
         )}
@@ -286,6 +355,7 @@ export default function Page() {
           <MotionCardContainer
             voteType={VoteType.VOTE_HOLD}
             optionList={tempHoldOptions}
+            colorTheme={colorTheme}
             onUpdateOption={handleUpdateHoldOption}
           />
         )}

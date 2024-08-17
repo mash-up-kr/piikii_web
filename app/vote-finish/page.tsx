@@ -8,14 +8,15 @@ import CourseItem from "./_components/CourseItem";
 import { useRouter } from "next/navigation";
 import { useIsClient } from "usehooks-ts";
 import useRoomUid from "@/hooks/useRoomUid";
-import { useGetRoomQuery } from "@/apis/room/RoomApi.query";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
 import { useGetCourseQuery } from "@/apis/course/CourseApi.query";
+import useShare from "@/hooks/useShare";
 
-const VoteEditPage = () => {
+const VoteFinishPage = () => {
   const router = useRouter();
   const isClient = useIsClient();
   const roomUid = useRoomUid();
+  const { onShare } = useShare();
 
   const {
     data: courseData,
@@ -33,9 +34,18 @@ const VoteEditPage = () => {
     <div>
       <NavigationBar
         className="pr-[24px] pl-[40px]"
-        title="코스 수정"
+        title="코스 추천"
         rightSlot={
-          <button className="flex justify-center items-center">
+          <button
+            className="flex justify-center items-center"
+            onClick={async () =>
+              await onShare({
+                url: `${window.location.origin}/vote-finish?roomUid=${roomUid}`,
+                title: courseData.data.roomName,
+                text: `투표 결과로 만들어진 ‘${courseData.data.roomName}’ 모임 코스를 확인해보세요`,
+              })
+            }
+          >
             <Image
               src={"/svg/ic_wrap_gray.svg"}
               alt="wrap"
@@ -95,4 +105,4 @@ const VoteEditPage = () => {
   );
 };
 
-export default VoteEditPage;
+export default VoteFinishPage;

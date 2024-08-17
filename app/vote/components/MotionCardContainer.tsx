@@ -5,6 +5,7 @@ import MotionCard from "./MotionCard";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   CategoryChoiceState,
+  ColorTheme,
   PlaceOption,
   SwipeDirection,
   VoteType,
@@ -14,6 +15,7 @@ import MotionCardActionButtons from "./MotionCardActionButtons";
 interface Props {
   voteType: VoteType;
   optionList: PlaceOption[];
+  colorTheme: ColorTheme;
   onUpdateOption: (option: any) => void;
 }
 
@@ -23,6 +25,7 @@ type SwipeState = [SwipeDirection, SwipedCount];
 export default function MotionCardContainer({
   voteType,
   optionList,
+  colorTheme,
   onUpdateOption,
 }: Props) {
   const [swipedDirection, setSwipedDirection] = useState<SwipeState>([
@@ -101,6 +104,7 @@ export default function MotionCardContainer({
       {/* Action Buttons */}
       <MotionCardActionButtons
         voteType={voteType}
+        colorTheme={colorTheme}
         onClickButton={(direction) => handleSwipeCard(curCardIndex, direction)}
       />
     </AnimatePresence>

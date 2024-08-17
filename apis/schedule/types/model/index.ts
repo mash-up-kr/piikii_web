@@ -3,11 +3,13 @@ export type ResponseForm = {
   timestamp: number;
 };
 
+export type ScheduleType = "ARCADE" | "DISH" | "DESSERT" | "ALCOHOL";
+
 export type ScheduleResponse = {
   scheduleId?: number | null;
   name: string;
   sequence: number;
-  type: "ARCADE" | "DISH" | "DESSERT" | "ALCOHOL";
+  type: ScheduleType;
 };
 
 export type SchedulesResponse = {

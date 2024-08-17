@@ -19,6 +19,7 @@ import { VoteResultByScheduleResponseDto } from "@/apis/vote/types/dto";
 import { useGetRoomQuery } from "@/apis/room/RoomApi.query";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
+import useShare from "@/hooks/useShare";
 
 const VoteProgressPage = () => {
   const { passwordSheet, handlePassword, onSubmit } = useCloseVote();
@@ -26,6 +27,7 @@ const VoteProgressPage = () => {
   const router = useRouter();
   const isClient = useIsClient();
   const roomUid = useRoomUid();
+  const { onShare } = useShare();
 
   const {
     data: roomData,
@@ -99,7 +101,20 @@ const VoteProgressPage = () => {
       <NavigationBar
         className="px-[24px]"
         rightSlot={
-          <button className="flex justify-center items-center">
+          <button
+            className="flex justify-center items-center"
+            onClick={async () =>
+              await onShare({
+                url: `${window.location.origin}/vote-progress?roomUid=${roomUid}`,
+                title: roomData.data.name,
+                text: `‘${roomData.data.name}’ 투표 시작❗ ${dayjs(
+                  roomData.data.voteDeadline
+                )
+                  .locale("ko")
+                  .format("DD일 dddd A h시 mm분")}에 투표가 마감돼요`,
+              })
+            }
+          >
             <Image
               src={"/svg/ic_wrap_gray.svg"}
               alt="wrap"
