@@ -1,30 +1,66 @@
 "use client";
 
-import { useGetVoteStatusQuery } from "@/apis/vote/VoteApi.query";
+import {
+  useGetUserVoteResultQuery,
+  useGetVoteStatusQuery,
+} from "@/apis/vote/VoteApi.query";
 import useRoomUid from "@/hooks/useRoomUid";
+import useUserUid from "@/hooks/useUserUid";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const roomUid = useRoomUid();
+  const userUid = useUserUid();
 
-  const { data, isError } = useGetVoteStatusQuery({
+  const {
+    data: voteStatusData,
+    isLoading: isVoteStatusLoading,
+    isError: isVoteStatusError,
+  } = useGetVoteStatusQuery({
     variables: {
       roomUid: roomUid ?? "",
     },
     options: { enabled: !!roomUid },
   });
 
+  const {
+    data: userVoteResultData,
+    isLoading: isUserVoteResultLoading,
+    isError: isUserVoteResultError,
+  } = useGetUserVoteResultQuery({
+    variables: {
+      roomUid: roomUid ?? "",
+      userUid: userUid ?? "",
+    },
+    options: { enabled: !!roomUid && !!userUid },
+  });
+
   useEffect(() => {
-    if (isError) {
+    if (isVoteStatusLoading || isUserVoteResultLoading) return;
+
+    if (
+      !voteStatusData ||
+      !userVoteResultData ||
+      isVoteStatusError ||
+      isUserVoteResultError
+    ) {
       return router.replace("/vote");
     }
 
-    if (data && data.data.voteFinished) {
+    if (voteStatusData && voteStatusData.data.voteFinished) {
       return router.replace("/vote-finish");
     }
-  }, [data, isError, router]);
+  }, [
+    isUserVoteResultError,
+    isUserVoteResultLoading,
+    isVoteStatusError,
+    isVoteStatusLoading,
+    router,
+    userVoteResultData,
+    voteStatusData,
+  ]);
 
   return <div>{children}</div>;
 }

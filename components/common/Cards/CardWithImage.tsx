@@ -82,7 +82,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
         ))}
         <button
           className="flex flex-row mt-[12px] items-center justify-center w-[295px] h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
-          onClick={() => (link ? router.push(link) : null)}
+          onClick={() => (link ? window.open(link, "_blank") : null)}
         >
           <div className="w-[55px] h-[18px] opacity-80 text-[12px] font-semibold">
             자세히 보기

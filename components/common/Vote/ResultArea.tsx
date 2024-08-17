@@ -5,6 +5,7 @@ import CardWithImage from "@/components/common/Cards/CardWithImage";
 import Image from "next/image";
 import react from "react";
 import { VoteAreaProps } from "@/model";
+import { cn } from "@/lib/utils";
 
 const ResultArea = ({
   schedules,
@@ -35,20 +36,26 @@ const ResultArea = ({
         {selectedSchedule.places.map((placeInfo, index) => (
           <div key={index}>
             <div
-              className={`flex flex-row rounded-[12px] ${
+              className={`relative flex flex-row rounded-[12px] ${
                 index === 0 ? "bg-[#FFF7F2]" : "bg-[#F9FAFB]"
               } w-[335px] h-[64px] items-center justify-between p-[20px]`}
             >
-              <div className="flex flex-row items-center justify-start gap-x-[8px]">
+              <div className="relative z-10 flex flex-row items-center justify-start gap-x-[8px]">
                 <span className="w-[20px] h-[20px] items-center bg-black text-[12px] font-semibold text-white flex justify-center rounded-[64px]">
                   {index + 1}
                 </span>
-                <span>{placeInfo.name}</span>{" "}
+                <span className="text-bold-16 text-secondary-700">
+                  {placeInfo.name}
+                </span>{" "}
                 <span className="flex w-[21px] items-center h-[21px] text-[14px] opacity-[0.5] text-[#363A3C]">
-                  {placeInfo.countOfAgree}
+                  {placeInfo.countOfAgree}명
                 </span>
               </div>
-              <button onClick={() => handleArrowClick(index)}>
+
+              <button
+                onClick={() => handleArrowClick(index)}
+                className="relative z-10"
+              >
                 <Image
                   src={"/png/ic_arrow_down_16.png"}
                   width={16}
@@ -57,6 +64,20 @@ const ResultArea = ({
                   className="mr-[4px]"
                 />
               </button>
+
+              {/* Fill Rect based on vote count */}
+              <div
+                className={cn(
+                  "absolute left-0 top-0 h-[64px] rounded-[12px] w-[20px] z-5",
+                  index === 0 ? "bg-primary-200" : "bg-neutral-300"
+                )}
+                style={{
+                  width: `${Math.min(
+                    100,
+                    (placeInfo.countOfAgree / placeInfo.countOfVote) * 100
+                  )}%`,
+                }}
+              />
             </div>
             {expandedCards.includes(index) && (
               <CardWithImage

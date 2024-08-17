@@ -1,9 +1,7 @@
 "use client";
 import { CategoryChip } from "@/app/add-course/_components/CategoryChip";
 import { CardWithSelectedOption } from "@/components/common/Cards/CardWithSelectedOption";
-import { flattenColumns } from "@/lib/utils";
-import { EditOptionAreaProps, VoteAreaProps } from "@/model";
-import { useState } from "react";
+import { EditOptionAreaProps } from "@/model";
 
 const EditOptionArea = ({
   schedules,

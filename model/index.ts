@@ -20,6 +20,7 @@ export interface CardInfoProps {
   rating?: string;
   reviewCount?: number;
   voteCount?: number;
+  totalVoteCount?: number;
   images: string[];
   info?: { label: string; value: string }[];
   onButtonClick?: () => void;
