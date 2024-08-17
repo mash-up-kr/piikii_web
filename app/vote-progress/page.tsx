@@ -92,7 +92,7 @@ const VoteProgressPage = () => {
     !voteData ||
     !selectedSchedule
   )
-    return <FullScreenLoader />;
+    return <FullScreenLoader label={`투표 결과를\n집계하고 있어요`} />;
 
   return (
     <div className="relative">

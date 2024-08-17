@@ -1,3 +1,4 @@
+import { ScheduleTypeGroupResponse } from "@/apis/place/types/dto";
 import { VoteResultByScheduleResponseDto } from "@/apis/vote/types/dto";
 import {
   ColumnsType,
