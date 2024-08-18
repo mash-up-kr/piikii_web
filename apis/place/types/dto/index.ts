@@ -38,6 +38,7 @@ export interface AddPlaceRequestDto {
   name: string;
   url?: string;
   address?: string | null;
+  reviewCount?: number | null;
   phoneNumber?: string | null;
   starGrade?: number | null;
   memo: string;

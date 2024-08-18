@@ -21,7 +21,8 @@ const PlaceDetail: React.FC = () => {
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [memoContent, setMemoContent] = useState("");
-  const [selectedChip, setSelectedChip] = useState<number | null>(null);
+  const [selectedChip, setSelectedChip] = useState<number[]>([]);
+  const [reviewCount, setReviewCount] = useState<number | null>(null);
   const [pictures, setPictures] = useState<string[]>([]);
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
@@ -29,20 +30,14 @@ const PlaceDetail: React.FC = () => {
     useCourseContext();
 
   const handleChipClick = (index: number) => {
-    setSelectedChip(index === selectedChip ? null : index);
-  };
-
-  const handleInputChange =
-    (setter: React.Dispatch<React.SetStateAction<string>>) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.value.length <= 50) {
-        setter(e.target.value);
+    setSelectedChip((prevSelectedChips) => {
+      if (prevSelectedChips.includes(index)) {
+        return prevSelectedChips.filter((chip) => chip !== index);
+      } else {
+        return [...prevSelectedChips, index];
       }
-    };
-
-  const selectedCategory = categoryList?.find(
-    (category) => category.scheduleId === selectedChip
-  );
+    });
+  };
 
   useEffect(() => {
     if (autoPlaceInfo && autoPlaceInfo[0]) {
@@ -51,49 +46,66 @@ const PlaceDetail: React.FC = () => {
   }, [autoPlaceInfo]);
 
   const onCompleteButtonClick = async () => {
-    if (!placeName || !selectedChip || !selectedCategory) {
+    if (!placeName || selectedChip.length === 0) {
       return;
     }
-    const defaultImage = categoryImageMap[selectedCategory.name];
-
-    const payload: AddPlaceRequestDto = {
-      scheduleId: selectedCategory.scheduleId as number,
-      type: selectedCategory.name,
-      name:
-        autoPlaceInfo && autoPlaceInfo[0] ? autoPlaceInfo[0].name : placeName,
-      url:
-        autoPlaceInfo && autoPlaceInfo[0] ? autoPlaceInfo[0].url : url || "-",
-      address: address || "-",
-      phoneNumber:
-        autoPlaceInfo && autoPlaceInfo[0]
-          ? autoPlaceInfo[0].phoneNumber
-          : phoneNumber
-          ? phoneNumber
-          : "-",
-      starGrade:
-        autoPlaceInfo && autoPlaceInfo[0] ? autoPlaceInfo[0].starGrade : 0,
-      memo: memoContent || "-",
-      voteLikeCount: 0,
-      voteDislikeCount: 0,
-      longitude: 0,
-      latitude: 0,
-    };
 
     try {
-      const response = await placeApi.createPlace({
-        roomUid,
-        payload: {
-          addPlaceRequest: payload,
-          placeImages: pictures.length > 0 ? pictures : [defaultImage],
-        },
-      });
+      await Promise.all(
+        selectedChip.map(async (chipId) => {
+          const selectedCategory = categoryList?.find(
+            (category) => category.scheduleId === chipId
+          );
+          if (!selectedCategory) return;
 
-      console.log("장소 생성 성공", response);
+          const defaultImage = categoryImageMap[selectedCategory.name];
+          const payload: AddPlaceRequestDto = {
+            scheduleId: selectedCategory.scheduleId as number,
+            type: selectedCategory.name,
+            name:
+              autoPlaceInfo && autoPlaceInfo[0]
+                ? autoPlaceInfo[0].name
+                : placeName,
+            url:
+              autoPlaceInfo && autoPlaceInfo[0]
+                ? autoPlaceInfo[0].url
+                : url || "-",
+            address: address || "-",
+            phoneNumber:
+              autoPlaceInfo && autoPlaceInfo[0]
+                ? autoPlaceInfo[0].phoneNumber
+                : phoneNumber
+                ? phoneNumber
+                : "-",
+            reviewCount: reviewCount || 0,
+            starGrade:
+              autoPlaceInfo && autoPlaceInfo[0]
+                ? autoPlaceInfo[0].starGrade
+                : 0,
+            memo: memoContent || "-",
+            voteLikeCount: 0,
+            voteDislikeCount: 0,
+            longitude: 0,
+            latitude: 0,
+          };
+
+          await placeApi.createPlace({
+            roomUid,
+            payload: {
+              addPlaceRequest: payload,
+              placeImages: pictures.length > 0 ? pictures : [defaultImage],
+            },
+          });
+        })
+      );
+
+      console.log("장소 생성 성공");
       router.push("/add-course");
     } catch (error) {
-      console.error("장소 생성 실패:", error, payload, selectedCategory);
+      console.error("장소 생성 실패:", error);
     }
   };
+
   return (
     <div className="flex flex-col gap-y-[56px]">
       <NavigationBar
@@ -147,7 +159,7 @@ const PlaceDetail: React.FC = () => {
                   <CategoryChip
                     key={item.scheduleId}
                     title={item.name}
-                    selected={selectedChip === item.scheduleId}
+                    selected={selectedChip.includes(item.scheduleId)}
                     onClick={() => handleChipClick(item.scheduleId as number)}
                   />
                 )
