@@ -1,91 +1,54 @@
-"use client";
-
-import { useGetCourseExistenceQuery } from "@/apis/course/CourseApi.query";
-import {
-  useGetUserVoteResultQuery,
-  useGetVoteStatusQuery,
-} from "@/apis/vote/VoteApi.query";
-import FullScreenLoader from "@/components/common/FullScreenLoader";
-import useRoomUid from "@/hooks/useRoomUid";
-import useUserUid from "@/hooks/useUserUid";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import courseApi from "@/apis/course/CourseApi";
+import { COURSE_API_QUERY_KEY } from "@/apis/course/CourseApi.query";
+import voteApi from "@/apis/vote/VoteApi";
+import { VOTE_API_QUERY_KEY } from "@/apis/vote/VoteApi.query";
+import { getQueryClient } from "@/components/providers/getQueryClient";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { cookies } from "next/headers";
+import VoteFinishGuard from "./_components/VoteFinishGuard";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const roomUid = useRoomUid();
-  const userUid = useUserUid();
+  const cookieStore = cookies();
+  const roomUid = cookieStore.get("roomUid");
+  const userUid = cookieStore.get("userUid");
 
-  const {
-    data: voteStatusData,
-    isLoading: isVoteStatusLoading,
-    isError: isVoteStatusError,
-  } = useGetVoteStatusQuery({
-    variables: {
-      roomUid: roomUid ?? "",
-    },
-    options: { enabled: !!roomUid },
-  });
+  const queryClient = getQueryClient();
 
-  const {
-    data: userVoteResultData,
-    isLoading: isUserVoteResultLoading,
-    isError: isUserVoteResultError,
-  } = useGetUserVoteResultQuery({
-    variables: {
-      roomUid: roomUid ?? "",
-      userUid: userUid ?? "",
-    },
-    options: { enabled: !!roomUid && !!userUid },
-  });
+  if (roomUid?.value) {
+    queryClient.prefetchQuery({
+      queryKey: VOTE_API_QUERY_KEY.GET_VOTE_STATUS({
+        roomUid: roomUid.value,
+      }),
+      queryFn: () => voteApi.getVoteStatus({ roomUid: roomUid.value }),
+    });
 
-  const {
-    data: courseExistenceData,
-    isLoading: isCourseExistenceLoading,
-    isError: isCourseExistenceError,
-  } = useGetCourseExistenceQuery({
-    variables: roomUid ?? "",
-    options: { enabled: !!roomUid },
-  });
+    queryClient.prefetchQuery({
+      queryKey: COURSE_API_QUERY_KEY.GET_COURSE_EXISTENCE(roomUid.value),
+      queryFn: () => courseApi.checkCourses(roomUid.value),
+    });
+  }
 
-  useEffect(() => {
-    if (
-      isVoteStatusLoading ||
-      isUserVoteResultLoading ||
-      isCourseExistenceLoading
-    )
-      return;
-
-    if (
-      !voteStatusData ||
-      !userVoteResultData ||
-      !courseExistenceData ||
-      isVoteStatusError ||
-      isUserVoteResultError ||
-      isCourseExistenceError
-    ) {
-      return router.replace("/vote");
-    }
-
-    if (voteStatusData && !voteStatusData.data.voteFinished) {
-      return router.replace("/vote-progress");
-    }
-  }, [
-    courseExistenceData,
-    isCourseExistenceError,
-    isCourseExistenceLoading,
-    isUserVoteResultError,
-    isUserVoteResultLoading,
-    isVoteStatusError,
-    isVoteStatusLoading,
-    router,
-    userVoteResultData,
-    voteStatusData,
-  ]);
+  if (roomUid?.value && userUid?.value) {
+    queryClient.prefetchQuery({
+      queryKey: VOTE_API_QUERY_KEY.GET_USER_VOTE_RESULT({
+        roomUid: roomUid.value,
+        userUid: userUid.value,
+      }),
+      queryFn: () =>
+        voteApi.getUserVoteResult({
+          roomUid: roomUid.value,
+          userUid: userUid.value,
+        }),
+    });
+  }
 
   // NOTE: 잠시 테스트로 주석처리
   // if (courseExistenceData && !courseExistenceData.data.isExist)
   //   return <FullScreenLoader label={`가장 적합한 코스를\n만들고 있어요`} />;
 
-  return <div>{children}</div>;
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <VoteFinishGuard>{children}</VoteFinishGuard>
+    </HydrationBoundary>
+  );
 }

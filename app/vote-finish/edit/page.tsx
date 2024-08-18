@@ -2,27 +2,23 @@
 
 import { useUpdateCoursePlace } from "@/apis/course/CourseApi.mutation";
 import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
-import { ScheduleTypeGroupResponse } from "@/apis/place/types/dto";
 import { VoteResultByScheduleResponseDto } from "@/apis/vote/types/dto";
 import { useGetVotesQuery } from "@/apis/vote/VoteApi.query";
-import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import { useToast } from "@/components/common/Toast/use-toast";
 import EditOptionArea from "@/components/common/Vote/EditOptionArea";
 import useRoomUid from "@/hooks/useRoomUid";
 import useUserUid from "@/hooks/useUserUid";
-import { CardInfoProps } from "@/model";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useIsClient } from "usehooks-ts";
 
 export default function VoteEditPage() {
   const router = useRouter();
   const isClient = useIsClient();
   const roomUid = useRoomUid();
-  const userUid = useUserUid();
   const toast = useToast();
 
   const {
@@ -78,7 +74,7 @@ export default function VoteEditPage() {
             .map((place) => place.id);
         })
         .flat() ?? [],
-    []
+    [placeData]
   );
 
   const handleClickConfirm = () => {
@@ -127,56 +123,62 @@ export default function VoteEditPage() {
     !voteData ||
     !selectedSchedule
   )
-    return <FullScreenLoader />;
+    return (
+      <Suspense>
+        <FullScreenLoader />
+      </Suspense>
+    );
 
   return (
-    <div>
-      <NavigationBar
-        title="코스 수정하기"
-        leftSlot={
-          <button
-            className="flex justify-center items-center"
-            onClick={() => router.back()}
-          >
-            <Image
-              src="/svg/ic_chevron_left_black.svg"
-              width={24}
-              height={24}
-              alt="left-chevron"
-            />
-          </button>
-        }
-        rightSlot={
-          <button onClick={handleClickConfirm}>
-            <span className="text-bold-15 text-primary-700">완료</span>
-          </button>
-        }
-        className="pl-[12px] pr-[20px]"
-      />
-
-      <div className="pt-[56px]">
-        <EditOptionArea
-          schedules={
-            votedSchedules?.map(({ scheduleId, scheduleName }) => ({
-              scheduleId,
-              scheduleName,
-            })) ?? []
+    <Suspense>
+      <div>
+        <NavigationBar
+          title="코스 수정하기"
+          leftSlot={
+            <button
+              className="flex justify-center items-center"
+              onClick={() => router.back()}
+            >
+              <Image
+                src="/svg/ic_chevron_left_black.svg"
+                width={24}
+                height={24}
+                alt="left-chevron"
+              />
+            </button>
           }
-          selectedSchedule={selectedSchedule}
-          selectedPlaces={selectedPlaces}
-          onClickSchedule={(scheduleId) => {
-            setSelectedSchedule(
-              votedSchedules?.find((v) => v.scheduleId === scheduleId)
-            );
-          }}
-          onClickPlaceCard={(scheduleId, placeId) => {
-            setSelectedPlaces((prev) => ({
-              ...prev,
-              [scheduleId]: placeId,
-            }));
-          }}
+          rightSlot={
+            <button onClick={handleClickConfirm}>
+              <span className="text-bold-15 text-primary-700">완료</span>
+            </button>
+          }
+          className="pl-[12px] pr-[20px]"
         />
+
+        <div className="pt-[56px]">
+          <EditOptionArea
+            schedules={
+              votedSchedules?.map(({ scheduleId, scheduleName }) => ({
+                scheduleId,
+                scheduleName,
+              })) ?? []
+            }
+            selectedSchedule={selectedSchedule}
+            selectedPlaces={selectedPlaces}
+            onClickSchedule={(scheduleId) => {
+              setSelectedSchedule(
+                votedSchedules?.find((v) => v.scheduleId === scheduleId)
+              );
+            }}
+            onClickPlaceCard={(scheduleId, placeId) => {
+              setSelectedPlaces((prev) => ({
+                ...prev,
+                [scheduleId]: placeId,
+              }));
+            }}
+          />
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
 }
