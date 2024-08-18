@@ -6,6 +6,10 @@ export enum VoteCastResultDto {
 /**
  * API Responses
  */
+export interface VotePlacesResponseDto {
+  places: VotePlaceResponseDto[];
+}
+
 export interface VotePlaceResponseDto {
   placeId: number;
   name: string;
@@ -19,6 +23,9 @@ export interface VotePlaceResponseDto {
   origin: "AVOCADO" | "LEMON" | "MANUAL";
   memo: string;
   countOfAgree: number;
+  countOfDisagree: number;
+  countOfVote: number;
+  voteResult?: VoteCastResultDto;
 }
 
 export interface VoteResultByScheduleResponseDto {

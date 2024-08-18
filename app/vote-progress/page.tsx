@@ -19,6 +19,7 @@ import { VoteResultByScheduleResponseDto } from "@/apis/vote/types/dto";
 import { useGetRoomQuery } from "@/apis/room/RoomApi.query";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
+import useShare from "@/hooks/useShare";
 
 const VoteProgressPage = () => {
   const { passwordSheet, handlePassword, onSubmit } = useCloseVote();
@@ -26,6 +27,7 @@ const VoteProgressPage = () => {
   const router = useRouter();
   const isClient = useIsClient();
   const roomUid = useRoomUid();
+  const { onShare } = useShare();
 
   const {
     data: roomData,
@@ -62,9 +64,16 @@ const VoteProgressPage = () => {
     React.useState<VoteResultByScheduleResponseDto>();
 
   const votedSchedules = useMemo(
-    () => voteData?.data.result,
+    () => voteData?.data.result ?? [],
     [voteData?.data.result]
   );
+
+  const totalCountOfVote = useMemo(() => {
+    const firstIndexSchedule = votedSchedules[0];
+    const firstIndexPlace = firstIndexSchedule?.places[0];
+
+    return firstIndexPlace?.countOfVote ?? 0;
+  }, [votedSchedules]);
 
   useEffect(() => {
     if (votedSchedules) {
@@ -85,14 +94,27 @@ const VoteProgressPage = () => {
     !voteData ||
     !selectedSchedule
   )
-    return <FullScreenLoader />;
+    return <FullScreenLoader label={`투표 결과를\n집계하고 있어요`} />;
 
   return (
     <div className="relative">
       <NavigationBar
         className="px-[24px]"
         rightSlot={
-          <button className="flex justify-center items-center">
+          <button
+            className="flex justify-center items-center"
+            onClick={async () =>
+              await onShare({
+                url: `${window.location.origin}/vote-progress?roomUid=${roomUid}`,
+                title: roomData.data.name,
+                text: `‘${roomData.data.name}’ 투표 시작❗ ${dayjs(
+                  roomData.data.voteDeadline
+                )
+                  .locale("ko")
+                  .format("DD일 dddd A h시 mm분")}에 투표가 마감돼요`,
+              })
+            }
+          >
             <Image
               src={"/svg/ic_wrap_gray.svg"}
               alt="wrap"
@@ -118,7 +140,7 @@ const VoteProgressPage = () => {
 
         <div className="pt-[33px] px-[20px]">
           <Title
-            title={<span>-명이 투표를 진행했어요</span>}
+            title={<span>{totalCountOfVote}명이 투표를 진행했어요</span>}
             subtitle={
               <span>
                 {dayjs(roomData.data.voteDeadline)

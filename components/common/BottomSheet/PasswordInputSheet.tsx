@@ -43,13 +43,13 @@ export function PasswordInputSheet({
       {trigger && <SheetTrigger asChild>{trigger}</SheetTrigger>}
 
       <SheetContent
-        className="rounded-tl-[16px] rounded-tr-[16px]"
+        className="rounded-tl-[16px] rounded-tr-[16px] max-w-[375px] lg:mr-[0] xl:mr-[218px] w-full"
         side={"bottom"}
         onInteractOutside={() => {
           onInteractOutside && onInteractOutside();
         }}
       >
-        <SheetHeader className="items-center justify-center pt-[8px] pb-[32px] ">
+        <SheetHeader className="items-center justify-center pt-[8px] pb-[32px]">
           <SheetTitle>
             <div className="w-[34px] h-[5px] rounded-[4px] bg-neutral-200" />
           </SheetTitle>

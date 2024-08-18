@@ -1,12 +1,21 @@
 "use client";
 
-import { VoteResultByScheduleResponseDto } from "@/apis/vote/types/dto";
-import { useGetVotesQuery } from "@/apis/vote/VoteApi.query";
+import {
+  VoteCastResultDto,
+  VoteResultByScheduleResponseDto,
+} from "@/apis/vote/types/dto";
+import { useCastVote } from "@/apis/vote/VoteApi.mutation";
+import {
+  useGetUserVoteResultQuery,
+  useGetVotesQuery,
+} from "@/apis/vote/VoteApi.query";
 import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
+import { useToast } from "@/components/common/Toast/use-toast";
 import EditOptionArea from "@/components/common/Vote/EditOptionArea";
 import useRoomUid from "@/hooks/useRoomUid";
+import useUserUid from "@/hooks/useUserUid";
 import { CardInfoProps } from "@/model";
 import { set } from "lodash-es";
 import Image from "next/image";
@@ -18,6 +27,8 @@ export default function VoteEditPage() {
   const router = useRouter();
   const isClient = useIsClient();
   const roomUid = useRoomUid();
+  const userUid = useUserUid();
+  const toast = useToast();
 
   const {
     data: voteData,
@@ -28,6 +39,39 @@ export default function VoteEditPage() {
       roomUid: roomUid ?? "",
     },
     options: { enabled: !!roomUid },
+  });
+
+  const {
+    data: userVoteData,
+    isLoading: isUserVoteDataLoading,
+    isError: isUserVoteDataError,
+  } = useGetUserVoteResultQuery({
+    variables: {
+      roomUid: roomUid ?? "",
+      userUid: userUid ?? "",
+    },
+    options: { enabled: !!roomUid },
+  });
+
+  const { mutate: castVote, isPending } = useCastVote({
+    options: {
+      onSuccess: (data) => {
+        console.log("onSuccess", data);
+        toast.toast({
+          title: "투표가 수정되었습니다.",
+          duration: 2000,
+        });
+
+        router.back();
+      },
+      onError: (error) => {
+        console.log("onError", error);
+        toast.toast({
+          title: "투표 수정을 실패했습니다.",
+          duration: 2000,
+        });
+      },
+    },
   });
 
   const [selectedSchedule, setSelectedSchedule] =
@@ -42,23 +86,49 @@ export default function VoteEditPage() {
     [voteData?.data.result]
   );
 
+  const userVotedPlaceIds = useMemo(
+    () => userVoteData?.data.places.map((p) => p.placeId) ?? [],
+    [userVoteData?.data.places]
+  );
+
+  const handleClickConfirm = () => {
+    castVote({
+      roomUid: roomUid ?? "",
+      payload: {
+        userUid: userUid ?? "",
+        votes: Object.values(selectedPlaces).map((placeId) => ({
+          placeId: Number(placeId),
+          voteResult: "AGREE" as VoteCastResultDto,
+        })),
+      },
+    });
+  };
+
   useEffect(() => {
     if (votedSchedules) {
       setSelectedSchedule(votedSchedules[0]);
       setSelectedPlaces(
         votedSchedules.reduce((acc, { scheduleId, places }) => {
-          acc[scheduleId] = places[0].placeId;
+          const selectedPlaceId =
+            places
+              .map((p) => p.placeId)
+              .filter((id) => id in userVotedPlaceIds)[0] ?? places[0].placeId;
+
+          acc[scheduleId] = selectedPlaceId;
           return acc;
         }, {} as Record<number, number>)
       );
     }
-  }, [votedSchedules]);
+  }, [userVotedPlaceIds, votedSchedules]);
 
   if (
     !isClient ||
     isVoteDataLoading ||
+    isUserVoteDataLoading ||
     isVoteDataError ||
+    isUserVoteDataError ||
     !voteData ||
+    !userVoteData ||
     !selectedSchedule
   )
     return <FullScreenLoader />;
@@ -81,7 +151,7 @@ export default function VoteEditPage() {
           </button>
         }
         rightSlot={
-          <button>
+          <button onClick={handleClickConfirm} disabled={isPending}>
             <span className="text-bold-15 text-primary-700">완료</span>
           </button>
         }

@@ -3,6 +3,8 @@ import { AxiosInstance } from "axios";
 import { ResponseForm } from "../common/model";
 import {
   VoteDeadlineSetRequestDto,
+  VotePlaceResponseDto,
+  VotePlacesResponseDto,
   VoteResultResponseDto,
   VoteSaveRequestDto,
   VoteStatusResponseDto,
@@ -34,6 +36,20 @@ class VoteApi {
     const { data } = await this.axios({
       method: "GET",
       url: `/rooms/${roomUid}/votes/status`,
+    });
+    return data;
+  };
+
+  getUserVoteResult = async ({
+    roomUid,
+    userUid,
+  }: {
+    roomUid: string;
+    userUid: string;
+  }): Promise<ResponseForm<VotePlacesResponseDto>> => {
+    const { data } = await this.axios({
+      method: "GET",
+      url: `/rooms/${roomUid}/votes/user/${userUid}`,
     });
     return data;
   };

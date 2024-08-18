@@ -1,13 +1,15 @@
 "use client";
 
+import { useGetCourseExistenceQuery } from "@/apis/course/CourseApi.query";
 import {
   useGetUserVoteResultQuery,
   useGetVoteStatusQuery,
 } from "@/apis/vote/VoteApi.query";
+import FullScreenLoader from "@/components/common/FullScreenLoader";
 import useRoomUid from "@/hooks/useRoomUid";
 import useUserUid from "@/hooks/useUserUid";
-import { useRouter } from "next/navigation";
-import { use, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -37,22 +39,41 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     options: { enabled: !!roomUid && !!userUid },
   });
 
+  const {
+    data: courseExistenceData,
+    isLoading: isCourseExistenceLoading,
+    isError: isCourseExistenceError,
+  } = useGetCourseExistenceQuery({
+    variables: roomUid ?? "",
+    options: { enabled: !!roomUid },
+  });
+
   useEffect(() => {
-    if (isVoteStatusLoading || isUserVoteResultLoading) return;
+    if (
+      isVoteStatusLoading ||
+      isUserVoteResultLoading ||
+      isCourseExistenceLoading
+    )
+      return;
 
     if (
       !voteStatusData ||
       !userVoteResultData ||
+      !courseExistenceData ||
       isVoteStatusError ||
-      isUserVoteResultError
+      isUserVoteResultError ||
+      isCourseExistenceError
     ) {
       return router.replace("/vote");
     }
 
-    if (voteStatusData && voteStatusData.data.voteFinished) {
-      return router.replace("/vote-finish");
+    if (voteStatusData && !voteStatusData.data.voteFinished) {
+      return router.replace("/vote-progress");
     }
   }, [
+    courseExistenceData,
+    isCourseExistenceError,
+    isCourseExistenceLoading,
     isUserVoteResultError,
     isUserVoteResultLoading,
     isVoteStatusError,
@@ -61,6 +82,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     userVoteResultData,
     voteStatusData,
   ]);
+
+  // NOTE: 잠시 테스트로 주석처리
+  // if (courseExistenceData && !courseExistenceData.data.isExist)
+  //   return <FullScreenLoader label={`가장 적합한 코스를\n만들고 있어요`} />;
 
   return <div>{children}</div>;
 }
