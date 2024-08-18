@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import Image from "next/image";
 import Title from "@/components/common/Title";

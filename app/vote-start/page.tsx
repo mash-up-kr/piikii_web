@@ -14,7 +14,7 @@ import { userUidStorage } from "@/utils/web-storage/user-uid";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import { useIsClient } from "usehooks-ts";
 import { setCookie } from "../actions";
 
@@ -81,85 +81,94 @@ export default function VoteStart() {
   }, []);
 
   if (isPlaceDataLoading || isRoomDataLoading || isPlaceDataError || !isClient)
-    return <FullScreenLoader />;
+    return (
+      <Suspense>
+        <FullScreenLoader />
+      </Suspense>
+    );
 
   return (
-    <div className="flex flex-col h-full">
-      <NavigationBar
-        title={roomData?.data.name ?? "투표 시작"}
-        rightSlot={
-          <button
-            className="flex justify-center items-center"
-            onClick={async () =>
-              await onShare({
-                url: `${window.location.origin}/vote-start?roomUid=${roomUid}`,
-                title: roomData?.data.name,
-                text: `‘${roomData?.data.name}’ 투표 시작❗ ${dayjs(
-                  roomData?.data.voteDeadline ?? new Date()
+    <Suspense>
+      <div className="flex flex-col h-full">
+        <NavigationBar
+          title={roomData?.data.name ?? "투표 시작"}
+          rightSlot={
+            <button
+              className="flex justify-center items-center"
+              onClick={async () =>
+                await onShare({
+                  url: `${window.location.origin}/vote-start?roomUid=${roomUid}`,
+                  title: roomData?.data.name,
+                  text: `‘${roomData?.data.name}’ 투표 시작❗ ${dayjs(
+                    roomData?.data.voteDeadline ?? new Date()
+                  )
+                    .locale("ko")
+                    .format("DD일 dddd A h시 mm분")}에 투표가 마감돼요`,
+                })
+              }
+            >
+              <Image
+                src={"/svg/ic_wrap_gray.svg"}
+                alt="wrap"
+                width={16}
+                height={16}
+              />
+            </button>
+          }
+          className="pr-[24px] pl-[40px] !bg-[#FFEDE5]"
+        />
+
+        {/* Content */}
+        <div className="flex flex-col h-full pt-[56px]">
+          <div className="flex flex-col flex-1 bg-gradient-to-b from-[#FFEDE5] to-[#FAF1ED] pt-[32px]">
+            <Title
+              title={
+                <>
+                  <span className="text-primary-700 block">
+                    투표가 시작되었어요.
+                  </span>
+                  <span className="text-neutral-900 text-opacity-90">
+                    투표 후 코스를 추천받아요
+                  </span>
+                </>
+              }
+              subtitle={
+                placeData && (
+                  <p className="text-neutral-600">
+                    후보가 {totalPlaceCount}곳으로 추려졌어요
+                  </p>
                 )
-                  .locale("ko")
-                  .format("DD일 dddd A h시 mm분")}에 투표가 마감돼요`,
-              })
-            }
-          >
-            <Image
-              src={"/svg/ic_wrap_gray.svg"}
-              alt="wrap"
-              width={16}
-              height={16}
+              }
+              titleClassName="text-black-22 text-center"
+              subtitleClassName="text-regular-15 text-center"
             />
-          </button>
-        }
-        className="pr-[24px] pl-[40px] !bg-[#FFEDE5]"
-      />
 
-      {/* Content */}
-      <div className="flex flex-col h-full pt-[56px]">
-        <div className="flex flex-col flex-1 bg-gradient-to-b from-[#FFEDE5] to-[#FAF1ED] pt-[32px]">
-          <Title
-            title={
-              <>
-                <span className="text-primary-700 block">
-                  투표가 시작되었어요.
-                </span>
-                <span className="text-neutral-900 text-opacity-90">
-                  투표 후 코스를 추천받아요
-                </span>
-              </>
-            }
-            subtitle={
-              placeData && (
-                <p className="text-neutral-600">
-                  후보가 {totalPlaceCount}곳으로 추려졌어요
-                </p>
-              )
-            }
-            titleClassName="text-black-22 text-center"
-            subtitleClassName="text-regular-15 text-center"
-          />
+            <div className="lg:flex lg:flex-1 lg:items-center">
+              <Image
+                src="/gif/onboarding_2.gif"
+                width={375}
+                height={375}
+                className="w-full"
+                alt="onboarding-gif"
+                unoptimized
+              />
+            </div>
+          </div>
 
-          <div className="lg:flex lg:flex-1 lg:items-center">
-            <Image
-              src="/gif/onboarding_2.gif"
-              width={375}
-              height={375}
-              className="w-full"
-              alt="onboarding-gif"
-              unoptimized
-            />
+          {/* Bottom Gradient */}
+          <div className="h-[10px] bg-gradient-to-b from-[#FAF1ED] to-white" />
+
+          {/* Bottom Button */}
+          <div className="px-[20px] pt-[10px] pb-[20px]">
+            <Button
+              className="rounded-[14px] h-[56px]"
+              onClick={handleStartVote}
+            >
+              투표하기
+            </Button>
           </div>
         </div>
-
-        {/* Bottom Gradient */}
-        <div className="h-[10px] bg-gradient-to-b from-[#FAF1ED] to-white" />
-
-        {/* Bottom Button */}
-        <div className="px-[20px] pt-[10px] pb-[20px]">
-          <Button className="rounded-[14px] h-[56px]" onClick={handleStartVote}>
-            투표하기
-          </Button>
-        </div>
       </div>
-    </div>
+    </Suspense>
   );
 }

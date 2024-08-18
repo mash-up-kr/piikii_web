@@ -75,7 +75,7 @@ export const VoteColorTheme: Record<ScheduleType, ColorTheme> = {
       bgActive: "bg-[#BF37FF] bg-opacity-[0.8]",
       bgInactive: "bg-[#BF37FF] bg-opacity-[0.1]",
       textActive: "text-[#BF37FF]",
-      avatarImg: "absolute w-[140px] h-[140px] right-[24px] top-[45px]",
+      avatarImg: "absolute w-[140px] h-[108px] right-[24px] top-[45px]",
     },
     style: {
       background:

@@ -16,8 +16,6 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
   noShadow,
   cardClassName,
 }) => {
-  const router = useRouter();
-
   const originLogoSrc = React.useMemo(
     () =>
       origin === "AVOCADO" ? "/svg/naver-icon.svg" : "/svg/kakao-icon.svg",
@@ -37,21 +35,23 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
           <CardHeader className="w-full">
             <div className="flex w-full gap-x-[8px] justify-between items-center h-[31px] text-semibold-22">
               <div className="flex items-center">{place}</div>
-              <div className="flex gap-x-[4px] items-center">
-                <div className="flex w-[16px] h-[16px]">
-                  <Image
-                    src={originLogoSrc}
-                    alt="logo"
-                    width={16}
-                    height={16}
-                    priority
-                    unoptimized
-                  />
+              {origin !== "MANUAL" && (
+                <div className="flex gap-x-[4px] items-center">
+                  <div className="flex w-[16px] h-[16px]">
+                    <Image
+                      src={originLogoSrc}
+                      alt="logo"
+                      width={16}
+                      height={16}
+                      priority
+                      unoptimized
+                    />
+                  </div>
+                  <div className="text-[14px]">
+                    {rating} ({reviewCount})
+                  </div>
                 </div>
-                <div className="text-[14px]">
-                  {rating} ({reviewCount})
-                </div>
-              </div>
+              )}
             </div>
           </CardHeader>
         </div>
