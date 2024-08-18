@@ -39,3 +39,10 @@ export const iconInfo = [
   { icon: "🍺", label: "술", type: "ALCOHOL" },
   { icon: "🕹️", label: "놀거리", type: "ARCADE" },
 ];
+
+export const categoryImageMap: { [key: string]: string } = {
+  FOOD: "/png/default_food.png",
+  DESSERT: "/png/default_dessert.png",
+  ALCOHOL: "/png/default_alcohol.png",
+  ARCADE: "/png/default_arcade.png",
+};

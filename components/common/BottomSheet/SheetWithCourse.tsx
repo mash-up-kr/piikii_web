@@ -7,10 +7,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Image from "next/image";
-import {
-  OrderType,
-  OrderType2,
-} from "@/app/edit-course/_components/DragAndDropArea";
+import { OrderType2 } from "@/app/edit-course/_components/DragAndDropArea";
 import { iconInfo } from "@/lib/utils";
 
 interface SheetWithCourseProps {

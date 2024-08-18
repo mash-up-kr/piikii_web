@@ -35,7 +35,8 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const { clipboardText } = useCopyPasted();
   const [placeUrl, setPlaceUrl] = useState("");
   const [showInput, setShowInput] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [showAlternateInput, setShowAlternateInput] = useState(false);
+
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
   const {
@@ -51,10 +52,27 @@ const AddCourse = ({ data }: AddCourseProps) => {
     autoData,
     setAutoData,
   } = useCourseContext();
-
+  const [selectedChip, setSelectedChip] = useState<number | null | undefined>(
+    categoryList && categoryList.length > 0 ? categoryList[0].scheduleId : null
+  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    number | null | undefined
+  >(
+    categoryList && categoryList.length > 0 ? categoryList[0].scheduleId : null
+  );
   const { data: currentPlacesData } = useGetPlacesQuery({
     variables: { roomUid },
   });
+
+  const naverMapRegex = /https?:\/\/naver\.me\/[a-zA-Z0-9]+/;
+  const kakaoMapRegex = /https?:\/\/place\.map\.kakao\.com\/[0-9]+/;
+
+  const validateClipboardText = (text: string) => {
+    return naverMapRegex.test(text) || kakaoMapRegex.test(text);
+  };
+
+  const isValidClipboardText = validateClipboardText(clipboardText);
+  const isValidPlaceUrl = validateClipboardText(placeUrl);
 
   useEffect(() => {
     if (currentPlacesData) {
@@ -94,26 +112,26 @@ const AddCourse = ({ data }: AddCourseProps) => {
     if (
       !currentPlacesData ||
       !Array.isArray(currentPlacesData) ||
+      categoryList === null ||
       currentPlacesData?.length === 0
     ) {
       return [];
     }
 
     if (selectedCategory === null) {
-      const defaultPlaces =
-        currentPlacesData.flatMap((item) => item.places) || [];
+      const defaultPlaces = currentPlacesData[0]?.places || [];
       return defaultPlaces;
+    } else {
+      const matchingPlaces =
+        currentPlacesData.find((item) => item.scheduleId === selectedCategory)
+          ?.places || [];
+      return matchingPlaces;
     }
-
-    const allPlaces: PlaceResponseDto[] = currentPlacesData.flatMap(
-      (item) => item.places
-    );
-    return allPlaces.filter((place) => place.scheduleId === selectedCategory);
   }, [currentPlacesData, selectedCategory]);
 
   const fetchCoursePageData = async (roomUid: string) => {
     try {
-      const currentSchedule = await scheduleApi.readSchedules(roomUid);
+      const currentSchedule = await scheduleApi.readSchedules({ roomUid });
       const currentRoom = await roomApi.readRoom(roomUid);
 
       setCategoryList(currentSchedule.data.schedules);
@@ -131,14 +149,22 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isMobile && clipboardText) {
+      if (!isMobile && isValidClipboardText) {
         setShowInput(false);
         setIsClipboardText(true);
         createPlaceMutate({ url: clipboardText });
-      } else if (placeUrl) {
+      } else if (isValidPlaceUrl) {
         setShowInput(false);
         setIsClipboardText(true);
         createPlaceMutate({ url: placeUrl });
+      } else if (!isValidClipboardText || !isValidPlaceUrl) {
+        setShowInput(false);
+        setShowAlternateInput(true);
+        setTimeout(() => {
+          setShowAlternateInput(false);
+          setShowInput(true);
+          setIsClipboardText(false);
+        }, 3000);
       } else {
         setShowInput(true);
       }
@@ -149,7 +175,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
-  const [selectedChip, setSelectedChip] = useState<number | null>(null);
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     setTouchStartX(e.targetTouches[0].clientX);
@@ -171,6 +196,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
+
     setSelectedCategory(index === selectedCategory ? null : index);
   };
 
@@ -190,12 +216,13 @@ const AddCourse = ({ data }: AddCourseProps) => {
             height={16}
             src="/gif/vote_button.gif"
             alt="vote_button.gif"
+            unoptimized
           />
         </Button>
       </div>
       <div
         className={`flex flex-col px-[20px] w-[335px] ${
-          !showInput ? "h-[148px]" : "h-[103px]"
+          isValidPlaceUrl || isValidClipboardText ? "h-[148px]" : "h-[103px]"
         } mt-[16px]`}
       >
         <div className="flex flex-row w-[224px] font-extrabold h-[31px] text-[22px] mb-[16px]">
@@ -203,7 +230,22 @@ const AddCourse = ({ data }: AddCourseProps) => {
           <p>를 추천받아요</p>
         </div>
 
-        {showInput ? (
+        {showAlternateInput ? (
+          <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FEF1F2] border-2 border-[#FFD6D9] rounded-[32px] items-center">
+            <Input
+              className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
+              placeholder="올바른 링크를 넣어주세요"
+              disabled={true}
+            />
+            <Image
+              src={"/svg/ic_exclamation_circle.svg"}
+              alt="arrow"
+              width={32}
+              height={32}
+              unoptimized
+            />
+          </div>
+        ) : showInput ? (
           <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FFF7F2] border-2 border-[#FFF1EB] rounded-[32px] items-center">
             <Input
               className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
@@ -354,14 +396,20 @@ const AddCourse = ({ data }: AddCourseProps) => {
         categoryList && (
           <PlaceContainer
             placesData={{
-              scheduleId:
-                selectedCategory ?? (categoryList[0]?.scheduleId as number),
+              scheduleId: selectedCategory
+                ? selectedCategory
+                : (categoryList[0]?.scheduleId as number),
               scheduleName:
                 categoryList?.find(
                   (category) => category.scheduleId === selectedCategory
                 )?.name || categoryList[0]?.name,
               places: filteredPlaces,
             }}
+            scheduleInfo={
+              categoryList?.find(
+                (category) => category.scheduleId === selectedCategory
+              )?.type || categoryList[0].type
+            }
           />
         )
       )}

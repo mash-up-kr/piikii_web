@@ -28,6 +28,7 @@ export interface CardInfoProps {
   noShadow?: boolean;
   cardClassName?: string;
   selected?: boolean;
+  category?: number;
 }
 
 export interface ImgProps {

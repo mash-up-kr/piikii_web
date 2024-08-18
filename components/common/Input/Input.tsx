@@ -42,9 +42,13 @@ export interface InputProps
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, leftSlot, rightSlot, ...props }, ref) => {
+  ({ className, type, leftSlot, rightSlot, disabled, ...props }, ref) => {
     const paddingLeft = leftSlot ? "pl-[40px]" : "";
     const paddingRight = rightSlot ? "pr-[64px]" : "";
+    const placeholderColorClass = disabled
+      ? "placeholder:text-[#EC3737]"
+      : "placeholder:text-muted-foreground";
+    const fontWeightClass = disabled ? "font-semibold" : "font-medium";
     return (
       <div className="relative flex items-center w-full">
         {leftSlot && (
@@ -52,7 +56,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <input
           type={type}
-          className={cn(inputClassName(), paddingLeft, paddingRight, className)}
+          className={cn(
+            inputClassName(),
+            paddingLeft,
+            paddingRight,
+            placeholderColorClass,
+            fontWeightClass,
+            className
+          )}
+          disabled={disabled}
           ref={ref}
           {...props}
         />

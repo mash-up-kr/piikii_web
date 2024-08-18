@@ -1,7 +1,12 @@
+"use client";
 import * as React from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { CardInfoProps } from "@/model";
+import { useCourseContext } from "@/providers/course-provider";
+import { useRouter } from "next/navigation";
+import { roomUidStorage } from "@/utils/web-storage/room-uid";
+import { categoryImageMap } from "@/lib/utils";
 
 export const CardWithImageSmall: React.FC<CardInfoProps> = ({
   origin,
@@ -10,7 +15,18 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
   rating,
   reviewCount,
   images,
+  category,
 }) => {
+  const router = useRouter();
+  const { addPlaceInfo } = useCourseContext();
+
+  const defaultImage = category
+    ? categoryImageMap[category]
+    : "/png/default_food.png";
+
+  const onButtonClick = () => {
+    router.push(`add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`);
+  };
   const originLogoSrc = React.useMemo(
     () =>
       origin === "AVOCADO" ? "/svg/naver-icon.svg" : "/svg/kakao-icon.svg",
@@ -18,11 +34,14 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
   );
 
   return (
-    <Card className="ml-10 flex flex-col items-start justify-center w-[160px] h-[157px] cursor-pointer">
+    <Card
+      className="flex flex-col items-start justify-center w-[160px] h-[157px] cursor-pointer"
+      onClick={onButtonClick}
+    >
       <CardContent className="flex flex-col w-full gap-y-[8px]">
         <div className="relative w-[160px] h-[110px] overflow-hidden rounded-[12px] items-center justify-center">
           <Image
-            src={images?.[0]}
+            src={images ? images[0] : defaultImage}
             alt="like"
             width={160}
             height={110}
