@@ -60,13 +60,15 @@ const generateUniqueTitles = (
       .sort((a, b) => a.number - b.number);
 
     const newNumber =
-      sortedItems.findIndex((i) => i.scheduleId === item.scheduleId) + 1;
+      sortedItems.length > 1
+        ? sortedItems.findIndex((i) => i.scheduleId === item.scheduleId) + 1
+        : 0;
 
     return {
       ...item,
       name:
-        sortedItems.length > 1
-          ? `${item.name.split(" ")[0]} ${newNumber}차`
+        newNumber > 0
+          ? `${item.name.split(" ")[0]}${newNumber}차`
           : item.name.split(" ")[0],
     };
   });
@@ -94,6 +96,7 @@ const DragAndDropArea: React.FC = () => {
   const [itemCount, setItemCount] = useState(
     categoryList ? categoryList.length : 0
   );
+  const [copyColumns, setCopyColumns] = useState<ScheduleResponse[]>(columns);
   const [isDisabled, setIsDisabled] = useState(false);
   const toast = useToast();
   const searchParams = useSearchParams();
@@ -110,6 +113,12 @@ const DragAndDropArea: React.FC = () => {
       <>&apos;{selectedItemText}&apos; 카테고리를 삭제할까요?</>
     );
 
+  useEffect(() => {
+    setColumns(categoryList ?? []);
+    setCopyColumns(categoryList ?? []); // copyColumns를 초기화
+    setItemCount((categoryList ?? []).length);
+  }, [categoryList]);
+
   const handleClickDisabledButton = () => {
     if (isDisabled) {
       console.log(isDisabled);
@@ -121,6 +130,16 @@ const DragAndDropArea: React.FC = () => {
     return;
   };
 
+  const generateTempKey = () => {
+    // 1,000,000 ~ 9,999,999 범위의 값을 생성
+    return Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000;
+  };
+
+  const isTempKey = (id: number) => {
+    //  1,000,000 ~ 9,999,999 범위의 값을 가진 `scheduleId`는 임시 키로 간주
+    return id >= 1000000 && id <= 9999999;
+  };
+
   const prepareSchedulesForApi = (
     roomUid: string,
     schedules: ScheduleResponse[]
@@ -128,7 +147,9 @@ const DragAndDropArea: React.FC = () => {
     return {
       roomUid: roomUid,
       schedules: schedules.map((schedule) => ({
-        scheduleId: schedule.scheduleId,
+        scheduleId: isTempKey(schedule.scheduleId as number)
+          ? null
+          : schedule.scheduleId,
         name: schedule.name,
         type: schedule.type,
         sequence: schedule.sequence,
@@ -138,11 +159,10 @@ const DragAndDropArea: React.FC = () => {
 
   const changeSchedule = async (roomUid: string) => {
     try {
-      const requestPayload = prepareSchedulesForApi(roomUid, columns);
+      const requestPayload = prepareSchedulesForApi(roomUid, copyColumns);
       const response = await scheduleApi.createSchedules(requestPayload);
 
       if (response) {
-        //setcategory를
         router.back();
       }
     } catch (error) {
@@ -166,21 +186,23 @@ const DragAndDropArea: React.FC = () => {
     const sourceIndex = result.source.index;
     const destinationIndex = result.destination.index;
 
-    const reorderedItems = reorder(columns, sourceIndex, destinationIndex);
+    const reorderedItems = reorder(copyColumns, sourceIndex, destinationIndex);
 
-    const updatedList = reorderedItems.map((item, index) => ({
-      ...item,
-      sequence: index + 1,
-    }));
+    const updatedList = generateUniqueTitles(
+      reorderedItems.map((item, index) => ({
+        ...item,
+        sequence: index + 1,
+      }))
+    );
 
-    setCategoryList(updatedList);
+    setCopyColumns(updatedList);
   };
 
   const onDeleteButtonClick = (item: ScheduleResponse) => {
     setSelectedSequence(item.sequence);
     setSelectedItemText(item.name);
 
-    const matchedSchedule = roomPlacesInfo?.flatMap(
+    const matchedSchedule = roomPlacesInfo?.filter(
       (place) => place.scheduleId === item.scheduleId
     );
 
@@ -190,27 +212,17 @@ const DragAndDropArea: React.FC = () => {
 
     setIsModalOpen(true);
   };
-
-  const handleItemDelete = (sequence: number) => {
-    const filteredList = columns.filter((item) => item.sequence !== sequence);
-
-    const updatedList = generateUniqueTitles(
-      filteredList.map((item, index) => ({
-        ...item,
-        sequence: index + 1,
-      }))
-    );
-
-    setCategoryList(updatedList);
-  };
-
   const onConfirmDelete = () => {
     if (selectedSequence !== null) {
-      handleItemDelete(selectedSequence);
+      const selectedItem = copyColumns.find(
+        (item) => item.sequence === selectedSequence
+      );
+      if (selectedItem) {
+        handleItemDelete(selectedSequence, selectedItem.type);
+      }
     }
     setIsModalOpen(false);
   };
-
   const onCancelDelete = () => {
     setIsModalOpen(false);
   };
@@ -222,26 +234,49 @@ const DragAndDropArea: React.FC = () => {
     const icon = iconInfo.find((icon) => icon.type === type);
     return icon ? icon.label : type;
   };
-
   const handleItemClick = (type: OrderType2) => {
     const label = findLabelForType(type);
 
+    // 해당 타입에 속한 기존 아이템들 필터링
+    const itemsOfType = copyColumns.filter((item) => item.type === type);
+
+    // 새로운 아이템의 sequence를 결정 (기존 아이템 수 + 1)
+    const newSequence = itemsOfType.length + 1;
+
     const newItem: ScheduleResponse = {
-      scheduleId: null,
+      scheduleId: generateTempKey(),
       type,
-      name: `${label} ${columns.length + 1}차`,
-      sequence: columns.length + 1,
+      name: newSequence > 1 ? `${label} ${newSequence}차` : `${label}`,
+      sequence: newSequence,
     };
 
-    const existingItems = columns.filter((item) => item.type === type);
+    // 아이템 리스트에 새로운 아이템 추가 후 순서에 맞게 라벨링
+    const updatedList = generateUniqueTitles([...copyColumns, newItem]);
 
-    if (existingItems.length > 0) {
-      newItem.name = `${label} ${existingItems.length + 1}차`;
-    }
+    setCopyColumns(updatedList);
+  };
+  const handleItemDelete = (sequence: number, type: OrderType2) => {
+    // 삭제할 항목을 제외한 리스트를 생성
+    const filteredList = copyColumns.filter(
+      (item) => !(item.sequence === sequence && item.type === type)
+    );
 
-    const updatedList = generateUniqueTitles([...columns, newItem]);
+    // 삭제하고  -동일한 타입의 항목들의 sequence만 골라서 조정
+    const updatedList = filteredList.map((item) => {
+      if (item.type === type && item.sequence > sequence) {
+        return {
+          ...item,
+          sequence: item.sequence - 1,
+          name:
+            item.sequence > 2
+              ? `${item.name.split(" ")[0]}${item.sequence - 1}차`
+              : item.name.split(" ")[0],
+        };
+      }
+      return item;
+    });
 
-    setCategoryList(updatedList);
+    setCopyColumns(updatedList);
   };
 
   return (
@@ -254,7 +289,7 @@ const DragAndDropArea: React.FC = () => {
               ref={provided.innerRef}
               className="flex flex-col gap-y-[16px]"
             >
-              {columns.map((item: ScheduleResponse, index: number) => (
+              {copyColumns.map((item: ScheduleResponse, index: number) => (
                 <Draggable
                   key={item.scheduleId}
                   draggableId={`item-${item.type}-${item.scheduleId}`}
