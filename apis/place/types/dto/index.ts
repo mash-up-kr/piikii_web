@@ -2,7 +2,7 @@
  * API Response
  */
 export interface PlaceResponseDto {
-  id: number;
+  id?: number;
   roomUid: string;
   scheduleId: number;
   name: string;
@@ -15,6 +15,7 @@ export interface PlaceResponseDto {
   starGrade?: number;
   origin: "AVOCADO" | "LEMON" | "MANUAL";
   memo?: string;
+  openingHours?: string;
   reviewCount?: number;
   confirmed?: boolean;
 }
@@ -34,15 +35,15 @@ export interface SuccessPlaceTypeGroupResponse {
  * API Payloads
  */
 export interface AddPlaceRequestDto {
-  scheduleId: number;
-  type: string;
+  scheduleIds: number[];
   name: string;
   url?: string;
   address?: string | null;
+  openingHours?: string | null;
   reviewCount?: number | null;
   phoneNumber?: string | null;
   starGrade?: number | null;
-  memo: string;
+  memo?: string;
   voteLikeCount?: number | null;
   voteDislikeCount?: number | null;
   longitude?: number | null;
@@ -56,14 +57,17 @@ export interface CreatePlacePayloadDto {
 
 export interface ModifyPlaceRequestDto {
   scheduleId: number;
-  scheduleType: string;
   name: string;
-  url: string;
+  url?: string;
   deleteTargetUrls: string[];
   address: string;
-  phoneNumber: string;
-  starGrade: number;
-  memo: string;
-  voteLikeCount: number;
-  voteDislikeCount: number;
+  phoneNumber?: string;
+  starGrade?: number;
+  memo?: string;
+  reviewCount?: number;
+  openingHours: string;
+  voteLikeCount?: number;
+  voteDislikeCount?: number;
+  longitude?: number;
+  latitude?: number;
 }

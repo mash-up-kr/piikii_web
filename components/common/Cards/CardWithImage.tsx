@@ -121,7 +121,7 @@ export function CardWithLike({ size }: CardSizeProps) {
         >
           <Image
             src="/svg/img_like.svg"
-            alt="like"
+            alt="default"
             width={imageSize}
             height={imageSize}
             priority

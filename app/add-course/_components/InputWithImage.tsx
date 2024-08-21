@@ -9,48 +9,42 @@ export interface InputProps
 }
 
 const InputWithImage = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, onFilesChange, ...props }, ref) => {
+  ({ className, onFilesChange, ...props }, ref) => {
     const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
-    const [pendingFiles, setPendingFiles] = useState<string[]>([]);
 
     useEffect(() => {
-      if (pendingFiles.length > 0 && onFilesChange) {
-        onFilesChange([...uploadedFiles, ...pendingFiles]);
-        setUploadedFiles((prevFiles) =>
-          [...prevFiles, ...pendingFiles].slice(0, 3)
-        );
-        setPendingFiles([]);
+      if (onFilesChange) {
+        onFilesChange(uploadedFiles);
       }
-    }, [pendingFiles, onFilesChange, uploadedFiles]);
+    }, [uploadedFiles, onFilesChange]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
       if (files) {
-        const newFiles = Array.from(files).map((file) =>
-          URL.createObjectURL(file)
-        );
-        setPendingFiles(newFiles);
+        const newFiles = Array.from(files)
+          .slice(0, 3 - uploadedFiles.length) // 최대 3개의 파일만 업로드
+          .map(
+            (file) =>
+              `${process.env.NEXT_PUBLIC_DNS_URL}/${URL.createObjectURL(file)}`
+          );
+
+        setUploadedFiles((prevFiles) => [...prevFiles, ...newFiles]);
       }
     };
 
     const handleDeleteFile = (index: number) => {
-      setUploadedFiles((prevFiles) => {
-        const updatedFiles = prevFiles.filter((_, i) => i !== index);
-        if (onFilesChange) {
-          onFilesChange(updatedFiles);
-        }
-        return updatedFiles;
-      });
+      setUploadedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
     };
 
     return (
       <div className="flex flex-row items-center gap-x-[9px] gap-y-2 w-full">
         {uploadedFiles.length < 3 && (
           <input
-            type={type}
+            type="file"
             className={cn("flex rounded-lg border", className)}
             onChange={handleFileChange}
             ref={ref}
+            multiple
             {...props}
           />
         )}

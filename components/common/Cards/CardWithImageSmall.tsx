@@ -16,20 +16,20 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
   reviewCount,
   images,
   category,
+  onButtonClick,
 }) => {
-  const router = useRouter();
-  const { addPlaceInfo } = useCourseContext();
-
+  console.log(category, "=========");
   const defaultImage = category
     ? categoryImageMap[category]
     : "/png/default_food.png";
 
-  const onButtonClick = () => {
-    router.push(`add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`);
-  };
   const originLogoSrc = React.useMemo(
     () =>
-      origin === "AVOCADO" ? "/svg/naver-icon.svg" : "/svg/kakao-icon.svg",
+      origin === "AVOCADO"
+        ? "/svg/naver-icon.svg"
+        : origin === "LEMON"
+        ? "/svg/kakao-icon.svg"
+        : null,
     [origin]
   );
 
@@ -54,21 +54,23 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
             {place}
           </span>
 
-          <div className="flex flex-row w-[71px] h-[18px gap-x-[2px] items-center">
-            <Image
-              src={originLogoSrc}
-              alt="logo"
-              width={12}
-              height={12}
-              priority
-            />
-            <span className="text-[12px] max-w-[24px] h-[18px] items-center text-black">
-              {rating}
-            </span>
-            <span className="text-[12px] max-w-[31px] h-[18px] items-center text-[#B5B9C6]">
-              ({reviewCount})
-            </span>
-          </div>
+          {originLogoSrc !== null && (
+            <div className="flex flex-row w-[71px] h-[18px gap-x-[2px] items-center">
+              <Image
+                src={originLogoSrc}
+                alt="logo"
+                width={12}
+                height={12}
+                priority
+              />
+              <span className="text-[12px] max-w-[24px] h-[18px] items-center text-black">
+                {rating}
+              </span>
+              <span className="text-[12px] max-w-[31px] h-[18px] items-center text-[#B5B9C6]">
+                ({reviewCount})
+              </span>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

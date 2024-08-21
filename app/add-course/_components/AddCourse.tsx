@@ -19,10 +19,7 @@ import { useCreatePlace } from "@/apis/origin-place/OriginPlaceApi.mutation";
 import { PlaceContainer } from "./PlaceContainer";
 import useShare from "@/hooks/useShare";
 import { RoomResponse } from "@/apis/room/types/model";
-import {
-  PlaceResponseDto,
-  ScheduleTypeGroupResponse,
-} from "@/apis/place/types/dto";
+import { ModalWithVote } from "@/components/common/Modal/ModalWithVote";
 
 export interface AddCourseProps {
   data: RoomResponse;
@@ -36,30 +33,27 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const [placeUrl, setPlaceUrl] = useState("");
   const [showInput, setShowInput] = useState(true);
   const [showAlternateInput, setShowAlternateInput] = useState(false);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReadyToVote, setIsReadyToVote] = useState(false);
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
   const {
     roomInfo,
     setRoomInfo,
+    roomPlacesInfo,
     setRoomPlacesInfo,
     categoryList,
     setCategoryList,
-    autoPlaceInfo,
-    setAutoPlaceInfo,
     isClipboardText,
     setIsClipboardText,
+    addPlaceInfo,
     autoData,
     setAutoData,
   } = useCourseContext();
   const [selectedChip, setSelectedChip] = useState<number | null | undefined>(
     categoryList && categoryList.length > 0 ? categoryList[0].scheduleId : null
   );
-  const [selectedCategory, setSelectedCategory] = useState<
-    number | null | undefined
-  >(
-    categoryList && categoryList.length > 0 ? categoryList[0].scheduleId : null
-  );
+
   const { data: currentPlacesData } = useGetPlacesQuery({
     variables: { roomUid },
   });
@@ -79,21 +73,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
       setRoomPlacesInfo(currentPlacesData);
     }
   }, [currentPlacesData, setRoomPlacesInfo]);
-
-  const hasPlaces = useMemo(() => {
-    if (
-      !currentPlacesData ||
-      !Array.isArray(currentPlacesData) ||
-      currentPlacesData.length === 0
-    ) {
-      console.error("currentPlacesData is not in expected format or is empty.");
-      return false;
-    }
-
-    return currentPlacesData.some(
-      (schedule) => Array.isArray(schedule.places) && schedule.places.length > 0
-    );
-  }, [currentPlacesData]);
 
   const { mutate: createPlaceMutate } = useCreatePlace({
     options: {
@@ -118,16 +97,21 @@ const AddCourse = ({ data }: AddCourseProps) => {
       return [];
     }
 
-    if (selectedCategory === null) {
+    if (selectedChip === null) {
       const defaultPlaces = currentPlacesData[0]?.places || [];
+
       return defaultPlaces;
     } else {
       const matchingPlaces =
-        currentPlacesData.find((item) => item.scheduleId === selectedCategory)
+        currentPlacesData.find((item) => item.scheduleId === selectedChip)
           ?.places || [];
       return matchingPlaces;
     }
-  }, [currentPlacesData, selectedCategory]);
+  }, [currentPlacesData, selectedChip, roomPlacesInfo]);
+
+  const hasPlaces = useMemo(() => {
+    return filteredPlaces.length > 0;
+  }, [filteredPlaces]);
 
   const fetchCoursePageData = async (roomUid: string) => {
     try {
@@ -146,6 +130,14 @@ const AddCourse = ({ data }: AddCourseProps) => {
   useEffect(() => {
     fetchCoursePageData(roomUid);
   }, [roomUid]);
+
+  useEffect(() => {
+    if (filteredPlaces.length > 0) {
+      setIsReadyToVote(true);
+    } else {
+      setIsReadyToVote(false);
+    }
+  }, [filteredPlaces]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -196,8 +188,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
-
-    setSelectedCategory(index === selectedCategory ? null : index);
   };
 
   const { onShare } = useShare();
@@ -205,11 +195,14 @@ const AddCourse = ({ data }: AddCourseProps) => {
   return (
     <div className="flex flex-col">
       <div className="flex items-center justify-center gap-x-[17px] cursor-pointer px-[20px] py-[11px]">
-        <p className="flex w-[232px] text-semibold-15 text-neutral-700">
+        <p className="flex w-[232px] items-center text-semibold-15 text-neutral-700">
           {roomInfo?.name}
         </p>
 
-        <Button className="flex border-2 border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white gap-[4px]">
+        <Button
+          className="flex border-2 border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white gap-[4px]"
+          onClick={!isReadyToVote ? () => setIsModalOpen(true) : undefined}
+        >
           <p className="font-semibold text-neutral-700 text-[12px]">투표시작</p>
           <Image
             width={16}
@@ -396,22 +389,25 @@ const AddCourse = ({ data }: AddCourseProps) => {
         categoryList && (
           <PlaceContainer
             placesData={{
-              scheduleId: selectedCategory
-                ? selectedCategory
+              scheduleId: selectedChip
+                ? selectedChip
                 : (categoryList[0]?.scheduleId as number),
               scheduleName:
                 categoryList?.find(
-                  (category) => category.scheduleId === selectedCategory
+                  (category) => category.scheduleId === selectedChip
                 )?.name || categoryList[0]?.name,
               places: filteredPlaces,
             }}
             scheduleInfo={
               categoryList?.find(
-                (category) => category.scheduleId === selectedCategory
+                (category) => category.scheduleId === selectedChip
               )?.type || categoryList[0].type
             }
           />
         )
+      )}
+      {isModalOpen && (
+        <ModalWithVote onButtonClick={() => setIsModalOpen((prev) => !prev)} />
       )}
     </div>
   );

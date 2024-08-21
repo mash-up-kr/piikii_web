@@ -3,20 +3,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useCourseContext } from "@/providers/course-provider";
 import { roomUidStorage } from "@/utils/web-storage/room-uid";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export type PlaceAutoCompleteData = {
   name: string;
-  url: string;
+  url?: string;
   placeImageUrls: {
     contents: string[];
   };
   address?: string;
   phoneNumber?: string;
   starGrade?: number;
-  reviewCount: number;
+  reviewCount?: number;
   category?: string;
   origin: "AVOCADO" | "LEMON" | "MANUAL";
+  openingHours?: string;
 };
 
 export type CardForCopiedContentProps = PlaceAutoCompleteData;
@@ -33,20 +34,19 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
   origin,
 }) => {
   const router = useRouter();
-  const { addPlaceInfo } = useCourseContext();
+  // const { addPlaceInfo } = useCourseContext();
 
   const onButtonClick = () => {
-    addPlaceInfo({
-      name,
-      url,
-      placeImageUrls,
-      address,
-      phoneNumber,
-      starGrade,
-      reviewCount,
-      category,
-      origin,
-    });
+    // addPlaceInfo({
+    //   name,
+    //   url,
+    //   placeImageUrls,
+    //   address,
+    //   phoneNumber,
+    //   starGrade,
+    //   reviewCount,
+    //   origin,
+    // });
 
     router.push(`add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`);
   };
@@ -76,11 +76,12 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
               <div className="flex flex-row gap-x-[2px] w-full h-[18px] items-center justify-start">
                 <div className="flex flex-row w-[12px] h-[12px]">
                   <Image
-                    src="/png/naver.png"
+                    src="/svg/naver-icon.svg"
                     alt="naver"
                     width={12}
                     height={12}
                     priority
+                    unoptimized
                   />
                 </div>
                 <span className="w-[24px] h-[18px] text-[12px] text-[#363A3C] font-semibold">
@@ -96,7 +97,7 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
               onClick={onButtonClick}
             >
               <Image
-                src={"svg/icon-x-mono.svg"}
+                src={"/svg/icon-x-mono.svg"}
                 alt="plusIcon"
                 className="z-9999"
                 width={24}
