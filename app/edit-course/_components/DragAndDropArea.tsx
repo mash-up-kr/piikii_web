@@ -39,8 +39,11 @@ const extractNumberFromTitle = (title: string) => {
 };
 
 const generateUniqueTitles = (
-  columns: ScheduleResponse[]
+  columns: ScheduleResponse[],
+  updateTitles: boolean = true
 ): ScheduleResponse[] => {
+  if (!updateTitles) return columns;
+
   const groupedByType = columns.reduce((acc, item) => {
     if (!acc[item.type]) {
       acc[item.type] = [];
@@ -64,12 +67,17 @@ const generateUniqueTitles = (
         ? sortedItems.findIndex((i) => i.scheduleId === item.scheduleId) + 1
         : 0;
 
+    const existingItem = columns.find((i) => i.scheduleId === item.scheduleId);
+    const shouldUpdateTitle =
+      existingItem && existingItem.sequence !== item.sequence;
+
     return {
       ...item,
-      name:
-        newNumber > 0
+      name: shouldUpdateTitle
+        ? newNumber > 0
           ? `${item.name.split(" ")[0]}${newNumber}차`
-          : item.name.split(" ")[0],
+          : item.name.split(" ")[0]
+        : item.name,
     };
   });
 };
@@ -188,12 +196,7 @@ const DragAndDropArea: React.FC = () => {
 
     const reorderedItems = reorder(copyColumns, sourceIndex, destinationIndex);
 
-    const updatedList = generateUniqueTitles(
-      reorderedItems.map((item, index) => ({
-        ...item,
-        sequence: index + 1,
-      }))
-    );
+    const updatedList = generateUniqueTitles(reorderedItems, false);
 
     setCopyColumns(updatedList);
   };
@@ -207,7 +210,7 @@ const DragAndDropArea: React.FC = () => {
     );
 
     if (matchedSchedule) {
-      setSelectedPlaceNumber(matchedSchedule.length);
+      setSelectedPlaceNumber(matchedSchedule[0].places.length);
     }
 
     setIsModalOpen(true);

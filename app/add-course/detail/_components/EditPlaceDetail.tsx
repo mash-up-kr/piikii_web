@@ -48,6 +48,7 @@ const EditPlaceDetail: React.FC = () => {
 
   useEffect(() => {
     if (selectedPlaceInfo !== null) {
+      setSelectedChip(selectedPlaceInfo.scheduleId);
       updatePlaceInfo(selectedPlaceInfo);
     }
   }, [selectedPlaceInfo]);
@@ -75,15 +76,17 @@ const EditPlaceDetail: React.FC = () => {
       return;
     }
 
-    const newImages = values.pictures || ["/png/food.png"]; // 사용자가 새로 추가한 이미지들
+    const newImages = values.pictures || []; // 사용자가 새로 추가한 이미지들
     const currentImages = selectedPlaceInfo.placeImageUrls.contents || []; // 기존 이미지들
 
     const deleteTargetUrls = currentImages.filter(
-      (image) => !newImages.includes(image)
+      (image) => typeof image === "string" && !newImages.includes(image)
     );
-    const newPlaceImages = newImages.map((image) =>
-      typeof image === "string" ? image : URL.createObjectURL(image)
-    );
+
+    const newPlaceImages =
+      values.pictures?.map((file: File | string) =>
+        typeof file === "string" ? file : URL.createObjectURL(file)
+      ) || [];
 
     const payload: ModifyPlaceRequestDto = {
       scheduleId:

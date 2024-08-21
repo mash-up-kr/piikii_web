@@ -32,15 +32,12 @@ const useCourseHandler = () => {
       if (roomPlacesInfo) {
         return roomPlacesInfo.map((group) => {
           if (group.scheduleId === newPlace.scheduleId) {
-            // 동일한 scheduleId를 가진 그룹을 찾아 places에 newPlace를 추가
-            console.log(group.scheduleId, newPlace.scheduleId, "id 상태");
-
             return {
               ...group,
               places: [...group.places, newPlace],
             };
           }
-          console.log(newPlace, "새 장소", roomPlacesInfo, "변화 상태");
+
           return group;
         });
       }

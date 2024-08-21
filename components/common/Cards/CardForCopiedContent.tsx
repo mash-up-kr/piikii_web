@@ -7,14 +7,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 export type PlaceAutoCompleteData = {
   name: string;
-  url: string;
+  url?: string;
   placeImageUrls: {
     contents: string[];
   };
   address?: string;
   phoneNumber?: string;
   starGrade?: number;
-  reviewCount: number;
+  reviewCount?: number;
   category?: string;
   origin: "AVOCADO" | "LEMON" | "MANUAL";
   openingHours?: string;

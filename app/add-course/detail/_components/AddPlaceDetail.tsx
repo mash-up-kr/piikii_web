@@ -53,6 +53,7 @@ const AddPlaceDetail: React.FC = () => {
     autoData,
     setAutoData,
     addPlaceInfo,
+    autoPlaceInfo,
     roomPlacesInfo,
   } = useCourseContext();
 
@@ -61,7 +62,9 @@ const AddPlaceDetail: React.FC = () => {
       onSuccess: (res) => {
         const placeResponse: PlaceResponseDto = res.data;
         setIsClipboardText(false);
-        addPlaceInfo(placeResponse);
+
+        addPlaceInfo(placeResponse); //
+
         router.back();
       },
       onError: (error) => {
@@ -78,7 +81,6 @@ const AddPlaceDetail: React.FC = () => {
         return [...prevChips, index]; // 새로운 칩 선택
       }
     });
-    console.log(selectedChips, "Selected Chips");
   };
 
   const selectedCategory = useMemo(() => {

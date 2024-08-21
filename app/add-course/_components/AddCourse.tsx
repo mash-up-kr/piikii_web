@@ -53,11 +53,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const [selectedChip, setSelectedChip] = useState<number | null | undefined>(
     categoryList && categoryList.length > 0 ? categoryList[0].scheduleId : null
   );
-  const [selectedCategory, setSelectedCategory] = useState<
-    number | null | undefined
-  >(
-    categoryList && categoryList.length > 0 ? categoryList[0].scheduleId : null
-  );
+
   const { data: currentPlacesData } = useGetPlacesQuery({
     variables: { roomUid },
   });
@@ -101,16 +97,17 @@ const AddCourse = ({ data }: AddCourseProps) => {
       return [];
     }
 
-    if (selectedCategory === null) {
+    if (selectedChip === null) {
       const defaultPlaces = currentPlacesData[0]?.places || [];
+
       return defaultPlaces;
     } else {
       const matchingPlaces =
-        currentPlacesData.find((item) => item.scheduleId === selectedCategory)
+        currentPlacesData.find((item) => item.scheduleId === selectedChip)
           ?.places || [];
       return matchingPlaces;
     }
-  }, [currentPlacesData, selectedCategory, roomPlacesInfo]);
+  }, [currentPlacesData, selectedChip, roomPlacesInfo]);
 
   const hasPlaces = useMemo(() => {
     return filteredPlaces.length > 0;
@@ -191,7 +188,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   const handleChipClick = (index: number) => {
     setSelectedChip(index === selectedChip ? null : index);
-    setSelectedCategory(index === selectedCategory ? null : index);
   };
 
   const { onShare } = useShare();
@@ -393,18 +389,18 @@ const AddCourse = ({ data }: AddCourseProps) => {
         categoryList && (
           <PlaceContainer
             placesData={{
-              scheduleId: selectedCategory
-                ? selectedCategory
+              scheduleId: selectedChip
+                ? selectedChip
                 : (categoryList[0]?.scheduleId as number),
               scheduleName:
                 categoryList?.find(
-                  (category) => category.scheduleId === selectedCategory
+                  (category) => category.scheduleId === selectedChip
                 )?.name || categoryList[0]?.name,
               places: filteredPlaces,
             }}
             scheduleInfo={
               categoryList?.find(
-                (category) => category.scheduleId === selectedCategory
+                (category) => category.scheduleId === selectedChip
               )?.type || categoryList[0].type
             }
           />

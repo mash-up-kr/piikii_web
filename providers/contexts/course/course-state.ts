@@ -17,7 +17,10 @@ const useCourseState = () => {
   const [roomPlacesInfo, setRoomPlacesInfo] = useState<
     ScheduleTypeGroupResponse[] | null
   >(null);
-  const [autoPlaceInfo, setAutoPlaceInfo] = useState<PlaceResponseDto[]>([]);
+
+  const [autoPlaceInfo, setAutoPlaceInfo] = useState<PlaceAutoCompleteData[]>(
+    []
+  );
   const [selectedPlaceInfo, setSelectedPlaceInfo] =
     useState<PlaceResponseDto | null>(null);
   const [isClipboardText, setIsClipboardText] = useState(false);
