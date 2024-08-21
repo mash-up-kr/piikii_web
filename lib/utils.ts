@@ -41,7 +41,7 @@ export const iconInfo = [
 ];
 
 export const categoryImageMap: { [key: string]: string } = {
-  FOOD: "/png/default_food.png",
+  DISH: "/png/default_food.png",
   DESSERT: "/png/default_dessert.png",
   ALCOHOL: "/png/default_alcohol.png",
   ARCADE: "/png/default_arcade.png",

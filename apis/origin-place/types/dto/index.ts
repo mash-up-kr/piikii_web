@@ -1,5 +1,6 @@
 export type PlaceAutoCompleteResponse = {
   data: {
+    openingHours?: string | null | undefined;
     name: string;
     url: string;
     placeImageUrls: {

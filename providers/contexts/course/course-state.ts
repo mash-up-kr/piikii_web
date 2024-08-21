@@ -1,5 +1,6 @@
 import { PlaceAutoCompleteResponse } from "@/apis/origin-place/types/dto";
 import {
+  PlaceResponseDto,
   ScheduleTypeGroupResponse,
   SuccessPlaceTypeGroupResponse,
 } from "@/apis/place/types/dto";
@@ -16,9 +17,9 @@ const useCourseState = () => {
   const [roomPlacesInfo, setRoomPlacesInfo] = useState<
     ScheduleTypeGroupResponse[] | null
   >(null);
-  const [autoPlaceInfo, setAutoPlaceInfo] = useState<PlaceAutoCompleteData[]>(
-    []
-  );
+  const [autoPlaceInfo, setAutoPlaceInfo] = useState<PlaceResponseDto[]>([]);
+  const [selectedPlaceInfo, setSelectedPlaceInfo] =
+    useState<PlaceResponseDto | null>(null);
   const [isClipboardText, setIsClipboardText] = useState(false);
   const [autoData, setAutoData] = useState<PlaceAutoCompleteResponse | null>(
     null
@@ -26,14 +27,16 @@ const useCourseState = () => {
 
   return {
     roomInfo,
+    autoPlaceInfo,
     roomPlacesInfo,
     categoryList,
-    autoPlaceInfo,
+    selectedPlaceInfo,
     isClipboardText,
     setRoomInfo,
+    setAutoPlaceInfo,
     setRoomPlacesInfo,
     setCategoryList,
-    setAutoPlaceInfo,
+    setSelectedPlaceInfo,
     setIsClipboardText,
     autoData,
     setAutoData,

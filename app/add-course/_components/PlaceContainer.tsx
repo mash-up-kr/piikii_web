@@ -1,5 +1,14 @@
-import { ScheduleTypeGroupResponse } from "@/apis/place/types/dto";
+"use client";
+import {
+  PlaceResponseDto,
+  ScheduleTypeGroupResponse,
+} from "@/apis/place/types/dto";
 import { CardWithImageSmall } from "@/components/common/Cards/CardWithImageSmall";
+import { categoryImageMap } from "@/lib/utils";
+import { useCourseContext } from "@/providers/course-provider";
+import { roomUidStorage } from "@/utils/web-storage/room-uid";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export interface PlacesContainerProps {
   placesData: ScheduleTypeGroupResponse;
@@ -11,6 +20,15 @@ export const PlaceContainer: React.FC<PlacesContainerProps> = ({
   scheduleInfo,
 }) => {
   const { places } = placesData;
+
+  const router = useRouter();
+  const { selectedPlaceInfo, setSelectedPlaceInfo } = useCourseContext();
+  const handleCardClick = (place: PlaceResponseDto) => {
+    setSelectedPlaceInfo(place);
+    router.push(
+      `add-course/detail/edit?roomUid=${roomUidStorage?.get()?.roomUid}`
+    );
+  };
 
   return (
     <div className="flex flex-wrap items-center justify-start gap-x-[12px] mx-[20px] gap-y-[20px] my-[20px]">
@@ -24,6 +42,7 @@ export const PlaceContainer: React.FC<PlacesContainerProps> = ({
             reviewCount={place?.reviewCount}
             images={place?.placeImageUrls?.contents}
             category={scheduleInfo}
+            onButtonClick={() => handleCardClick(place)}
           />
         </div>
       ))}

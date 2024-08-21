@@ -1,10 +1,10 @@
 import React, { Suspense } from "react";
-import PlaceDetail from "./_components/PlaceDetail";
+import AddPlaceDetail from "./_components/AddPlaceDetail";
 
 const AddDetailPage = () => {
   return (
     <Suspense>
-      <PlaceDetail />
+      <AddPlaceDetail />
     </Suspense>
   );
 };

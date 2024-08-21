@@ -1,30 +1,36 @@
 "use client";
+import { PlaceResponseDto } from "@/apis/place/types/dto";
+import { LabelWithValue } from "@/app/add-course/_components/LabelWithValue";
+import { CommonPlaceDetailFormType } from "@/app/add-course/_hooks/useAddPlaceDetailForm";
 import { Card, CardHeader } from "@/components/ui/card";
 import { useCourseContext } from "@/providers/course-provider";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { UseFormRegister } from "react-hook-form";
 
-export const CardWithAutoCompleteData = () => {
-  const router = useRouter();
-  const { autoPlaceInfo } = useCourseContext();
+export interface CardWithAutoCompleteDataProps {
+  register: UseFormRegister<CommonPlaceDetailFormType>;
+}
+
+export const CardWithAutoCompleteData = ({
+  register,
+}: CardWithAutoCompleteDataProps) => {
+  const { isClipboardText, autoData } = useCourseContext();
+  console.log(autoData, "card=======");
 
   return (
-    <div className="flex flex-col w-full gap-y-[8px]">
-      <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
-        {autoPlaceInfo[0]?.category}
-      </p>
+    <div className="flex flex-col w-full gap-y-[8px] mt-[32px]">
       <Card className=" border-none shadow-none">
-        <div className="flex flex-col w-full h-[139px]">
+        <div className="flex flex-col w-full">
           <div className="flex gap-x-[8px]">
             <CardHeader className="w-full">
               <div className="flex w-full gap-x-[8px] items-center h-[31px] text-semibold-22">
-                <div className="flex items-center">
-                  {autoPlaceInfo[0]?.name}
-                </div>
+                <div className="flex items-center">{autoData?.data.name}</div>
                 <div className="flex gap-x-[4px] items-center">
                   <div className="flex w-[16px] h-[16px]">
                     <Image
-                      src="/png/naver.png"
+                      src="/svg/naver-icon.svg"
                       alt="naver"
                       width={16}
                       height={16}
@@ -33,15 +39,14 @@ export const CardWithAutoCompleteData = () => {
                     />
                   </div>
                   <div className="text-[14px]">
-                    {autoPlaceInfo[0]?.starGrade} (
-                    {autoPlaceInfo[0]?.reviewCount})
+                    {autoData?.data?.starGrade} ({autoData?.data?.reviewCount})
                   </div>
                 </div>
               </div>
             </CardHeader>
           </div>
           <div className="flex flex-row w-full gap-x-[9px] my-[16px]">
-            {autoPlaceInfo[0]?.placeImageUrls.contents.map((src, index) => (
+            {autoData?.data?.placeImageUrls.contents.map((src, index) => (
               <Image
                 key={index}
                 src={src}
@@ -55,10 +60,10 @@ export const CardWithAutoCompleteData = () => {
           </div>
         </div>
       </Card>
-      {autoPlaceInfo[0]?.url ? (
+      {autoData && (
         <button
-          className="flex flex-row mt-[32px] items-center justify-center w-full h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
-          onClick={() => router.push(autoPlaceInfo[0]?.url)}
+          className="flex flex-row items-center justify-center w-full h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
+          // onClick={() => router.push(selectedPlaceInfo.url)}
         >
           <div className="w-full h-[18px] opacity-80 text-[12px] font-semibold">
             링크 바로가기
@@ -73,7 +78,70 @@ export const CardWithAutoCompleteData = () => {
             unoptimized
           />
         </button>
-      ) : null}
+      )}
+      {isClipboardText ? (
+        <div className="flex flex-col items-start justify-center mt-[32px]">
+          <div className="flex flex-col gap-y-[28px]">
+            <LabelWithValue
+              type="openingHours"
+              iconSrc="/svg/ic_clock_mono.svg"
+              {...register("openingHours")}
+            />
+            <LabelWithValue
+              type="location"
+              iconSrc="/svg/ic_pin_location_mono.svg"
+              {...register("address")}
+            />
+            <LabelWithValue
+              type="link"
+              iconSrc="/svg/ic_call_mono.svg"
+              {...register("phoneNumber")}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-start justify-center mt-[32px]">
+          <div className="flex flex-row w-full items-center justify-between mb-[12px] cursor-pointer">
+            <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+              영업정보
+            </p>
+          </div>
+          <div className="flex w-[335px] p-5 flex-col justify-end items-start gap-5 rounded-lg border border-[#F0F1F5] bg-[#F9FAFB]">
+            <LabelWithValue
+              type="openingHours"
+              iconSrc="/svg/ic_clock_mono.svg"
+              placeholder="영업 시간을 남겨주세요"
+              {...register("openingHours")}
+            />
+            <Image
+              src={"/svg/ic_horizon.svg"}
+              alt="horizon"
+              width={295}
+              height={0}
+              unoptimized
+            />
+            <LabelWithValue
+              type="location"
+              iconSrc="/svg/ic_pin_location_mono.svg"
+              placeholder="주소를 남겨주세요"
+              {...register("address")}
+            />
+            <Image
+              src={"/svg/ic_horizon.svg"}
+              alt="horizon"
+              width={295}
+              height={0}
+              unoptimized
+            />
+            <LabelWithValue
+              type="link"
+              iconSrc="/svg/ic_call_mono.svg"
+              placeholder="전화번호를 남겨주세요"
+              {...register("phoneNumber")}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

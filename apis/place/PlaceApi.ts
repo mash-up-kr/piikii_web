@@ -37,14 +37,24 @@ class PlaceApi {
       placeImages: string[];
     };
   }): Promise<ResponseForm<PlaceResponseDto>> => {
+    //SuccessPlaceTypeGroupResponse[]
+    const formData = new FormData();
+
+    formData.append("addPlaceRequest", JSON.stringify(payload.addPlaceRequest));
+
+    payload.placeImages.forEach((image) => {
+      formData.append("placeImages", image);
+    });
+
     const { data } = await this.axios({
       method: "POST",
       url: `/rooms/${roomUid}/places`,
-      data: payload,
+      data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
+
     return data;
   };
 
@@ -68,7 +78,7 @@ class PlaceApi {
     payload,
   }: {
     roomUid: string;
-    placeId: string;
+    placeId: number;
     payload: {
       modifyPlaceRequest: ModifyPlaceRequestDto;
       newPlaceImages: string[];

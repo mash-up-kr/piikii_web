@@ -32,7 +32,9 @@ const EditCourse = () => {
               width={24}
               height={24}
             />
-            <p className="text-semibold-15 text-neutral-700">순서 편집하기</p>
+            <p className="flex items-center text-semibold-15 text-neutral-700">
+              순서 편집하기
+            </p>
           </div>
         }
       />
