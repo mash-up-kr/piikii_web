@@ -3,6 +3,7 @@ import instance from "../instance";
 import { ResponseForm } from "../common/model";
 import {
   AddPlaceRequestDto,
+  CreatePlacePayloadDto,
   ModifyPlaceRequestDto,
   PlaceResponseDto,
   ScheduleTypeGroupResponse,
@@ -32,19 +33,13 @@ class PlaceApi {
     payload,
   }: {
     roomUid: string;
-    payload: {
-      addPlaceRequest: AddPlaceRequestDto;
-      placeImages: string[];
-    };
+    payload: CreatePlacePayloadDto;
   }): Promise<ResponseForm<PlaceResponseDto>> => {
-    //SuccessPlaceTypeGroupResponse[]
     const formData = new FormData();
 
     formData.append("addPlaceRequest", JSON.stringify(payload.addPlaceRequest));
 
-    payload.placeImages.forEach((image) => {
-      formData.append("placeImages", image);
-    });
+    formData.append("placeImages", JSON.stringify(payload?.placeImages));
 
     const { data } = await this.axios({
       method: "POST",

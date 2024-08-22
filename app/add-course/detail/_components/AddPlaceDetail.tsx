@@ -124,12 +124,13 @@ const AddPlaceDetail: React.FC = () => {
           (image) => image.id === category!.type
         );
 
-        console.log(matchedImage, "=====matched?");
-        return `${process.env.NEXT_PUBLIC_DNS_URL}/png/${matchedImage?.src}`;
+        const res = `${process.env.NEXT_PUBLIC_DNS_URL}/png/${matchedImage?.src}`;
+        console.log(res, "=====matched?");
+        return res;
       })
       .filter((src) => src !== null);
-
-    const payload: AddPlaceRequestDto = {
+    console.log("Default Images to be used:", defaultImages);
+    const payloadForRequest: AddPlaceRequestDto = {
       scheduleIds: scheduleIds,
       name: autoData && autoData.data ? autoData.data.name : values.name,
       url: autoData && autoData.data ? autoData.data.url : values.url || "-",
@@ -154,15 +155,19 @@ const AddPlaceDetail: React.FC = () => {
       longitude: 0,
       latitude: 0,
     };
-    console.log("payload:", payload);
+
+    const formImages = values.pictures
+      ? values.pictures.filter((file): file is string => file !== null)
+      : [];
+
+    const payload = {
+      addPlaceRequest: payloadForRequest,
+      placeImages: formImages.length > 0 ? formImages : defaultImages,
+    };
+
     createPlaceMutate({
       roomUid,
-      payload: {
-        addPlaceRequest: payload,
-        placeImages: values.pictures
-          ? values.pictures.filter((file): file is string => file !== null)
-          : defaultImages,
-      },
+      payload,
     });
   };
 
