@@ -2,7 +2,7 @@
  * API Response
  */
 export interface PlaceResponseDto {
-  id?: number;
+  id: number;
   roomUid: string;
   scheduleId: number;
   name: string;

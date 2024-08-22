@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export interface InputProps
@@ -51,7 +52,7 @@ const InputWithImage = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="flex gap-x-[9px] flex-wrap">
           {uploadedFiles.map((file, index) => (
             <div key={index} className="relative w-[80px] h-[80px]">
-              <img
+              <Image
                 src={file}
                 alt={`${file}`}
                 className="object-cover w-full h-full rounded"
