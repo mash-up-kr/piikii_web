@@ -7,12 +7,6 @@ import { Toaster } from "@/components/common/Toast/toaster";
 import LandingPage from "./landing";
 import { CourseProvider } from "@/providers/course-provider";
 
-const Pretendard = localFont({
-  src: "../static/fonts/PretendardVariable.woff2",
-  display: "swap",
-  variable: "--font-pretendard",
-});
-
 export const metadata: Metadata = {
   title: "함께 즐기는 모임의 시작, 피키",
   description: "함께 즐기는 모임의 시작, 피키",
@@ -26,9 +20,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <link rel="icon" type="image/x-icon" href="./favicon.ico" />
-      <body
-        className={`${Pretendard.className} w-screen flex justify-center lg:justify-end bg-landing-background`}
-      >
+      <body className="w-screen flex justify-center lg:justify-end bg-landing-background">
         <ClientProvider>
           <div className="w-full justify-center lg:block hidden">
             <LandingPage />
