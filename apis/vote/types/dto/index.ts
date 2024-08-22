@@ -25,6 +25,7 @@ export interface VotePlaceResponseDto {
   countOfAgree: number;
   countOfDisagree: number;
   countOfVote: number;
+  openingHours?: string;
   voteResult?: VoteCastResultDto;
 }
 

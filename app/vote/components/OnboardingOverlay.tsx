@@ -10,7 +10,12 @@ interface Props {
 export default function OnboardingOverlay({ onStartVote }: Props) {
   const router = useRouter();
   return (
-    <div className="fixed top-0 h-dvh w-[375px] backdrop-blur-2xl bg-black bg-opacity-50 z-[1000] flex flex-col justify-center items-center">
+    <div
+      className="fixed top-0 h-dvh w-[375px] backdrop-blur-2xl bg-black bg-opacity-50 z-[1000] flex flex-col justify-center items-center"
+      style={{
+        WebkitBackdropFilter: "blur(40px)",
+      }}
+    >
       <div className="absolute right-[20px] top-[53px] rounded-[24px] bg-secondary-like-700 py-[10px] w-[286px] text-medium-14 text-secondary-like-100 text-center">
         모두 이해했다면 눌러서 투표를 시작해주세요
       </div>
@@ -50,6 +55,7 @@ export default function OnboardingOverlay({ onStartVote }: Props) {
         width={297}
         height={193}
         alt="vote-onboarding-center"
+        unoptimized
       />
 
       <Image
@@ -58,6 +64,7 @@ export default function OnboardingOverlay({ onStartVote }: Props) {
         height={109}
         alt="vote-onboarding-bottom"
         className="absolute bottom-0"
+        unoptimized
       />
     </div>
   );

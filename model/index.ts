@@ -23,6 +23,7 @@ export interface CardInfoProps {
   voteCount?: number;
   totalVoteCount?: number;
   images: string[];
+  openingHours?: string;
   info?: { label: string; value: string }[];
   onButtonClick?: () => void;
   noShadow?: boolean;

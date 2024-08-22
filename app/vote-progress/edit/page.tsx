@@ -1,5 +1,6 @@
 "use client";
 
+import { PLACE_API_QUERY_KEY } from "@/apis/place/PlaceApi.query";
 import {
   VoteCastResultDto,
   VoteResultByScheduleResponseDto,
@@ -8,16 +9,15 @@ import { useCastVote } from "@/apis/vote/VoteApi.mutation";
 import {
   useGetUserVoteResultQuery,
   useGetVotesQuery,
+  VOTE_API_QUERY_KEY,
 } from "@/apis/vote/VoteApi.query";
-import { ColumnsType } from "@/app/edit-course/_components/DragAndDropArea";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
 import { useToast } from "@/components/common/Toast/use-toast";
 import EditOptionArea from "@/components/common/Vote/EditOptionArea";
+import { getQueryClient } from "@/components/providers/getQueryClient";
 import useRoomUid from "@/hooks/useRoomUid";
 import useUserUid from "@/hooks/useUserUid";
-import { CardInfoProps } from "@/model";
-import { set } from "lodash-es";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -29,6 +29,8 @@ export default function VoteEditPage() {
   const roomUid = useRoomUid();
   const userUid = useUserUid();
   const toast = useToast();
+
+  const queryClient = getQueryClient();
 
   const {
     data: voteData,
@@ -55,11 +57,19 @@ export default function VoteEditPage() {
 
   const { mutate: castVote, isPending } = useCastVote({
     options: {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         console.log("onSuccess", data);
         toast.toast({
           title: "투표가 수정되었습니다.",
           duration: 2000,
+        });
+
+        await queryClient.invalidateQueries({
+          queryKey: VOTE_API_QUERY_KEY.GET_VOTES({ roomUid: roomUid ?? "" }),
+        });
+
+        await queryClient.invalidateQueries({
+          queryKey: PLACE_API_QUERY_KEY.GET_PLACES({ roomUid: roomUid ?? "" }),
         });
 
         router.back();

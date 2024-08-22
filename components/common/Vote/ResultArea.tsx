@@ -21,7 +21,7 @@ const ResultArea = ({
   };
 
   return (
-    <div className="flex flex-col w-[335px] h-[631px] mx-[20px] gap-y-[26px]">
+    <div className="flex flex-col w-[335px] mx-[20px] gap-y-[26px] pb-[80px]">
       <div className="flex flex-row w-[252px] h-[37px] gap-x-[8px]">
         {schedules.map((item) => (
           <CategoryChip
@@ -84,7 +84,7 @@ const ResultArea = ({
                 origin={placeInfo.origin}
                 info={[
                   { label: "주소", value: placeInfo.address ?? "-" },
-                  { label: "영업시간", value: "-" },
+                  { label: "영업시간", value: placeInfo.openingHours ?? "-" },
                   { label: "메모", value: placeInfo.memo ?? "-" },
                 ]}
                 place={placeInfo.name}

@@ -70,7 +70,6 @@
   * {
     @apply border-border;
     overscroll-behavior: none;
-    -webkit-font-smoothing: antialiased;
   }
   body {
     @apply bg-background text-foreground;

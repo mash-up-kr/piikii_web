@@ -76,10 +76,12 @@ const VoteProgressPage = () => {
   }, [votedSchedules]);
 
   useEffect(() => {
+    router.prefetch("/vote-finish");
+
     if (votedSchedules) {
       setSelectedSchedule(votedSchedules[0]);
     }
-  }, [votedSchedules]);
+  }, [router, votedSchedules]);
 
   if (
     !isClient ||
@@ -172,7 +174,7 @@ const VoteProgressPage = () => {
           </div>
         </div>
 
-        <div className="fixed w-[375px] bottom-0 px-[20px] pt-[10px] pb-[20px] flex justify-between items-center gap-[7px] bg-white">
+        <div className="z-50 fixed w-[375px] bottom-0 px-[20px] pt-[10px] pb-[20px] flex justify-between items-center gap-[7px] bg-white">
           <Button
             className="rounded-[14px] bg-primary-100 h-[56px] text-primary-700 hover:bg-primary-200"
             onClick={() => router.push("/vote-progress/edit")}
