@@ -76,13 +76,6 @@
   }
 }
 
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard-dynamic-subset.css");
-
-html,
-body {
-  font-family: "Pretendard", sans-serif;
-}
-
 .disable-scrollbar {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE 10+ */
