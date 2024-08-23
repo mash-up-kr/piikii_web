@@ -307,11 +307,12 @@ const AddCourse = ({ data }: AddCourseProps) => {
           />
           <p
             className="w-full text-[14px] font-semibold text-[#B5B9C6]"
-            onClick={() =>
+            onClick={() => {
+              setAutoData(null);
               router.push(
                 `add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`
-              )
-            }
+              );
+            }}
           >
             직접 추가
           </p>

@@ -8,13 +8,10 @@ import { CardWithAutoCompleteData } from "@/components/common/Cards/CardWithAuto
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCourseContext } from "@/providers/course-provider";
 import {
-  AddPlaceRequestDto,
   ModifyPlaceRequestDto,
   PlaceResponseDto,
 } from "@/apis/place/types/dto";
 import { useEffect, useState } from "react";
-import placeApi from "@/apis/place/PlaceApi";
-import { categoryImageMap } from "@/lib/utils";
 import { FormProvider } from "react-hook-form";
 import { useAddPlaceDetailForm } from "../../_hooks/useAddPlaceDetailForm";
 import { InputWithImage } from "../../_components/InputWithImage";
