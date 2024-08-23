@@ -13,16 +13,18 @@ import createUUID from "@/utils/createUid";
 import { userUidStorage } from "@/utils/web-storage/user-uid";
 import dayjs from "dayjs";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo } from "react";
 import { useIsClient } from "usehooks-ts";
 import { setCookie } from "../actions";
+import { useGetVoteStatusQuery } from "@/apis/vote/VoteApi.query";
 
 export default function VoteStart() {
   const router = useRouter();
   const toast = useToast();
   const isClient = useIsClient();
   const roomUid = useRoomUid();
+
   const { onShare } = useShare();
 
   const {
@@ -45,6 +47,14 @@ export default function VoteStart() {
     options: { enabled: !!roomUid },
   });
 
+  const { error: voteStatusError, isError: isVoteStatusError } =
+    useGetVoteStatusQuery({
+      variables: {
+        roomUid: roomUid ?? "",
+      },
+      options: { enabled: !!roomUid, retry: 1 },
+    });
+
   const totalPlaceCount = useMemo(() => {
     if (placeData) {
       return placeData?.reduce((acc, cur) => acc + cur.places.length, 0);
@@ -52,6 +62,16 @@ export default function VoteStart() {
   }, [placeData]);
 
   const handleStartVote = () => {
+    if (isVoteStatusError) {
+      toast.toast({
+        title:
+          voteStatusError?.response?.data.cause ??
+          "투표 상태를 불러올 수 없습니다.",
+        duration: 1000,
+      });
+      return;
+    }
+
     if (!roomUid || !placeData) {
       toast.toast({
         variants: "warning",
@@ -80,7 +100,7 @@ export default function VoteStart() {
     }
   }, []);
 
-  if (isPlaceDataLoading || isRoomDataLoading || isPlaceDataError || !isClient)
+  if (isPlaceDataLoading || isRoomDataLoading || !isClient)
     return (
       <Suspense>
         <FullScreenLoader />

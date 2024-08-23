@@ -35,12 +35,13 @@ const ResultArea = ({
         {selectedSchedule.places.map((placeInfo, index) => (
           <div key={index}>
             <div
-              className={`relative flex flex-row rounded-[12px] ${
-                index === 0 ? "bg-[#FFF7F2]" : "bg-[#F9FAFB]"
-              } w-[335px] h-[64px] items-center justify-between p-[20px]`}
+              className={cn(
+                `relative flex flex-row rounded-[12px] w-[335px] h-[64px] items-center justify-between p-[20px]`,
+                index === 0 ? "bg-primary-50" : "bg-neutral-100"
+              )}
             >
               <div className="relative z-10 flex flex-row items-center justify-start gap-x-[8px]">
-                <span className="w-[20px] h-[20px] items-center bg-black text-[12px] font-semibold text-white flex justify-center rounded-[64px]">
+                <span className="w-[20px] h-[20px] items-center bg-black text-semibold-12 text-white flex justify-center rounded-[64px]">
                   {index + 1}
                 </span>
                 <span className="text-bold-16 text-secondary-700">
@@ -90,6 +91,7 @@ const ResultArea = ({
                 link={placeInfo.url}
                 rating={Number(placeInfo.starGrade.toFixed(2)) ?? "0"}
                 images={placeInfo.thumbnailLinks.contents || []}
+                cardClassName="mt-[8px]"
               />
             )}
           </div>

@@ -5,6 +5,7 @@ import {
   useGetUserVoteResultQuery,
 } from "@/apis/vote/VoteApi.query";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
+import { toast, useToast } from "@/components/common/Toast/use-toast";
 import useRoomUid from "@/hooks/useRoomUid";
 import useUserUid from "@/hooks/useUserUid";
 import { useRouter } from "next/navigation";
@@ -19,11 +20,13 @@ export default function VotePageGuard({
   const roomUid = useRoomUid();
   const userUid = useUserUid();
   const router = useRouter();
+  const toast = useToast();
 
   const {
     data: voteStatusData,
     isLoading: isVoteStatusLoading,
     isFetching: isVoteStatusFetching,
+    isError: isVoteStatusError,
   } = useGetVoteStatusQuery({
     variables: {
       roomUid: roomUid ?? "",
@@ -35,6 +38,7 @@ export default function VotePageGuard({
     data: userVoteResultData,
     isLoading: isUserVoteResultDataLoading,
     isFetching: isUserVoteResultDataFetching,
+    isError: isUserVoteResultError,
   } = useGetUserVoteResultQuery({
     variables: {
       roomUid: roomUid ?? "",
@@ -46,6 +50,10 @@ export default function VotePageGuard({
   useEffect(() => {
     if (isVoteStatusLoading || isUserVoteResultDataLoading) return;
 
+    if (isVoteStatusError || isUserVoteResultError) {
+      return router.replace(`/vote-start`);
+    }
+
     if (voteStatusData && voteStatusData.data.voteFinished) {
       return router.replace("/vote-finish");
     }
@@ -55,8 +63,11 @@ export default function VotePageGuard({
     }
   }, [
     isUserVoteResultDataLoading,
+    isUserVoteResultError,
+    isVoteStatusError,
     isVoteStatusLoading,
     router,
+    toast,
     userVoteResultData,
     voteStatusData,
   ]);
@@ -66,6 +77,8 @@ export default function VotePageGuard({
     isUserVoteResultDataLoading ||
     isVoteStatusFetching ||
     isUserVoteResultDataFetching ||
+    isVoteStatusError ||
+    isUserVoteResultError ||
     (voteStatusData &&
       voteStatusData.data.voteFinished &&
       userVoteResultData &&

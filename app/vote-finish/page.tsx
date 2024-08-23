@@ -33,7 +33,7 @@ const VoteFinishPage = () => {
   return (
     <div>
       <NavigationBar
-        className="pr-[24px] pl-[40px]"
+        className="pr-[24px] pl-[40px] z-[100]"
         title="코스 추천"
         rightSlot={
           <button

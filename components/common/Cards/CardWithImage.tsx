@@ -25,7 +25,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
   return (
     <Card
       className={cn(
-        "flex flex-col items-center w-[335px] max-h-[372px] py-[24px] rounded-xl border-0",
+        "flex flex-col items-center w-[335px] max-h-[372px] py-[24px] rounded-xl border-0 bg-primary-50",
         noShadow && "shadow-none",
         cardClassName
       )}
@@ -81,7 +81,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
           </div>
         ))}
         <button
-          className="flex flex-row mt-[12px] items-center justify-center w-[295px] h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
+          className="flex flex-row mt-[12px] items-center justify-center w-[295px] h-[42px] bg-primary-150 py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
           onClick={() => (link ? window.open(link, "_blank") : null)}
         >
           <div className="h-[18px] opacity-80 text-[12px] font-semibold">
