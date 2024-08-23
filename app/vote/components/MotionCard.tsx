@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { PlaceOption, SwipeDirection } from "../model";
+import { ColorTheme, PlaceOption, SwipeDirection } from "../model";
 import Image from "next/image";
 import { Z_INDEX } from "@/lib/constants";
 import CardWithImage from "@/components/common/Cards/CardWithImage";
@@ -15,6 +15,7 @@ interface Props {
   data: PlaceOption | null;
   onSwipeCard: (direction: SwipeDirection) => void;
   hideShadow: boolean;
+  colorTheme: ColorTheme;
 }
 
 const variants = {
@@ -34,6 +35,7 @@ export default function MotionCard({
   onSwipeCard,
   data,
   hideShadow,
+  colorTheme,
 }: Props) {
   const formattedStarGrade = Number(data?.starGrade?.toFixed(2));
   const x = useMotionValue(0);
@@ -105,6 +107,7 @@ export default function MotionCard({
           y,
           rotate,
           zIndex: Z_INDEX.MOTION_CARD - index,
+          boxShadow: colorTheme.style.cardBoxShadow,
         }}
         whileHover={{ cursor: "grab" }}
         whileTap={{ cursor: "grabbing" }}
@@ -122,6 +125,11 @@ export default function MotionCard({
             { label: "메모", value: data.memo ?? "-" },
           ]}
           noShadow={hideShadow}
+          cardClassName="!bg-neutral-0"
+          cardButtonClassName="!bg-neutral-100"
+          customStyle={{
+            position: "relative",
+          }}
         />
 
         <motion.div

@@ -70,7 +70,7 @@ const VoteResult = () => {
   return (
     <div className="relative">
       <NavigationBar
-        className="pl-[12px]"
+        className="pl-[12px] z-[100]"
         leftSlot={
           <div className="flex justify-start items-center">
             <button className="flex justify-center items-center">

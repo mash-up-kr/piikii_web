@@ -122,7 +122,10 @@ export default function CourseItem({
               alt="bubble-polygon"
             />
             <span
-              className={cn("px-[6px] py-[4px] rounded-[6px]", bubbleColor)}
+              className={cn(
+                "px-[6px] py-[4px] rounded-[6px] border-transparent ml-[-1px]",
+                bubbleColor
+              )}
             >
               {distanceToNextLocation}m
             </span>

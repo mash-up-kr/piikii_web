@@ -5,6 +5,7 @@ import {
   useGetUserVoteResultQuery,
 } from "@/apis/vote/VoteApi.query";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
+import { toast, useToast } from "@/components/common/Toast/use-toast";
 import useRoomUid from "@/hooks/useRoomUid";
 import useUserUid from "@/hooks/useUserUid";
 import { useRouter } from "next/navigation";
@@ -19,22 +20,25 @@ export default function VotePageGuard({
   const roomUid = useRoomUid();
   const userUid = useUserUid();
   const router = useRouter();
+  const toast = useToast();
 
   const {
     data: voteStatusData,
     isLoading: isVoteStatusLoading,
     isFetching: isVoteStatusFetching,
+    isError: isVoteStatusError,
   } = useGetVoteStatusQuery({
     variables: {
       roomUid: roomUid ?? "",
     },
-    options: { enabled: !!roomUid },
+    options: { enabled: !!roomUid, retry: false },
   });
 
   const {
     data: userVoteResultData,
     isLoading: isUserVoteResultDataLoading,
     isFetching: isUserVoteResultDataFetching,
+    isError: isUserVoteResultError,
   } = useGetUserVoteResultQuery({
     variables: {
       roomUid: roomUid ?? "",
@@ -55,8 +59,11 @@ export default function VotePageGuard({
     }
   }, [
     isUserVoteResultDataLoading,
+    isUserVoteResultError,
+    isVoteStatusError,
     isVoteStatusLoading,
     router,
+    toast,
     userVoteResultData,
     voteStatusData,
   ]);
@@ -66,6 +73,7 @@ export default function VotePageGuard({
     isUserVoteResultDataLoading ||
     isVoteStatusFetching ||
     isUserVoteResultDataFetching ||
+    isUserVoteResultError ||
     (voteStatusData &&
       voteStatusData.data.voteFinished &&
       userVoteResultData &&

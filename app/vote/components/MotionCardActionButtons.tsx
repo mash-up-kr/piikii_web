@@ -23,10 +23,13 @@ export default function MotionCardActionButtons({
   onClickButton,
 }: Props) {
   return (
-    <div className="flex justify-center items-center gap-x-[8px]">
+    <div
+      className="flex justify-center items-center gap-x-[8px] relative z-1000"
+      style={{}}
+    >
       <Button
         className={cn(
-          "hover:bg-secondary-dislike-100 active:bg-secondary-dislike-200",
+          "hover:bg-secondary-dislike-100 active:bg-secondary-dislike-200 relative z-[1000]",
           ICON_BUTTON_CLASSNAME
         )}
         style={{
@@ -40,7 +43,7 @@ export default function MotionCardActionButtons({
       {voteType === VoteType.VOTE_PENDING && (
         <Button
           className={cn(
-            "text-black-16 hover:bg-neutral-500 active:bg-neutral-600 group",
+            "text-black-16 hover:bg-neutral-300  group relative z-[1001]",
             ICON_BUTTON_CLASSNAME
           )}
           style={{
@@ -48,7 +51,7 @@ export default function MotionCardActionButtons({
           }}
           onClick={() => onClickButton(SwipeDirection.UP)}
         >
-          <span className="text-neutral-600 group-hover:text-neutral-0">
+          <span className="text-neutral-900 text-opacity-70 text-black-16">
             보류
           </span>
         </Button>
@@ -56,7 +59,7 @@ export default function MotionCardActionButtons({
 
       <Button
         className={cn(
-          " hover:bg-secondary-like-100 active:bg-secondary-like-200",
+          " hover:bg-secondary-like-100 active:bg-secondary-like-200 relative z-[1002]",
           ICON_BUTTON_CLASSNAME
         )}
         style={{
