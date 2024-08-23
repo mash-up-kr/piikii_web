@@ -32,7 +32,7 @@ const EditOptionArea = ({
             origin={placeInfo.origin}
             place={placeInfo.name}
             link={placeInfo.url}
-            rating={placeInfo.starGrade.toString() ?? "0"}
+            rating={placeInfo.starGrade ?? "0"}
             images={placeInfo.thumbnailLinks.contents || []}
             voteCount={placeInfo.countOfAgree}
             onButtonClick={() =>

@@ -79,9 +79,10 @@ const EditPlaceDetail: React.FC = () => {
     const newImages = values.pictures || []; // 사용자가 새로 추가한 이미지들
     const currentImages = selectedPlaceInfo.placeImageUrls.contents || []; // 기존 이미지들
 
-    const deleteTargetUrls = currentImages.filter(
-      (image) => typeof image === "string" && !newImages.includes(image)
-    );
+    const deleteTargetUrls = currentImages;
+    // .filter(
+    //   (image) => typeof image === "string" && !newImages.includes(image)
+    // );
 
     const newPlaceImages =
       values.pictures?.map((file: File | string) =>
@@ -205,7 +206,7 @@ const EditPlaceDetail: React.FC = () => {
                   id="picture"
                   type="file"
                   onFilesChange={(files) => {
-                    methods.setValue("pictures", files);
+                    // methods.setValue("pictures", files);
                   }}
                   multiple
                 />
