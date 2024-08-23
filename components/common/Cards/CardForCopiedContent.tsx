@@ -34,26 +34,14 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
   origin,
 }) => {
   const router = useRouter();
-  // const { addPlaceInfo } = useCourseContext();
-
+  const formattedStarGrade = starGrade?.toFixed(2);
   const onButtonClick = () => {
-    // addPlaceInfo({
-    //   name,
-    //   url,
-    //   placeImageUrls,
-    //   address,
-    //   phoneNumber,
-    //   starGrade,
-    //   reviewCount,
-    //   origin,
-    // });
-
     router.push(`add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`);
   };
 
   return (
     <Card
-      className={`group flex flex-col w-[335px] h-[104px] items-start justify-center cursor-pointer p-[12px] rounded-[16px] bg-[#FFF7F2] hover:bg-[#FFF1EB] active:bg-[#FFEAE1]  text-[#FF601C] hover:text-[#DD4808] active:text-[#BF3900]`}
+      className={`shadow-none group flex flex-col w-[335px] h-[104px] items-start justify-center cursor-pointer p-[12px] rounded-[16px] bg-[#FFF7F2] hover:bg-[#FFF1EB] active:bg-[#FFEAE1]  text-[#FF601C] hover:text-[#DD4808] active:text-[#BF3900] border border-[#FFEAE1]`}
     >
       <CardContent className="flex flex-col w-[295px] h-[80px]">
         <div className="flex flex-row w-full h-full">
@@ -84,12 +72,16 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
                     unoptimized
                   />
                 </div>
-                <span className="w-[24px] h-[18px] text-[12px] text-[#363A3C] font-semibold">
-                  {starGrade}
-                </span>
-                <span className="w-[31px] h-[18px] text-[12px] text-[#363A3C] opacity-50">
-                  ({reviewCount})
-                </span>
+                {starGrade && (
+                  <span className="w-[24px] h-[18px] text-[12px] text-[#363A3C] font-semibold">
+                    {formattedStarGrade}
+                  </span>
+                )}
+                {reviewCount && (
+                  <span className="w-[31px] h-[18px] text-[12px] text-[#363A3C] opacity-50">
+                    ({reviewCount})
+                  </span>
+                )}
               </div>
             </div>
             <button

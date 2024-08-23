@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["search.pstatic.net"],
+    domains: ["search.pstatic.net", "t1.daumcdn.net"],
     remotePatterns: [
       {
         protocol: "https",
@@ -9,8 +9,8 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "kr.object.ncloudstorage.com"
-      }
+        hostname: "kr.object.ncloudstorage.com",
+      },
     ],
   },
 };

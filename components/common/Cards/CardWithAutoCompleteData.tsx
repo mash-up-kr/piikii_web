@@ -6,7 +6,7 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { useCourseContext } from "@/providers/course-provider";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+
 import { UseFormRegister } from "react-hook-form";
 
 export interface CardWithAutoCompleteDataProps {
@@ -17,7 +17,9 @@ export const CardWithAutoCompleteData = ({
   register,
 }: CardWithAutoCompleteDataProps) => {
   const { isClipboardText, autoData } = useCourseContext();
-  console.log(autoData, "card=======");
+  const formattedStarGrade = autoData?.data?.starGrade?.toFixed(2);
+  const router = useRouter();
+  const placeUrl = autoData?.data?.url ?? "";
 
   return (
     <div className="flex flex-col w-full gap-y-[8px] mt-[32px]">
@@ -39,31 +41,31 @@ export const CardWithAutoCompleteData = ({
                     />
                   </div>
                   <div className="text-[14px]">
-                    {autoData?.data?.starGrade} ({autoData?.data?.reviewCount})
+                    {formattedStarGrade} ({autoData?.data?.reviewCount})
                   </div>
                 </div>
               </div>
             </CardHeader>
           </div>
-          <div className="flex flex-row w-full gap-x-[9px] my-[16px]">
+          <div className="flex flex-row w-full h-[100px] gap-x-[9px] my-[16px]">
             {autoData?.data?.placeImageUrls.contents.map((src, index) => (
               <Image
                 key={index}
                 src={src}
                 className="rounded-lg"
                 alt={`food${index + 1}`}
-                width={92}
-                height={92}
+                width={100}
+                height={100}
                 priority
               />
             ))}
           </div>
         </div>
       </Card>
-      {autoData && (
+      {placeUrl && (
         <button
           className="flex flex-row items-center justify-center w-full h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
-          // onClick={() => router.push(selectedPlaceInfo.url)}
+          onClick={() => router.push(placeUrl)}
         >
           <div className="w-full h-[18px] opacity-80 text-[12px] font-semibold">
             링크 바로가기
@@ -81,7 +83,7 @@ export const CardWithAutoCompleteData = ({
       )}
       {isClipboardText ? (
         <div className="flex flex-col items-start justify-center mt-[32px]">
-          <div className="flex flex-col gap-y-[28px]">
+          <div className="flex flex-col w-full gap-y-[28px]">
             <LabelWithValue
               type="openingHours"
               iconSrc="/svg/ic_clock_mono.svg"

@@ -35,7 +35,7 @@ export function SheetWithCourse({ handleItemClick }: SheetWithCourseProps) {
           </button>
         </SheetTrigger>
         <SheetContent
-          className="flex flex-col items-start rounded-t-[16px] w-[375px]"
+          className="flex flex-col  items-start rounded-t-[16px] w-[375px] xl:mr-[218px]"
           side={"bottom"}
         >
           <div className="w-full flex justify-center">

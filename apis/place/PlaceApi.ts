@@ -39,7 +39,14 @@ class PlaceApi {
 
     formData.append("addPlaceRequest", JSON.stringify(payload.addPlaceRequest));
 
-    formData.append("placeImages", JSON.stringify(payload?.placeImages));
+    if (
+      !payload.addPlaceRequest.autoCompletedPlaceImageUrls ||
+      payload.addPlaceRequest.autoCompletedPlaceImageUrls.length === 0
+    ) {
+      payload.placeImages?.forEach((image) => {
+        formData.append("placeImages", image);
+      });
+    }
 
     const { data } = await this.axios({
       method: "POST",

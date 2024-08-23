@@ -10,11 +10,11 @@ export type CommonPlaceDetailFormType = {
   url?: string;
   reviewCount?: number;
   starGrade?: number;
-  openingHours?: string;
+  openingHours?: string | null;
   phoneNumber?: string;
   address?: string;
   memo?: string;
-  pictures: string[];
+  pictures?: File[];
 };
 
 const addPlaceDetailSchema = z.object({
@@ -28,7 +28,7 @@ const addPlaceDetailSchema = z.object({
   phoneNumber: z.string().optional(),
   address: z.string().optional(),
   memo: z.string().optional(),
-  pictures: z.array(z.string()),
+  pictures: z.array(z.any().optional()),
 });
 
 export const useAddPlaceDetailForm = (

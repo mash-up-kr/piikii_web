@@ -18,7 +18,7 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
   category,
   onButtonClick,
 }) => {
-  console.log(category, "=========");
+  const formattedRating = rating?.toFixed(2);
   const defaultImage = category
     ? categoryImageMap[category]
     : "/png/default_food.png";
@@ -64,7 +64,7 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
                 priority
               />
               <span className="text-[12px] max-w-[24px] h-[18px] items-center text-black">
-                {rating}
+                {formattedRating}
               </span>
               <span className="text-[12px] max-w-[31px] h-[18px] items-center text-[#B5B9C6]">
                 ({reviewCount})

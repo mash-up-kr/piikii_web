@@ -30,12 +30,14 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
   const { clipboardText } = useCopyPasted();
+
   const [placeUrl, setPlaceUrl] = useState("");
   const [showInput, setShowInput] = useState(true);
   const [showAlternateInput, setShowAlternateInput] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReadyToVote, setIsReadyToVote] = useState(false);
   const searchParams = useSearchParams();
+
   const roomUid = searchParams.get("roomUid") || "";
   const {
     roomInfo,
@@ -51,10 +53,10 @@ const AddCourse = ({ data }: AddCourseProps) => {
     setAutoData,
   } = useCourseContext();
   const [selectedChip, setSelectedChip] = useState<number | null | undefined>(
-    categoryList && categoryList.length > 0 ? categoryList[0].scheduleId : null
+    null
   );
 
-  const { data: currentPlacesData } = useGetPlacesQuery({
+  const { data: currentPlacesData, refetch } = useGetPlacesQuery({
     variables: { roomUid },
   });
 
@@ -69,9 +71,19 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const isValidPlaceUrl = validateClipboardText(placeUrl);
 
   useEffect(() => {
+    if (categoryList && categoryList.length > 0) {
+      setSelectedChip(categoryList[0].scheduleId);
+    }
+  }, [categoryList]);
+
+  useEffect(() => {
     if (currentPlacesData) {
       setRoomPlacesInfo(currentPlacesData);
     }
+  }, [currentPlacesData, setRoomPlacesInfo]);
+
+  useEffect(() => {
+    refetch();
   }, [currentPlacesData, setRoomPlacesInfo]);
 
   const { mutate: createPlaceMutate } = useCreatePlace({
@@ -141,15 +153,18 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isMobile && isValidClipboardText) {
+      if (!isMobile && clipboardText && isValidClipboardText) {
         setShowInput(false);
         setIsClipboardText(true);
         createPlaceMutate({ url: clipboardText });
-      } else if (isValidPlaceUrl) {
+      } else if (placeUrl && isValidPlaceUrl) {
         setShowInput(false);
         setIsClipboardText(true);
         createPlaceMutate({ url: placeUrl });
-      } else if (!isValidClipboardText || !isValidPlaceUrl) {
+      } else if (
+        (clipboardText && !isValidClipboardText) ||
+        (placeUrl && !isValidPlaceUrl)
+      ) {
         setShowInput(false);
         setShowAlternateInput(true);
         setTimeout(() => {
