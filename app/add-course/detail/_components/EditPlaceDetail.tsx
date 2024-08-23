@@ -163,7 +163,7 @@ const EditPlaceDetail: React.FC = () => {
                 필수
               </p>
             </div>
-            <div className="w-[120px] h-[21px] font-medium text-[14px] text-[#23272F] opacity-[0.5]">
+            <div className="w-full h-[21px] font-medium text-[14px] text-[#23272F] opacity-[0.5]">
               여러 개 선택 가능해요
             </div>
             <div className="flex flex-row w-[252px] gap-x-[8px] mt-[12px]">
@@ -185,11 +185,11 @@ const EditPlaceDetail: React.FC = () => {
 
           <div className="gap-y-[32px] flex flex-col">
             <div className="flex flex-col gap-y-[12px]">
-              <div className="flex flex-row items-center w-[90px] h-[24px] gap-x-[6px]">
-                <p className="w-[59px] font-bold text-[#292E31] text-[16px]">
+              <div className="flex flex-row items-center w-full h-[24px] gap-x-[6px]">
+                <p className="w-[70px] font-bold text-[#292E31] text-[16px]">
                   장소 이름
                 </p>
-                <p className="w-[25px] font-bold text-[#FF601C] text-[14px]">
+                <p className="w-[30px] font-bold text-[#FF601C] text-[14px]">
                   필수
                 </p>
               </div>

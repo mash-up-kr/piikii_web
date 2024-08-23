@@ -262,7 +262,7 @@ const AddPlaceDetail: React.FC = () => {
                 필수
               </p>
             </div>
-            <div className="w-[120px] h-[21px] font-medium text-[14px] text-[#23272F] opacity-[0.5]">
+            <div className="w-full h-[21px] font-medium text-[14px] text-[#23272F] opacity-[0.5]">
               여러 개 선택 가능해요
             </div>
             <div className="flex flex-row w-[252px] mt-[12px] gap-x-[8px]">
