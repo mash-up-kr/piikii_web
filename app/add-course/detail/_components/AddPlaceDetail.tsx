@@ -10,9 +10,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCourseContext } from "@/providers/course-provider";
 import { PlaceResponseDto } from "@/apis/place/types/dto";
 import { useEffect, useState, useMemo } from "react";
-import { useAddPlaceDetailForm } from "../../_hooks/useAddPlaceDetailForm";
+import {
+  CommonPlaceDetailFormType,
+  useAddPlaceDetailForm,
+} from "../../_hooks/useAddPlaceDetailForm";
 import { FormProvider } from "react-hook-form";
 import { useCreatePlace } from "@/apis/place/PlaceApi.mutation";
+import { PlaceAutoCompleteResponse } from "@/apis/origin-place/types/dto";
 
 export type DefaultImageType = {
   id: string;
@@ -47,54 +51,61 @@ const createFileFromImagePath = async (
   return new File([blob], fileName, { type: blob.type });
 };
 
+const getPayloadForRequest = (
+  autoData: PlaceAutoCompleteResponse | null,
+  values: CommonPlaceDetailFormType,
+  selectedChips: number[]
+) => {
+  return {
+    scheduleIds: selectedChips,
+    name: autoData ? autoData?.data?.name : values.name,
+    url: autoData ? autoData?.data?.url : values.url ? values.url : "-",
+    address: values.address || "-",
+    openingHours: autoData
+      ? autoData?.data?.openingHours
+      : values.openingHours
+      ? values.openingHours
+      : "-",
+    phoneNumber: autoData
+      ? autoData?.data?.phoneNumber
+      : values.phoneNumber
+      ? values.phoneNumber
+      : "-",
+    reviewCount: autoData?.data?.reviewCount || 0,
+    starGrade: autoData?.data?.starGrade || 0,
+    memo: values.memo || "-",
+    origin: autoData?.data?.origin || "MANUAL",
+    voteLikeCount: 0,
+    longitude: 0,
+    latitude: 0,
+    autoCompletedPlaceImageUrls: autoData?.data?.placeImageUrls?.contents || [],
+  };
+};
+
 const AddPlaceDetail: React.FC = () => {
   const router = useRouter();
   const [selectedChips, setSelectedChips] = useState<number[]>([]);
   const methods = useAddPlaceDetailForm();
   const searchParams = useSearchParams();
+
   const roomUid = searchParams.get("roomUid") || "";
   const {
     categoryList,
     isClipboardText,
     setIsClipboardText,
     autoData,
-    setAutoData,
     addPlaceInfo,
-    autoPlaceInfo,
-    roomPlacesInfo,
   } = useCourseContext();
 
-  const payloadForRequest = useMemo(() => {
-    const values = methods.watch();
-    console.log(methods.getValues("name"));
+  const [payloadForRequest, setPayloadForRequest] = useState(() => {
+    const values = methods.getValues();
+    return getPayloadForRequest(autoData, values, selectedChips);
+  });
 
-    const scheduleIds = selectedChips;
-
-    return {
-      scheduleIds: scheduleIds,
-      name: autoData && autoData.data ? autoData.data.name : values.name,
-      url: autoData && autoData.data ? autoData.data.url : values.url || "-",
-      address: values.address || "-",
-      openingHours:
-        autoData && autoData.data
-          ? autoData.data.openingHours
-          : values.openingHours || "-",
-      phoneNumber:
-        autoData && autoData.data
-          ? autoData.data.phoneNumber
-          : values.phoneNumber || "-",
-      reviewCount: autoData && autoData.data ? autoData.data.reviewCount : 0,
-      starGrade: autoData && autoData.data ? autoData.data.starGrade : 0,
-      memo: values.memo || "-",
-      origin: autoData && autoData.data ? autoData.data.origin : "MANUAL",
-      voteLikeCount: 0,
-      voteDislikeCount: 0,
-      longitude: 0,
-      latitude: 0,
-      autoCompletedPlaceImageUrls:
-        (autoData && autoData.data.placeImageUrls.contents) || [],
-    };
-  }, [methods, selectedChips, categoryList, autoData, methods.getValues()]);
+  useEffect(() => {
+    const values = methods.getValues();
+    setPayloadForRequest(getPayloadForRequest(autoData, values, selectedChips));
+  }, [methods, selectedChips, autoData]);
 
   const { mutate: createPlaceMutate } = useCreatePlace({
     options: {
@@ -132,10 +143,6 @@ const AddPlaceDetail: React.FC = () => {
 
   useEffect(() => {
     if (autoData) {
-      console.log(
-        autoData,
-        "autoCompletedPlaceImageUrlsautoCompletedPlaceImageUrls"
-      );
       setIsClipboardText(true);
 
       const { name, url, address, phoneNumber, openingHours } =
@@ -145,9 +152,6 @@ const AddPlaceDetail: React.FC = () => {
       methods.setValue("address", address);
       methods.setValue("phoneNumber", phoneNumber);
       methods.setValue("openingHours", openingHours);
-
-      const values = methods.getValues();
-      console.log("values", values);
     } else {
       setIsClipboardText(false);
     }
@@ -155,13 +159,17 @@ const AddPlaceDetail: React.FC = () => {
 
   const onCompleteButtonClick = async () => {
     const values = methods.getValues();
-    methods.getValues("name");
-    console.log("values", values);
+    const scheduleIds = selectedChips;
+
+    const updatedPayloadForRequest = getPayloadForRequest(
+      autoData,
+      values,
+      scheduleIds
+    );
+
     if (!values.name || !selectedChips || !selectedCategory) {
       return;
     }
-
-    const scheduleIds = selectedChips;
 
     const selectedCategories = scheduleIds.map((chipId) => {
       return categoryList?.find((category) => category.scheduleId === chipId);
@@ -178,12 +186,7 @@ const AddPlaceDetail: React.FC = () => {
               matchedImage.src,
               matchedImage.src.split("/").pop() || "default.png"
             );
-            // 파일 정보를 콘솔에 출력
-            console.log({
-              name: file.name,
-              size: file.size,
-              type: file.type,
-            });
+
             return file;
           }
           return null;
@@ -196,7 +199,6 @@ const AddPlaceDetail: React.FC = () => {
         ? values.pictures.filter((file): file is File => file instanceof File)
         : [];
 
-    console.log("formImages", formImages);
     const placeImages =
       autoData !== null
         ? []
@@ -205,7 +207,7 @@ const AddPlaceDetail: React.FC = () => {
         : defaultImages;
 
     const payload = {
-      addPlaceRequest: payloadForRequest,
+      addPlaceRequest: updatedPayloadForRequest,
       ...(autoData !== null ? {} : { placeImages }),
     };
 
@@ -306,7 +308,7 @@ const AddPlaceDetail: React.FC = () => {
                     <InputWithLabel
                       type="text"
                       placeholder="상호명을 적어주세요"
-                      {...methods.register("name")}
+                      {...methods.register("name", { required: true })}
                     />
                   </div>
                   <div className="flex flex-col items-start justify-center">

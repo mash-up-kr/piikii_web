@@ -86,16 +86,19 @@ export const CardWithAutoCompleteData = ({
           <div className="flex flex-col w-full gap-y-[28px]">
             <LabelWithValue
               type="openingHours"
+              placeholder="영업 시간이 안 나와있어요"
               iconSrc="/svg/ic_clock_mono.svg"
               {...register("openingHours")}
             />
             <LabelWithValue
               type="location"
+              placeholder="주소가 안 나와있어요"
               iconSrc="/svg/ic_pin_location_mono.svg"
               {...register("address")}
             />
             <LabelWithValue
               type="link"
+              placeholder="전화번호가 안 나와있어요"
               iconSrc="/svg/ic_call_mono.svg"
               {...register("phoneNumber")}
             />
