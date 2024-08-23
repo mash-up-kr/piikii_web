@@ -116,7 +116,7 @@ const VoteTime = () => {
 
         <PasswordInputSheet
           title="모임 비밀번호 다시 입력"
-          subTitle="비밀번호를한번 더 확인합니다"
+          subTitle="비밀번호를 한 번 더 확인합니다"
           isOpen={passwordConfirmSheet.isOpen}
           onInteractOutside={passwordConfirmSheet.onClose}
           onPasswordComplete={(result) => {

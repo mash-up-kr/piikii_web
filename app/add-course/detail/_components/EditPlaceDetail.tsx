@@ -186,7 +186,7 @@ const EditPlaceDetail: React.FC = () => {
           <div className="gap-y-[32px] flex flex-col">
             <div className="flex flex-col gap-y-[12px]">
               <div className="flex flex-row items-center w-full h-[24px] gap-x-[6px]">
-                <p className="w-[70px] font-bold text-[#292E31] text-[16px]">
+                <p className="w-[65px] font-bold text-[#292E31] text-[16px]">
                   장소 이름
                 </p>
                 <p className="w-[30px] font-bold text-[#FF601C] text-[14px]">
