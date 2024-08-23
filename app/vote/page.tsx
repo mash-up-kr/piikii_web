@@ -305,7 +305,7 @@ export default function Page() {
                   <span className={cn(colorTheme.classname.textActive)}>
                     {placeData[curScheduleIndex].scheduleName}
                   </span>
-                  을 투표해주세요
+                  에 투표해주세요
                 </span>
               }
               titleClassName="text-black-22"

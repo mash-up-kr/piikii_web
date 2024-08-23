@@ -35,6 +35,7 @@ export default function MotionCard({
   data,
   hideShadow,
 }: Props) {
+  const formattedStarGrade = Number(data?.starGrade?.toFixed(2));
   const x = useMotionValue(0);
   const y = useTransform(x, [-250, 0, 250], [-30, 0, -30]);
 
@@ -112,7 +113,7 @@ export default function MotionCard({
         <CardWithImage
           origin={data.origin}
           place={data.name}
-          rating={data.starGrade?.toString() ?? "-"}
+          rating={formattedStarGrade ?? "-"}
           reviewCount={data.reviewCount ?? 0}
           images={data.placeImageUrls.contents ?? []}
           info={[

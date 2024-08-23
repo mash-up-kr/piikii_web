@@ -13,7 +13,6 @@ const ResultArea = ({
   onClickSchedule,
 }: VoteAreaProps) => {
   const [expandedCards, setExpandedCards] = react.useState<number[]>([]);
-
   const handleArrowClick = (index: number) => {
     setExpandedCards((prev) =>
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
@@ -89,7 +88,7 @@ const ResultArea = ({
                 ]}
                 place={placeInfo.name}
                 link={placeInfo.url}
-                rating={placeInfo.starGrade.toString() ?? "0"}
+                rating={Number(placeInfo.starGrade.toFixed(2)) ?? "0"}
                 images={placeInfo.thumbnailLinks.contents || []}
               />
             )}

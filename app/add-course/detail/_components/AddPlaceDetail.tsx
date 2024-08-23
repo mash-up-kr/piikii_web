@@ -15,6 +15,7 @@ import { categoryImageMap } from "@/lib/utils";
 import { useAddPlaceDetailForm } from "../../_hooks/useAddPlaceDetailForm";
 import { FormProvider } from "react-hook-form";
 import { useCreatePlace } from "@/apis/place/PlaceApi.mutation";
+import { match } from "assert";
 
 export type DefaultImageType = {
   id: string;
@@ -24,21 +25,30 @@ export type DefaultImageType = {
 export const DEFAULT_IMAGES: DefaultImageType[] = [
   {
     id: "DISH",
-    src: "default_food.png",
+    src: "/png/default_food.png",
   },
   {
     id: "DESSERT",
-    src: "default_dessert.png",
+    src: "/png/default_dessert.png",
   },
   {
     id: "ALCOHOL",
-    src: "default_alcohol.png",
+    src: "/png/default_alcohol.png",
   },
   {
     id: "ARCADE",
-    src: "default_arcade.png",
+    src: "/png/default_arcade.png",
   },
 ];
+
+const createFileFromImagePath = async (
+  imagePath: string,
+  fileName: string
+): Promise<File> => {
+  const response = await fetch(imagePath);
+  const blob = await response.blob();
+  return new File([blob], fileName, { type: blob.type });
+};
 
 const AddPlaceDetail: React.FC = () => {
   const router = useRouter();
@@ -57,15 +67,49 @@ const AddPlaceDetail: React.FC = () => {
     roomPlacesInfo,
   } = useCourseContext();
 
+  const payloadForRequest = useMemo(() => {
+    const values = methods.watch();
+    const scheduleIds = selectedChips;
+
+    return {
+      scheduleIds: scheduleIds,
+      name: autoData && autoData.data ? autoData.data.name : values.name,
+      url: autoData && autoData.data ? autoData.data.url : values.url || "-",
+      address: values.address || "-",
+      openingHours:
+        autoData && autoData.data
+          ? autoData.data.openingHours
+          : values.openingHours || "-",
+      phoneNumber:
+        autoData && autoData.data
+          ? autoData.data.phoneNumber
+          : values.phoneNumber || "-",
+      reviewCount: autoData && autoData.data ? autoData.data.reviewCount : 0,
+      starGrade: autoData && autoData.data ? autoData.data.starGrade : 0,
+      memo: values.memo || "-",
+      origin: autoData && autoData.data ? autoData.data.origin : "MANUAL",
+      voteLikeCount: 0,
+      voteDislikeCount: 0,
+      longitude: 0,
+      latitude: 0,
+      autoCompletedPlaceImageUrls:
+        (autoData && autoData.data.placeImageUrls.contents) || [],
+    };
+  }, [methods, selectedChips, categoryList, autoData]);
+
+  useEffect(() => {
+    console.log("payloadForRequest changed:", payloadForRequest);
+  }, [payloadForRequest]);
+
   const { mutate: createPlaceMutate } = useCreatePlace({
     options: {
       onSuccess: (res) => {
         const placeResponse: PlaceResponseDto = res.data;
         setIsClipboardText(false);
 
-        addPlaceInfo(placeResponse); //
+        addPlaceInfo(placeResponse);
 
-        router.back();
+        router.replace(`/add-course?roomUid=${roomUid}`);
       },
       onError: (error) => {
         console.error("장소 등록 실패:", error);
@@ -93,13 +137,20 @@ const AddPlaceDetail: React.FC = () => {
 
   useEffect(() => {
     if (autoData) {
+      console.log(
+        autoData,
+        "autoCompletedPlaceImageUrlsautoCompletedPlaceImageUrls"
+      );
       setIsClipboardText(true);
 
-      const { name, url, address, phoneNumber } = autoData.data || {};
+      const { name, url, address, phoneNumber, openingHours } =
+        autoData.data || {};
       methods.setValue("name", name);
       methods.setValue("url", url);
       methods.setValue("address", address);
       methods.setValue("phoneNumber", phoneNumber);
+      methods.setValue("openingHours", openingHours);
+
       const values = methods.getValues();
       console.log("values", values);
     }
@@ -118,58 +169,59 @@ const AddPlaceDetail: React.FC = () => {
       return categoryList?.find((category) => category.scheduleId === chipId);
     });
 
-    const defaultImages = selectedCategories
-      .map((category) => {
-        const matchedImage = DEFAULT_IMAGES.find(
-          (image) => image.id === category!.type
-        );
+    const defaultImages = (
+      await Promise.all(
+        selectedCategories.map(async (category) => {
+          const matchedImage = DEFAULT_IMAGES.find(
+            (image) => image.id === category!.type
+          );
+          if (matchedImage) {
+            const file = await createFileFromImagePath(
+              matchedImage.src,
+              matchedImage.src.split("/").pop() || "default.png"
+            );
+            // 파일 정보를 콘솔에 출력
+            console.log({
+              name: file.name,
+              size: file.size,
+              type: file.type,
+            });
+            return file;
+          }
+          return null;
+        })
+      )
+    ).filter((file): file is File => file !== null);
 
-        console.log(matchedImage, "=====matched?");
-        return `${process.env.NEXT_PUBLIC_DNS_URL}/png/${matchedImage?.src}`;
-      })
-      .filter((src) => src !== null);
+    const formImages =
+      values.pictures && Array.isArray(values.pictures)
+        ? values.pictures.filter((file): file is File => file instanceof File)
+        : [];
 
-    const payload: AddPlaceRequestDto = {
-      scheduleIds: scheduleIds,
-      name: autoData && autoData.data ? autoData.data.name : values.name,
-      url: autoData && autoData.data ? autoData.data.url : values.url || "-",
-      address: values.address || "-",
-      openingHours:
-        autoData && autoData.data
-          ? autoData.data.openingHours
-          : values.openingHours
-          ? values.openingHours
-          : "-",
-      phoneNumber:
-        autoData && autoData.data
-          ? autoData.data.phoneNumber
-          : values.phoneNumber
-          ? values.phoneNumber
-          : "-",
-      reviewCount: autoData && autoData.data ? autoData.data.reviewCount : 0,
-      starGrade: autoData && autoData.data ? autoData.data.starGrade : 0,
-      memo: values.memo || "-",
-      voteLikeCount: 0,
-      voteDislikeCount: 0,
-      longitude: 0,
-      latitude: 0,
+    console.log("formImages", formImages);
+    const placeImages =
+      autoData !== null
+        ? []
+        : formImages.length > 0
+        ? formImages
+        : defaultImages;
+
+    const payload = {
+      addPlaceRequest: payloadForRequest,
+      ...(autoData !== null ? {} : { placeImages }),
     };
-    console.log("payload:", payload);
+
+    console.log(placeImages, "placeimg");
+
     createPlaceMutate({
       roomUid,
-      payload: {
-        addPlaceRequest: payload,
-        placeImages: values.pictures
-          ? values.pictures.filter((file): file is string => file !== null)
-          : defaultImages,
-      },
+      payload,
     });
   };
 
   useEffect(() => {
     return () => {
       setIsClipboardText(false);
-      // setAutoData(null);
     };
   }, []);
 
@@ -266,8 +318,16 @@ const AddPlaceDetail: React.FC = () => {
                       className="w-[80px] h-[80px]"
                       id="picture"
                       type="file"
-                      onFilesChange={(files) => {
-                        methods.setValue("pictures", files);
+                      onFilesChange={(formData) => {
+                        const files = Array.from(
+                          formData.getAll("placeImages")
+                        );
+                        methods.setValue(
+                          "pictures",
+                          files.filter(
+                            (file): file is File => file instanceof File
+                          )
+                        );
                       }}
                       multiple
                     />

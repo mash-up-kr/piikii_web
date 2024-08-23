@@ -44,15 +44,17 @@ export interface AddPlaceRequestDto {
   phoneNumber?: string | null;
   starGrade?: number | null;
   memo?: string;
+  origin: string;
   voteLikeCount?: number | null;
   voteDislikeCount?: number | null;
   longitude?: number | null;
   latitude?: number | null;
+  autoCompletedPlaceImageUrls?: string[];
 }
 
 export interface CreatePlacePayloadDto {
   addPlaceRequest: AddPlaceRequestDto;
-  placeImages?: string[];
+  placeImages?: File[];
 }
 
 export interface ModifyPlaceRequestDto {

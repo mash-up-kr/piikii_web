@@ -62,8 +62,8 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
               src={src}
               className="rounded-lg"
               alt={`food${index + 1}`}
-              width={92}
-              height={92}
+              width={100}
+              height={100}
               priority
             />
           ))}

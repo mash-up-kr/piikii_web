@@ -18,7 +18,7 @@ export interface CardInfoProps {
   origin: "AVOCADO" | "LEMON" | "MANUAL";
   place: string;
   link?: string;
-  rating?: string;
+  rating?: number;
   reviewCount?: number;
   voteCount?: number;
   totalVoteCount?: number;
