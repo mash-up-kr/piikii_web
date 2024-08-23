@@ -233,7 +233,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
           isValidPlaceUrl || isValidClipboardText ? "h-[148px]" : "h-[103px]"
         } mt-[16px]`}
       >
-        <div className="flex flex-row w-[224px] font-extrabold h-[31px] text-[22px] mb-[16px]">
+        <div className="flex flex-row w-full font-extrabold h-[31px] text-[22px] mb-[16px]">
           <p className="text-[#FF601C]">투표 후 코스</p>
           <p>를 추천받아요</p>
         </div>
@@ -306,7 +306,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
             height={20}
           />
           <p
-            className="w-[52px] text-[14px] font-semibold text-[#B5B9C6]"
+            className="w-full text-[14px] font-semibold text-[#B5B9C6]"
             onClick={() =>
               router.push(
                 `add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`

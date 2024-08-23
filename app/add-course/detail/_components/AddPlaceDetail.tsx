@@ -69,6 +69,8 @@ const AddPlaceDetail: React.FC = () => {
 
   const payloadForRequest = useMemo(() => {
     const values = methods.watch();
+    console.log(methods.getValues("name"));
+
     const scheduleIds = selectedChips;
 
     return {
@@ -96,10 +98,6 @@ const AddPlaceDetail: React.FC = () => {
         (autoData && autoData.data.placeImageUrls.contents) || [],
     };
   }, [methods, selectedChips, categoryList, autoData]);
-
-  useEffect(() => {
-    console.log("payloadForRequest changed:", payloadForRequest);
-  }, [payloadForRequest]);
 
   const { mutate: createPlaceMutate } = useCreatePlace({
     options: {
@@ -153,11 +151,20 @@ const AddPlaceDetail: React.FC = () => {
 
       const values = methods.getValues();
       console.log("values", values);
+    } else {
+      setIsClipboardText(false);
+
+      methods.setValue("name", "");
+      methods.setValue("url", "");
+      methods.setValue("address", "");
+      methods.setValue("phoneNumber", "");
+      methods.setValue("openingHours", "");
     }
-  }, [autoData]);
+  }, [autoData, methods, setIsClipboardText]);
 
   const onCompleteButtonClick = async () => {
     const values = methods.getValues();
+    methods.getValues("name");
     console.log("values", values);
     if (!values.name || !selectedChips || !selectedCategory) {
       return;
@@ -262,7 +269,7 @@ const AddPlaceDetail: React.FC = () => {
                 필수
               </p>
             </div>
-            <div className="w-[120px] h-[21px] font-medium text-[14px] text-[#23272F] opacity-[0.5]">
+            <div className="w-full h-[21px] font-medium text-[14px] text-[#23272F] opacity-[0.5]">
               여러 개 선택 가능해요
             </div>
             <div className="flex flex-row w-[252px] mt-[12px] gap-x-[8px]">
@@ -297,12 +304,12 @@ const AddPlaceDetail: React.FC = () => {
               </div>
             ) : (
               <div className="gap-y-[32px] flex flex-col">
-                <div className="flex flex-col gap-y-[12px]">
-                  <div className="flex flex-row items-center w-[90px] h-[24px] gap-x-[6px]">
-                    <p className="w-[59px] font-bold text-[#292E31] text-[16px]">
+                <div className="flex flex-col w-full gap-y-[12px]">
+                  <div className="flex flex-row items-center w-full h-[24px] gap-x-[6px]">
+                    <p className="w-[65px] font-bold text-[#292E31] text-[16px]">
                       장소 이름
                     </p>
-                    <p className="w-[25px] font-bold text-[#FF601C] text-[14px]">
+                    <p className="w-[30px] font-bold text-[#FF601C] text-[14px]">
                       필수
                     </p>
                   </div>

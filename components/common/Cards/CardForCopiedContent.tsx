@@ -55,7 +55,7 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
           />
           <div className="flex flex-row pl-[12px] items-center justify-center gap-y-[4px]">
             <div className="flex flex-col w-[170px] h-[65px] items-start justify-center pr-[9px]">
-              <span className="flex w-[99px] h-[18px] text-[12px] font-bold">
+              <span className="flex w-full h-[18px] text-[12px] font-bold">
                 복사한 장소 추가하기
               </span>
               <span className="flex-row w-full max-w-[170px] inline-block whitespace-nowrap overflow-hidden text-ellipsis h-[21px] text-[14px] text-black font-semibold items-center">
