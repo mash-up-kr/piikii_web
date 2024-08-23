@@ -31,7 +31,7 @@ export default function VotePageGuard({
     variables: {
       roomUid: roomUid ?? "",
     },
-    options: { enabled: !!roomUid },
+    options: { enabled: !!roomUid, retry: false },
   });
 
   const {
@@ -49,10 +49,6 @@ export default function VotePageGuard({
 
   useEffect(() => {
     if (isVoteStatusLoading || isUserVoteResultDataLoading) return;
-
-    if (isVoteStatusError || isUserVoteResultError) {
-      return router.replace(`/vote-start`);
-    }
 
     if (voteStatusData && voteStatusData.data.voteFinished) {
       return router.replace("/vote-finish");
@@ -77,7 +73,6 @@ export default function VotePageGuard({
     isUserVoteResultDataLoading ||
     isVoteStatusFetching ||
     isUserVoteResultDataFetching ||
-    isVoteStatusError ||
     isUserVoteResultError ||
     (voteStatusData &&
       voteStatusData.data.voteFinished &&

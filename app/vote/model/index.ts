@@ -45,6 +45,7 @@ export interface ColorTheme {
   style: {
     background: string;
     buttonBoxShadow: string;
+    cardBoxShadow: string;
     avatarImgZIndex: number;
   };
   img: {
@@ -64,6 +65,7 @@ export const VoteColorTheme: Record<ScheduleType, ColorTheme> = {
       background:
         "linear-gradient(180deg, #FFE6DC 42.74%, #FDC6AE 69.6%, #F8AC8B 78.91%)",
       buttonBoxShadow: "0px 5px 10px 0px #CE9983, 0px 0px 60px 0px #E58A64",
+      cardBoxShadow: "0px 20px 36px 0px #E58A64",
       avatarImgZIndex: Z_INDEX.BACKGROUND,
     },
     img: {
@@ -81,6 +83,7 @@ export const VoteColorTheme: Record<ScheduleType, ColorTheme> = {
       background:
         "linear-gradient(180deg, #F7E5FF 42.74%, #DAB3EC 69.6%, #D4AAE7 78.91%)",
       buttonBoxShadow: "0px 5px 10px 0px #B683CE, 0px 0px 60px 0px #BD81D9",
+      cardBoxShadow: "0px 20px 36px 0px #BD81D9",
       avatarImgZIndex: Z_INDEX.AVATAR_BACKGROUND,
     },
     img: {
@@ -98,6 +101,7 @@ export const VoteColorTheme: Record<ScheduleType, ColorTheme> = {
       background:
         "linear-gradient(180deg, #E5F5FF 42.74%, #A0D1ED 69.6%, #9DD2F1 78.91%)",
       buttonBoxShadow: "0px 5px 10px 0px #83B2CE, 0px 0px 60px 0px #6EB4DC",
+      cardBoxShadow: "0px 20px 36px 0px #6EB4DC",
       avatarImgZIndex: Z_INDEX.BACKGROUND,
     },
     img: {
@@ -115,6 +119,7 @@ export const VoteColorTheme: Record<ScheduleType, ColorTheme> = {
       background:
         "linear-gradient(180deg, #E5E6FF 42.74%, #B5B7F3 69.6%, #ACAEF1 78.91%)",
       buttonBoxShadow: "0px 5px 10px 0px #8386CE, 0px 0px 60px 0px #8085E9",
+      cardBoxShadow: "0px 20px 36px 0px #8A8FEB",
       avatarImgZIndex: Z_INDEX.AVATAR_BACKGROUND,
     },
     img: {

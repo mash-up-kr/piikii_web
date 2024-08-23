@@ -83,6 +83,7 @@ export default function MotionCardContainer({
                 ) ?? null
               }
               hideShadow={false}
+              colorTheme={colorTheme}
             />
             <MotionCard
               key={curCardIndex}
@@ -96,6 +97,7 @@ export default function MotionCardContainer({
                 null
               }
               hideShadow={true}
+              colorTheme={colorTheme}
             />
           </AnimatePresence>
         )}

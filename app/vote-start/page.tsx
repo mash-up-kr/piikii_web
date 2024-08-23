@@ -47,14 +47,6 @@ export default function VoteStart() {
     options: { enabled: !!roomUid },
   });
 
-  const { error: voteStatusError, isError: isVoteStatusError } =
-    useGetVoteStatusQuery({
-      variables: {
-        roomUid: roomUid ?? "",
-      },
-      options: { enabled: !!roomUid, retry: 1 },
-    });
-
   const totalPlaceCount = useMemo(() => {
     if (placeData) {
       return placeData?.reduce((acc, cur) => acc + cur.places.length, 0);
@@ -62,16 +54,6 @@ export default function VoteStart() {
   }, [placeData]);
 
   const handleStartVote = () => {
-    if (isVoteStatusError) {
-      toast.toast({
-        title:
-          voteStatusError?.response?.data.cause ??
-          "투표 상태를 불러올 수 없습니다.",
-        duration: 1000,
-      });
-      return;
-    }
-
     if (!roomUid || !placeData) {
       toast.toast({
         variants: "warning",

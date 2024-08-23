@@ -28,8 +28,10 @@ export interface CardInfoProps {
   onButtonClick?: () => void;
   noShadow?: boolean;
   cardClassName?: string;
+  cardButtonClassName?: string;
   selected?: boolean;
   category?: number;
+  customStyle?: Record<string, string>;
 }
 
 export interface ImgProps {
