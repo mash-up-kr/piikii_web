@@ -8,14 +8,11 @@ import { CardWithAutoCompleteData } from "@/components/common/Cards/CardWithAuto
 import { InputWithImage } from "../../_components/InputWithImage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCourseContext } from "@/providers/course-provider";
-import { AddPlaceRequestDto, PlaceResponseDto } from "@/apis/place/types/dto";
-import { useEffect, useRef, useState, useMemo } from "react";
-import placeApi from "@/apis/place/PlaceApi";
-import { categoryImageMap } from "@/lib/utils";
+import { PlaceResponseDto } from "@/apis/place/types/dto";
+import { useEffect, useState, useMemo } from "react";
 import { useAddPlaceDetailForm } from "../../_hooks/useAddPlaceDetailForm";
 import { FormProvider } from "react-hook-form";
 import { useCreatePlace } from "@/apis/place/PlaceApi.mutation";
-import { match } from "assert";
 
 export type DefaultImageType = {
   id: string;
@@ -97,7 +94,7 @@ const AddPlaceDetail: React.FC = () => {
       autoCompletedPlaceImageUrls:
         (autoData && autoData.data.placeImageUrls.contents) || [],
     };
-  }, [methods, selectedChips, categoryList, autoData]);
+  }, [methods, selectedChips, categoryList, autoData, methods.getValues()]);
 
   const { mutate: createPlaceMutate } = useCreatePlace({
     options: {
@@ -153,14 +150,8 @@ const AddPlaceDetail: React.FC = () => {
       console.log("values", values);
     } else {
       setIsClipboardText(false);
-
-      methods.setValue("name", "");
-      methods.setValue("url", "");
-      methods.setValue("address", "");
-      methods.setValue("phoneNumber", "");
-      methods.setValue("openingHours", "");
     }
-  }, [autoData, methods, setIsClipboardText]);
+  }, []);
 
   const onCompleteButtonClick = async () => {
     const values = methods.getValues();
@@ -217,8 +208,6 @@ const AddPlaceDetail: React.FC = () => {
       addPlaceRequest: payloadForRequest,
       ...(autoData !== null ? {} : { placeImages }),
     };
-
-    console.log(placeImages, "placeimg");
 
     createPlaceMutate({
       roomUid,
