@@ -55,15 +55,15 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
             </div>
           </CardHeader>
         </div>
-        <div className="flex flex-row gap-x-[9px] py-[15px]">
+        <div className="flex flex-row w-[294px] h-[92px] gap-x-[9px] py-[15px]">
           {images.map((src, index) => (
             <Image
               key={index}
               src={src}
-              className="rounded-lg"
+              className="rounded-lg w-[92px] h-[92px]"
               alt={`food${index + 1}`}
-              width={100}
-              height={100}
+              width={92}
+              height={92}
               priority
             />
           ))}
