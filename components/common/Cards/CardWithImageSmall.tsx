@@ -35,7 +35,7 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
 
   return (
     <Card
-      className="flex flex-col items-start justify-center w-[160px] h-[157px] cursor-pointer"
+      className="flex flex-col items-start justify-center w-[160px] h-[157px] border-none shadow-none cursor-pointer"
       onClick={onButtonClick}
     >
       <CardContent className="flex flex-col w-full gap-y-[8px]">
