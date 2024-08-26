@@ -59,22 +59,23 @@ const useInvitation = () => {
     return !name;
   }, [name]);
 
-  const { mutate: createRoomMutate } = useCreateRoom({
-    options: {
-      onSuccess: (res) => {
-        const {
-          data: { roomUid },
-        } = res;
-        if (roomUid) {
-          roomUidStorage?.set({ roomUid });
-          requestCreateSchedules(roomUid);
-        } else throw Error("roomUid not found");
+  const { mutate: createRoomMutate, isPending: createRoomMutateIsPending } =
+    useCreateRoom({
+      options: {
+        onSuccess: (res) => {
+          const {
+            data: { roomUid },
+          } = res;
+          if (roomUid) {
+            roomUidStorage?.set({ roomUid });
+            requestCreateSchedules(roomUid);
+          } else throw Error("roomUid not found");
+        },
+        onError: (err) => {
+          toast.toast({ title: err.message });
+        },
       },
-      onError: (err) => {
-        toast.toast({ title: err.message });
-      },
-    },
-  });
+    });
 
   const { mutate: createSchedulesMutate } = useCreateSchedules({
     options: {
@@ -190,6 +191,7 @@ const useInvitation = () => {
       onOpen: onPasswordConfirmSheetOpen,
     },
     thumbnail,
+    createRoomMutateIsPending,
     updateThumbnail,
     handleName,
     handleMessage,
