@@ -24,7 +24,7 @@ const Invitation = ({ handleStep }: InvitationProps) => {
     passwordSheet,
     passwordConfirmSheet,
     thumbnail,
-    createRoomMutateIsPending,
+    isLoading,
     updateThumbnail,
     handleMessage,
     handleName,
@@ -35,7 +35,7 @@ const Invitation = ({ handleStep }: InvitationProps) => {
 
   return (
     <>
-      {createRoomMutateIsPending ? (
+      {isLoading ? (
         <FullScreenLoader />
       ) : (
         <>

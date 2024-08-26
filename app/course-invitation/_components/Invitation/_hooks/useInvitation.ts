@@ -55,27 +55,32 @@ const useInvitation = () => {
     src: "invitation_image.png",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const isButtonDisabled = useMemo(() => {
     return !name;
   }, [name]);
 
-  const { mutate: createRoomMutate, isPending: createRoomMutateIsPending } =
-    useCreateRoom({
-      options: {
-        onSuccess: (res) => {
-          const {
-            data: { roomUid },
-          } = res;
-          if (roomUid) {
-            roomUidStorage?.set({ roomUid });
-            requestCreateSchedules(roomUid);
-          } else throw Error("roomUid not found");
-        },
-        onError: (err) => {
-          toast.toast({ title: err.message });
-        },
+  const { mutate: createRoomMutate } = useCreateRoom({
+    options: {
+      onSuccess: (res) => {
+        const {
+          data: { roomUid },
+        } = res;
+        if (roomUid) {
+          roomUidStorage?.set({ roomUid });
+          requestCreateSchedules(roomUid);
+        } else {
+          handleIsLoading(false);
+          throw Error("roomUid not found");
+        }
       },
-    });
+      onError: (err) => {
+        handleIsLoading(false);
+        toast.toast({ title: err.message });
+      },
+    },
+  });
 
   const { mutate: createSchedulesMutate } = useCreateSchedules({
     options: {
@@ -131,9 +136,14 @@ const useInvitation = () => {
     setPassword(_password.join(""));
   };
 
+  const handleIsLoading = (b: boolean) => {
+    setIsLoading(b);
+  };
+
   const handlePasswordConfirm = (_password: string[]) => {
     if (isPasswordCorrect(_password)) {
       onPasswordConfirmSheetClose();
+      handleIsLoading(true);
       requestCreateRoom();
     } else {
       toast.toast({ title: "비밀번호가 일치하지 않아요", duration: 500 });
@@ -191,7 +201,7 @@ const useInvitation = () => {
       onOpen: onPasswordConfirmSheetOpen,
     },
     thumbnail,
-    createRoomMutateIsPending,
+    isLoading,
     updateThumbnail,
     handleName,
     handleMessage,
