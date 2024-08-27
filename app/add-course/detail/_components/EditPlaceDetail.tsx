@@ -14,10 +14,10 @@ import {
 import { useEffect, useState } from "react";
 import { FormProvider } from "react-hook-form";
 import { useAddPlaceDetailForm } from "../../_hooks/useAddPlaceDetailForm";
-import { InputWithImage } from "../../_components/InputWithImage";
 import { useDeletePlace, useUpdatePlace } from "@/apis/place/PlaceApi.mutation";
 import { Button } from "@/components/common/Button/Button";
 import { ModalWithCategory } from "@/components/common/Modal/ModalWithCategory";
+import InputWithEditImage from "../../_components/InputWithEditImage";
 
 const EditPlaceDetail: React.FC = () => {
   const router = useRouter();
@@ -88,6 +88,8 @@ const EditPlaceDetail: React.FC = () => {
     if (selectedPlaceInfo) {
       console.log(selectedPlaceInfo, "selectedPlaceInfo?");
       const { name, url, address, phoneNumber, memo } = selectedPlaceInfo || {};
+      const initialImages = selectedPlaceInfo.placeImageUrls.contents || [];
+      methods.setValue("pictures", initialImages);
       methods.setValue("name", name);
       methods.setValue("url", url);
       methods.setValue("address", address);
@@ -222,14 +224,18 @@ const EditPlaceDetail: React.FC = () => {
                 />
               </div>
               <div className="flex flex-col items-start justify-center">
-                <InputWithImage
-                  className="w-[80px] h-[80px]"
+                <InputWithEditImage
                   id="picture"
                   type="file"
-                  onFilesChange={(files) => {
-                    // methods.setValue("pictures", files);
+                  onFilesChange={(formData) => {
+                    const files = Array.from(formData.getAll("placeImageUrls"));
+                    methods.setValue(
+                      "pictures",
+                      files.filter((file): file is File => file instanceof File)
+                    );
                   }}
                   multiple
+                  initialImages={selectedPlaceInfo?.placeImageUrls.contents}
                 />
               </div>
             </div>

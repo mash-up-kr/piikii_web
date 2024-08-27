@@ -14,7 +14,7 @@ export type CommonPlaceDetailFormType = {
   phoneNumber?: string;
   address?: string;
   memo?: string;
-  pictures?: File[];
+  pictures?: File[] | string[];
 };
 
 const addPlaceDetailSchema = z.object({

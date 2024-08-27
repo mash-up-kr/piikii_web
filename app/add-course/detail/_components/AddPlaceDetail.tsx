@@ -5,7 +5,7 @@ import Image from "next/image";
 import { CategoryChip } from "../../_components/CategoryChip";
 import { InputWithLabel } from "../../_components/InputWithLabel";
 import { CardWithAutoCompleteData } from "@/components/common/Cards/CardWithAutoCompleteData";
-import { InputWithImage } from "../../_components/InputWithImage";
+import { InputWithAddImage } from "../../_components/InputWithAddImage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCourseContext } from "@/providers/course-provider";
 import { PlaceResponseDto } from "@/apis/place/types/dto";
@@ -312,7 +312,7 @@ const AddPlaceDetail: React.FC = () => {
                     />
                   </div>
                   <div className="flex flex-col items-start justify-center">
-                    <InputWithImage
+                    <InputWithAddImage
                       className="w-[80px] h-[80px]"
                       id="picture"
                       type="file"
