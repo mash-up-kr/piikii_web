@@ -15,7 +15,9 @@ import { useEffect, useState } from "react";
 import { FormProvider } from "react-hook-form";
 import { useAddPlaceDetailForm } from "../../_hooks/useAddPlaceDetailForm";
 import { InputWithImage } from "../../_components/InputWithImage";
-import { useUpdatePlace } from "@/apis/place/PlaceApi.mutation";
+import { useDeletePlace, useUpdatePlace } from "@/apis/place/PlaceApi.mutation";
+import { Button } from "@/components/common/Button/Button";
+import { ModalWithCategory } from "@/components/common/Modal/ModalWithCategory";
 
 const EditPlaceDetail: React.FC = () => {
   const router = useRouter();
@@ -24,9 +26,17 @@ const EditPlaceDetail: React.FC = () => {
   const [selectedChip, setSelectedChip] = useState<number | null>(null);
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { categoryList, selectedPlaceInfo, setSelectedPlaceInfo } =
     useCourseContext();
+
+  const handleLeftButtonClick = () => {
+    setIsModalOpen(false);
+  };
+  const handleRightButtonClick = () => {
+    deletePlaceInfo();
+    setIsModalOpen(false);
+  };
 
   const { mutate: updatePlaceMutate } = useUpdatePlace({
     options: {
@@ -39,8 +49,28 @@ const EditPlaceDetail: React.FC = () => {
     },
   });
 
+  const { mutate: DeletePlaceMutate } = useDeletePlace({
+    options: {
+      onSuccess: () => {
+        router.back();
+      },
+      onError: (error) => {
+        console.error("장소 삭제 실패:", error);
+      },
+    },
+  });
+
   const updatePlaceInfo = (_placeInfo: PlaceResponseDto) => {
     setPlaceInfo(_placeInfo);
+  };
+
+  const deletePlaceInfo = () => {
+    if (selectedPlaceInfo) {
+      DeletePlaceMutate({
+        roomUid,
+        placeId: selectedPlaceInfo.id,
+      });
+    }
   };
 
   useEffect(() => {
@@ -114,12 +144,6 @@ const EditPlaceDetail: React.FC = () => {
       },
     });
   };
-
-  useEffect(() => {
-    return () => {
-      setSelectedPlaceInfo(null);
-    };
-  }, []);
 
   return (
     <FormProvider {...methods}>
@@ -260,7 +284,36 @@ const EditPlaceDetail: React.FC = () => {
                 placeInfo={placeInfo}
                 updatePlaceInfo={updatePlaceInfo}
               /> */}
+          <div className="flex rounded-[28px] mx-auto flex-row items-center justify-center w-[113px] h-[41px] bg-[#FEF1F2] text-[#FF5B5B] jutsity-center mt-[40px] mb-[32px]">
+            <button
+              className="flex flex-row gap-x-[8px] items-center justify-center"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <Image
+                src={"/png/ic_bin_20.png"}
+                alt="bin"
+                width={20}
+                height={20}
+              />
+              <p className="text-[14px] font-semibold">삭제하기</p>
+            </button>
+          </div>
         </div>
+        {isModalOpen && selectedPlaceInfo && (
+          <ModalWithCategory
+            modalText={
+              <>
+                '{selectedPlaceInfo.name}'
+                <br />
+                정말 삭제하시겠어요?
+              </>
+            }
+            onLeftButtonText="취소"
+            onRightButtonText="확인"
+            onLeftButtonClick={handleLeftButtonClick}
+            onRightButtonClick={handleRightButtonClick}
+          />
+        )}
       </div>
     </FormProvider>
   );
