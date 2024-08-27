@@ -65,7 +65,7 @@ class PlaceApi {
     placeId,
   }: {
     roomUid: string;
-    placeId: string;
+    placeId: number;
   }): Promise<ResponseForm> => {
     const { data } = await this.axios({
       method: "DELETE",
