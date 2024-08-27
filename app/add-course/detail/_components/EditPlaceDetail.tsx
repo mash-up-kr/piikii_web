@@ -303,7 +303,7 @@ const EditPlaceDetail: React.FC = () => {
           <ModalWithCategory
             modalText={
               <>
-                '{selectedPlaceInfo.name}'
+                &apos;{selectedPlaceInfo.name}&apos;
                 <br />
                 정말 삭제하시겠어요?
               </>
