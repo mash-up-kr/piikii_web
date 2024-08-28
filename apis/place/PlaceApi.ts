@@ -83,9 +83,21 @@ class PlaceApi {
     placeId: number;
     payload: {
       modifyPlaceRequest: ModifyPlaceRequestDto;
-      newPlaceImages: string[];
+      newPlaceImages: File[];
     };
   }): Promise<ResponseForm<PlaceResponseDto>> => {
+    const formData = new FormData();
+
+    formData.append(
+      "modifyPlaceRequest",
+      JSON.stringify(payload.newPlaceImages)
+    );
+    if (!payload.newPlaceImages || payload.newPlaceImages.length === 0) {
+      payload.newPlaceImages?.forEach((image) => {
+        formData.append("newPlaceImages", image);
+      });
+    }
+
     const { data } = await this.axios({
       method: "PATCH",
       url: `/rooms/${roomUid}/places/${placeId}`,

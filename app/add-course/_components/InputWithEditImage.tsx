@@ -4,6 +4,7 @@ interface InputWithEditImageProps {
   id: string;
   type: string;
   onFilesChange: (formData: FormData) => void;
+  onDeleteImageUrlsChange: (deleteImageUrls: string[]) => void;
   multiple?: boolean;
   initialImages?: string[];
 }
@@ -12,10 +13,12 @@ const InputWithEditImage: React.FC<InputWithEditImageProps> = ({
   id,
   type,
   onFilesChange,
+  onDeleteImageUrlsChange,
   multiple = false,
   initialImages = [],
 }) => {
   const [images, setImages] = useState<string[]>(initialImages);
+  const [deleteImageUrls, setDeleteImageUrls] = useState<string[]>([]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -23,6 +26,7 @@ const InputWithEditImage: React.FC<InputWithEditImageProps> = ({
       const newImages = Array.from(files).map((file) =>
         URL.createObjectURL(file)
       );
+      console.log(newImages);
       setImages([...images, ...newImages]);
 
       const formData = new FormData();
@@ -32,7 +36,15 @@ const InputWithEditImage: React.FC<InputWithEditImageProps> = ({
   };
 
   const handleRemoveImage = (index: number) => {
+    const imageToRemove = images[index];
+
     setImages(images.filter((_, i) => i !== index));
+
+    if (initialImages.includes(imageToRemove)) {
+      const updatedDeleteImageUrls = [...deleteImageUrls, imageToRemove];
+      setDeleteImageUrls(updatedDeleteImageUrls);
+      onDeleteImageUrlsChange(updatedDeleteImageUrls);
+    }
   };
 
   return (

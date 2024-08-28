@@ -15,7 +15,6 @@ import { useEffect, useState } from "react";
 import { FormProvider } from "react-hook-form";
 import { useAddPlaceDetailForm } from "../../_hooks/useAddPlaceDetailForm";
 import { useDeletePlace, useUpdatePlace } from "@/apis/place/PlaceApi.mutation";
-import { Button } from "@/components/common/Button/Button";
 import { ModalWithCategory } from "@/components/common/Modal/ModalWithCategory";
 import InputWithEditImage from "../../_components/InputWithEditImage";
 
@@ -87,7 +86,8 @@ const EditPlaceDetail: React.FC = () => {
   useEffect(() => {
     if (selectedPlaceInfo) {
       console.log(selectedPlaceInfo, "selectedPlaceInfo?");
-      const { name, url, address, phoneNumber, memo } = selectedPlaceInfo || {};
+      const { name, url, address, phoneNumber, memo, openingHours } =
+        selectedPlaceInfo || {};
       const initialImages = selectedPlaceInfo.placeImageUrls.contents || [];
       methods.setValue("pictures", initialImages);
       methods.setValue("name", name);
@@ -95,6 +95,7 @@ const EditPlaceDetail: React.FC = () => {
       methods.setValue("address", address);
       methods.setValue("phoneNumber", phoneNumber);
       methods.setValue("memo", memo);
+      methods.setValue("openingHours", openingHours);
     }
   }, [selectedPlaceInfo]);
 
@@ -105,23 +106,15 @@ const EditPlaceDetail: React.FC = () => {
       return;
     }
 
-    const newImages = values.pictures || []; // 사용자가 새로 추가한 이미지들
-    const currentImages = selectedPlaceInfo.placeImageUrls.contents || []; // 기존 이미지들
-
-    const deleteTargetUrls = currentImages;
-    // .filter(
-    //   (image) => typeof image === "string" && !newImages.includes(image)
-    // );
+    const deleteTargetUrls = methods.getValues("deletedPictures");
 
     const newPlaceImages =
-      values.pictures?.map((file: File | string) =>
-        typeof file === "string" ? file : URL.createObjectURL(file)
-      ) || [];
+      values.pictures && Array.isArray(values.pictures)
+        ? values.pictures.filter((file): file is File => file instanceof File)
+        : [];
 
     const payload: ModifyPlaceRequestDto = {
-      scheduleId:
-        (selectedPlaceInfo.scheduleId as number) ||
-        (values.scheduleId as number),
+      scheduleId: selectedPlaceInfo.scheduleId as number,
       name: values.name ? values.name : selectedPlaceInfo.name,
       url: values.url ? values.url : "-",
       address: values.address ? values.address : "-",
@@ -134,7 +127,7 @@ const EditPlaceDetail: React.FC = () => {
       voteDislikeCount: 0,
       longitude: 0,
       latitude: 0,
-      deleteTargetUrls,
+      deleteTargetUrls: deleteTargetUrls ?? [],
     };
 
     updatePlaceMutate({
@@ -233,6 +226,9 @@ const EditPlaceDetail: React.FC = () => {
                       "pictures",
                       files.filter((file): file is File => file instanceof File)
                     );
+                  }}
+                  onDeleteImageUrlsChange={(deleteImageUrls) => {
+                    methods.setValue("deletedPictures", deleteImageUrls);
                   }}
                   multiple
                   initialImages={selectedPlaceInfo?.placeImageUrls.contents}
