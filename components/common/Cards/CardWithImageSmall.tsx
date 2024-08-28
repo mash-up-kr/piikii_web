@@ -63,12 +63,16 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
                 height={12}
                 priority
               />
-              <span className="text-[12px] max-w-[24px] h-[18px] items-center text-black">
-                {formattedRating}
-              </span>
-              <span className="text-[12px] max-w-[31px] h-[18px] items-center text-[#B5B9C6]">
-                ({reviewCount})
-              </span>
+              {rating !== 0 && (
+                <span className="text-[12px] max-w-[24px] h-[18px] items-center text-black">
+                  {formattedRating}
+                </span>
+              )}
+              {reviewCount !== 0 && (
+                <span className="text-[12px] max-w-[31px] h-[18px] items-center text-[#B5B9C6]">
+                  ({reviewCount})
+                </span>
+              )}
             </div>
           )}
         </div>

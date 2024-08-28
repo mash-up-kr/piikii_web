@@ -5,13 +5,14 @@ import { cn } from "@/lib/utils";
 
 export interface InputWithAddImageProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
+  id: string;
   onFilesChange?: (formData: FormData) => void;
 }
 
 const InputWithAddImage = React.forwardRef<
   HTMLInputElement,
   InputWithAddImageProps
->(({ className, onFilesChange, ...props }, ref) => {
+>(({ className, id, onFilesChange, ...props }, ref) => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const handleFileChange = useCallback(
@@ -47,16 +48,22 @@ const InputWithAddImage = React.forwardRef<
   };
 
   return (
-    <div className="flex flex-row items-center gap-x-[9px] gap-y-2 w-full">
+    <div className="flex flex-row items-center justify-center gap-2">
+      <input
+        id={id}
+        type="file"
+        className="hidden"
+        onChange={handleFileChange}
+        ref={ref}
+        multiple
+        {...props}
+      />
       {uploadedFiles.length < 3 && (
-        <input
-          type="file"
-          className={cn("flex rounded-lg border", className)}
-          onChange={handleFileChange}
-          ref={ref}
-          multiple
-          {...props}
-        />
+        <label htmlFor={id} className="cursor-pointer">
+          <div className="rounded-lg w-[80px] h-[80px] bg-gray-100 flex items-center justify-center">
+            <span className="text-red-500">+</span>
+          </div>
+        </label>
       )}
       <div className="flex gap-x-[9px] flex-wrap">
         {uploadedFiles.map((file, index) => (
@@ -66,12 +73,12 @@ const InputWithAddImage = React.forwardRef<
               width={80}
               height={80}
               alt={`uploaded-image-${index}`}
-              className="object-cover w-full h-full rounded"
+              className="object-cover w-full h-full rounded-lg"
             />
             <button
               type="button"
               onClick={() => handleDeleteFile(index)}
-              className="absolute top-0 left-0 text-[#FF601C] rounded-full w-4 h-4 flex items-center justify-center text-sm"
+              className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-[20px] h-[20px] flex items-center justify-center"
             >
               x
             </button>
