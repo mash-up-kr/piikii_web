@@ -39,7 +39,7 @@
 
 https://www.piikii.co.kr
 
-# Service Features
+# Service Feature
 
 <div>
     <img
@@ -80,7 +80,7 @@ https://www.piikii.co.kr
 | Library | React-Hook-Form, Zod, DnD |
 | CI/CD | github, vercel |
 
-# Tech Features
+# Tech Feature
 <div>
   <img src="https://github.com/user-attachments/assets/d0ee6c73-f2af-45f7-8dfe-b371b0665178" alt="image"/>
 </div>
