@@ -19,9 +19,6 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
   onButtonClick,
 }) => {
   const formattedRating = rating?.toFixed(2);
-  const defaultImage = category
-    ? categoryImageMap[category]
-    : "/png/default_food.png";
 
   const originLogoSrc = React.useMemo(
     () =>
@@ -41,7 +38,7 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
       <CardContent className="flex flex-col w-full gap-y-[8px]">
         <div className="relative w-[160px] h-[110px] overflow-hidden rounded-[12px] items-center justify-center">
           <Image
-            src={images ? images[0] : defaultImage}
+            src={images[0]}
             alt="like"
             width={160}
             height={110}
