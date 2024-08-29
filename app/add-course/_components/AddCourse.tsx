@@ -29,7 +29,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
-  const { clipboardText } = useCopyPasted();
+  const { clipboardText, setClipboardText } = useCopyPasted();
 
   const [placeUrl, setPlaceUrl] = useState("");
   const [showInput, setShowInput] = useState(true);
@@ -63,12 +63,18 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const naverMapRegex = /https?:\/\/naver\.me\/[a-zA-Z0-9]+/;
   const kakaoMapRegex = /https?:\/\/place\.map\.kakao\.com\/[0-9]+/;
 
-  const validateClipboardText = (text: string) => {
-    return naverMapRegex.test(text) || kakaoMapRegex.test(text);
+  const validateText = (text: string) => {
+    if (isMobile) {
+      const naverMatch = text.match(naverMapRegex);
+      const kakaoMatch = text.match(kakaoMapRegex);
+      return naverMatch ? naverMatch[0] : kakaoMatch ? kakaoMatch[0] : null;
+    } else {
+      return naverMapRegex.test(text) || kakaoMapRegex.test(text);
+    }
   };
 
-  const isValidClipboardText = validateClipboardText(clipboardText);
-  const isValidPlaceUrl = validateClipboardText(placeUrl);
+  const isValidClipboardText = validateText(clipboardText);
+  const isValidPlaceUrl = validateText(placeUrl);
 
   useEffect(() => {
     if (categoryList && categoryList.length > 0) {
@@ -153,7 +159,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isMobile && clipboardText && isValidClipboardText) {
+      if (clipboardText && isValidClipboardText) {
         setShowInput(false);
         setIsClipboardText(true);
         createPlaceMutate({ url: clipboardText });
@@ -171,6 +177,8 @@ const AddCourse = ({ data }: AddCourseProps) => {
           setShowAlternateInput(false);
           setShowInput(true);
           setIsClipboardText(false);
+          setPlaceUrl("");
+          setClipboardText("");
         }, 3000);
       } else {
         setShowInput(true);
@@ -243,6 +251,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
             <Input
               className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
               placeholder="올바른 링크를 넣어주세요"
+              value={"올바른 링크를 넣어주세요"}
               disabled={true}
             />
             <Image

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { CategoryChip } from "../../_components/CategoryChip";
 import { InputWithLabel } from "../../_components/InputWithLabel";
 import { CardWithAutoCompleteData } from "@/components/common/Cards/CardWithAutoCompleteData";
-import { InputWithImage } from "../../_components/InputWithImage";
+import { InputWithAddImage } from "../../_components/InputWithAddImage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCourseContext } from "@/providers/course-provider";
 import { PlaceResponseDto } from "@/apis/place/types/dto";
@@ -17,6 +17,7 @@ import {
 import { FormProvider } from "react-hook-form";
 import { useCreatePlace } from "@/apis/place/PlaceApi.mutation";
 import { PlaceAutoCompleteResponse } from "@/apis/origin-place/types/dto";
+import { createFileFromImagePath } from "@/lib/utils";
 
 export type DefaultImageType = {
   id: string;
@@ -42,15 +43,6 @@ export const DEFAULT_IMAGES: DefaultImageType[] = [
   },
 ];
 
-const createFileFromImagePath = async (
-  imagePath: string,
-  fileName: string
-): Promise<File> => {
-  const response = await fetch(imagePath);
-  const blob = await response.blob();
-  return new File([blob], fileName, { type: blob.type });
-};
-
 const getPayloadForRequest = (
   autoData: PlaceAutoCompleteResponse | null,
   values: CommonPlaceDetailFormType,
@@ -58,6 +50,7 @@ const getPayloadForRequest = (
 ) => {
   return {
     scheduleIds: selectedChips,
+    category: autoData ? autoData?.data.category : null,
     name: autoData ? autoData?.data?.name : values.name,
     url: autoData ? autoData?.data?.url : values.url ? values.url : "-",
     address: values.address || "-",
@@ -312,7 +305,7 @@ const AddPlaceDetail: React.FC = () => {
                     />
                   </div>
                   <div className="flex flex-col items-start justify-center">
-                    <InputWithImage
+                    <InputWithAddImage
                       className="w-[80px] h-[80px]"
                       id="picture"
                       type="file"

@@ -2,12 +2,10 @@ import { AxiosInstance } from "axios";
 import instance from "../instance";
 import { ResponseForm } from "../common/model";
 import {
-  AddPlaceRequestDto,
   CreatePlacePayloadDto,
-  ModifyPlaceRequestDto,
   PlaceResponseDto,
-  ScheduleTypeGroupResponse,
   SuccessPlaceTypeGroupResponse,
+  UpdatePlacePayloadDto,
 } from "./types/dto";
 
 class PlaceApi {
@@ -81,15 +79,31 @@ class PlaceApi {
   }: {
     roomUid: string;
     placeId: number;
-    payload: {
-      modifyPlaceRequest: ModifyPlaceRequestDto;
-      newPlaceImages: string[];
-    };
+    payload: UpdatePlacePayloadDto;
   }): Promise<ResponseForm<PlaceResponseDto>> => {
+    const formData = new FormData();
+
+    formData.append(
+      "modifyPlaceRequest",
+      JSON.stringify(payload.modifyPlaceRequest)
+    );
+    if (!payload.newPlaceImages || payload.newPlaceImages.length === 0) {
+      payload.newPlaceImages?.forEach((image) => {
+        formData.append("newPlaceImages", image);
+      });
+    }
+
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
+
     const { data } = await this.axios({
       method: "PATCH",
       url: `/rooms/${roomUid}/places/${placeId}`,
-      data: payload,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
     return data;
   };

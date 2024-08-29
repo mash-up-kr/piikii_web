@@ -26,7 +26,6 @@ const useCourseHandler = () => {
   } = useCourseState();
 
   const addPlaceInfo = (newPlace: PlaceResponseDto) => {
-    console.log(roomPlacesInfo, "초기 상태");
     setRoomPlacesInfo((roomPlacesInfo) => {
       // roomPlacesInfo가 null이 아닌 경우만 진행
       if (roomPlacesInfo) {

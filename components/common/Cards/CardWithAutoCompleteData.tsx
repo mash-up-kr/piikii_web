@@ -27,9 +27,17 @@ export const CardWithAutoCompleteData = ({
         <div className="flex flex-col w-full">
           <div className="flex gap-x-[8px]">
             <CardHeader className="w-full">
-              <div className="flex w-full gap-x-[8px] items-center h-[31px] text-semibold-22">
-                <div className="flex items-center">{autoData?.data.name}</div>
-                <div className="flex gap-x-[4px] items-center">
+              {autoData?.data.category && (
+                <div className="text-[16px] font-semibold  mb-[8px]">
+                  {autoData?.data.category}
+                </div>
+              )}
+              <div className="flex w-full whitespace-nowrap gap-x-[8px] items-center h-[31px] text-semibold-22">
+                <div className="flex w-full text-overflow-ellipsis whitespace-nowrap items-center">
+                  {autoData?.data.name}
+                </div>
+
+                <div className="flex w-full gap-x-[4px] items-center">
                   <div className="flex w-[16px] h-[16px]">
                     <Image
                       src="/svg/naver-icon.svg"
@@ -40,7 +48,7 @@ export const CardWithAutoCompleteData = ({
                       unoptimized
                     />
                   </div>
-                  <div className="text-[14px]">
+                  <div className="w-full text-[14px]">
                     {formattedStarGrade} ({autoData?.data?.reviewCount})
                   </div>
                 </div>

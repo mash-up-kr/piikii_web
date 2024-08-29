@@ -14,10 +14,10 @@ import {
 import { useEffect, useState } from "react";
 import { FormProvider } from "react-hook-form";
 import { useAddPlaceDetailForm } from "../../_hooks/useAddPlaceDetailForm";
-import { InputWithImage } from "../../_components/InputWithImage";
 import { useDeletePlace, useUpdatePlace } from "@/apis/place/PlaceApi.mutation";
-import { Button } from "@/components/common/Button/Button";
 import { ModalWithCategory } from "@/components/common/Modal/ModalWithCategory";
+import InputWithEditImage from "../../_components/InputWithEditImage";
+import { createFileFromImagePath } from "@/lib/utils";
 
 const EditPlaceDetail: React.FC = () => {
   const router = useRouter();
@@ -41,7 +41,7 @@ const EditPlaceDetail: React.FC = () => {
   const { mutate: updatePlaceMutate } = useUpdatePlace({
     options: {
       onSuccess: () => {
-        router.back();
+        router.replace(`/add-course?roomUid=${roomUid}`);
       },
       onError: (error) => {
         console.error("장소 수정 실패:", error);
@@ -52,7 +52,7 @@ const EditPlaceDetail: React.FC = () => {
   const { mutate: DeletePlaceMutate } = useDeletePlace({
     options: {
       onSuccess: () => {
-        router.back();
+        router.replace(`/add-course?roomUid=${roomUid}`);
       },
       onError: (error) => {
         console.error("장소 삭제 실패:", error);
@@ -87,39 +87,49 @@ const EditPlaceDetail: React.FC = () => {
   useEffect(() => {
     if (selectedPlaceInfo) {
       console.log(selectedPlaceInfo, "selectedPlaceInfo?");
-      const { name, url, address, phoneNumber, memo } = selectedPlaceInfo || {};
+      const { name, url, address, phoneNumber, memo, openingHours } =
+        selectedPlaceInfo || {};
+      const initialImages = selectedPlaceInfo.placeImageUrls.contents || [];
+      methods.setValue("pictures", initialImages);
       methods.setValue("name", name);
       methods.setValue("url", url);
       methods.setValue("address", address);
       methods.setValue("phoneNumber", phoneNumber);
       methods.setValue("memo", memo);
+      methods.setValue("openingHours", openingHours);
     }
   }, [selectedPlaceInfo]);
 
   const onCompleteButtonClick = async () => {
     const values = methods.getValues();
-    console.log("values", values);
     if (!values.name || !selectedChip || !selectedPlaceInfo) {
       return;
     }
 
-    const newImages = values.pictures || []; // 사용자가 새로 추가한 이미지들
-    const currentImages = selectedPlaceInfo.placeImageUrls.contents || []; // 기존 이미지들
+    const deleteTargetUrls = methods.getValues("deletedPictures");
 
-    const deleteTargetUrls = currentImages;
-    // .filter(
-    //   (image) => typeof image === "string" && !newImages.includes(image)
-    // );
+    const formImages =
+      values.pictures && Array.isArray(values.pictures)
+        ? values.pictures.filter((file): file is File => file instanceof File)
+        : [];
 
-    const newPlaceImages =
-      values.pictures?.map((file: File | string) =>
-        typeof file === "string" ? file : URL.createObjectURL(file)
-      ) || [];
+    // const newPlaceImages =
+    //   values.pictures && Array.isArray(values.pictures)
+    //     ? await Promise.all(
+    //         values.pictures.map(async (file) => {
+    //           if (file instanceof File) {
+    //             return file;
+    //           } else {
+    //             const fileName = `image-${Date.now()}`;
+    //             return await createFileFromImagePath(file as string, fileName);
+    //           }
+    //         })
+    //       )
+    //     : [];
 
-    const payload: ModifyPlaceRequestDto = {
-      scheduleId:
-        (selectedPlaceInfo.scheduleId as number) ||
-        (values.scheduleId as number),
+    const ModifyPlaceReq: ModifyPlaceRequestDto = {
+      scheduleId: selectedPlaceInfo.scheduleId as number,
+      category: selectedPlaceInfo.category || null,
       name: values.name ? values.name : selectedPlaceInfo.name,
       url: values.url ? values.url : "-",
       address: values.address ? values.address : "-",
@@ -132,16 +142,18 @@ const EditPlaceDetail: React.FC = () => {
       voteDislikeCount: 0,
       longitude: 0,
       latitude: 0,
-      deleteTargetUrls,
+      deleteTargetUrls: deleteTargetUrls ?? [],
+    };
+
+    const payload = {
+      modifyPlaceRequest: ModifyPlaceReq,
+      formImages,
     };
 
     updatePlaceMutate({
       roomUid,
       placeId: selectedPlaceInfo.id as number,
-      payload: {
-        modifyPlaceRequest: payload,
-        newPlaceImages,
-      },
+      payload: payload,
     });
   };
 
@@ -203,102 +215,130 @@ const EditPlaceDetail: React.FC = () => {
               )}
             </div>
           </div>
-
-          <div className="gap-y-[32px] flex flex-col">
-            <div className="flex flex-col gap-y-[12px]">
-              <div className="flex flex-row items-center w-full h-[24px] gap-x-[6px]">
-                <p className="w-[65px] font-bold text-[#292E31] text-[16px]">
-                  장소 이름
+          <div className="flex flex-col w-full h-full gap-y-[32px]">
+            {selectedPlaceInfo?.origin == "AVOCADO" ||
+            selectedPlaceInfo?.origin == "LEMON" ? (
+              <div className="flex flex-col items-start justify-center gap-y-[12px]">
+                <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                  메모
                 </p>
-                <p className="w-[30px] font-bold text-[#FF601C] text-[14px]">
-                  필수
-                </p>
-              </div>
-              <div className="flex flex-col items-start justify-center">
                 <InputWithLabel
-                  type="text"
-                  placeholder="상호명을 적어주세요"
-                  {...methods.register("name")}
+                  type="link"
+                  placeholder="일행에게 메모를 남겨주세요"
+                  iconSrc="/svg/ic_memo_mono.svg"
+                  {...methods.register("memo")}
                 />
+                <CardWithAutoCompleteData register={methods.register} />
               </div>
-              <div className="flex flex-col items-start justify-center">
-                <InputWithImage
-                  className="w-[80px] h-[80px]"
-                  id="picture"
-                  type="file"
-                  onFilesChange={(files) => {
-                    // methods.setValue("pictures", files);
-                  }}
-                  multiple
-                />
-              </div>
-            </div>
+            ) : (
+              <div className="gap-y-[32px] flex flex-col">
+                <div className="flex flex-col w-full gap-y-[12px]">
+                  <div className="flex flex-row items-center w-full h-[24px] gap-x-[6px]">
+                    <p className="w-[65px] font-bold text-[#292E31] text-[16px]">
+                      장소 이름
+                    </p>
+                    <p className="w-[30px] font-bold text-[#FF601C] text-[14px]">
+                      필수
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-start justify-center">
+                    <InputWithLabel
+                      type="text"
+                      disabled={
+                        selectedPlaceInfo?.origin == "MANUAL" ? false : true
+                      }
+                      placeholder="상호명을 적어주세요"
+                      {...methods.register("name")}
+                    />
+                  </div>
+                  <div className="flex flex-col items-start justify-center">
+                    <InputWithEditImage
+                      id="picture"
+                      type="file"
+                      onFilesChange={(formData) => {
+                        const files = Array.from(
+                          formData.getAll("placeImageUrls")
+                        );
+                        methods.setValue(
+                          "pictures",
+                          files.filter(
+                            (file): file is File => file instanceof File
+                          )
+                        );
+                      }}
+                      onDeleteImageUrlsChange={(deleteImageUrls) => {
+                        methods.setValue("deletedPictures", deleteImageUrls);
+                      }}
+                      multiple
+                      initialImages={selectedPlaceInfo?.placeImageUrls.contents}
+                    />
+                  </div>
+                </div>
 
-            <div className="flex flex-col items-start justify-center gap-y-[12px]">
-              <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
-                링크
-              </p>
-              <InputWithLabel
-                type="link"
-                placeholder="링크를 붙여주세요"
-                iconSrc="/svg/ic_link.svg"
-                {...methods.register("url")}
-              />
+                <div className="flex flex-col items-start justify-center gap-y-[12px]">
+                  <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                    링크
+                  </p>
+                  <InputWithLabel
+                    type="link"
+                    placeholder="링크를 붙여주세요"
+                    iconSrc="/svg/ic_link.svg"
+                    {...methods.register("url")}
+                  />
+                </div>
+                <div className="flex flex-col items-start justify-center gap-y-[12px]">
+                  <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                    영업정보
+                  </p>
+                  <InputWithLabel
+                    type="link"
+                    placeholder="영업 시간을 남겨주세요"
+                    iconSrc="/svg/ic_clock_mono.svg"
+                    {...methods.register("openingHours")}
+                  />
+                  <InputWithLabel
+                    type="link"
+                    placeholder="주소를 남겨주세요"
+                    iconSrc="/svg/ic_pin_location_mono.svg"
+                    {...methods.register("address")}
+                  />
+                  <InputWithLabel
+                    type="link"
+                    placeholder="전화번호를 남겨주세요"
+                    iconSrc="/svg/ic_call_mono.svg"
+                    {...methods.register("phoneNumber")}
+                  />
+                </div>
+                <div className="flex flex-col items-start justify-center gap-y-[12px]">
+                  <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                    메모
+                  </p>
+                  <InputWithLabel
+                    type="link"
+                    placeholder="일행에게 메모를 남겨주세요"
+                    iconSrc="/svg/ic_memo_mono.svg"
+                    {...methods.register("memo")}
+                  />
+                </div>
+              </div>
+            )}
+            <div className="flex rounded-[28px] mx-auto flex-row items-center justify-center w-[113px] h-[41px] bg-[#FEF1F2] text-[#FF5B5B] jutsity-center mt-[8px] mb-[32px]">
+              <button
+                className="flex flex-row gap-x-[8px] items-center justify-center"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <Image
+                  src={"/png/ic_bin_20.png"}
+                  alt="bin"
+                  width={20}
+                  height={20}
+                />
+                <p className="text-[14px] font-semibold">삭제하기</p>
+              </button>
             </div>
-            <div className="flex flex-col items-start justify-center gap-y-[12px]">
-              <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
-                영업정보
-              </p>
-              <InputWithLabel
-                type="link"
-                placeholder="영업 시간을 남겨주세요"
-                iconSrc="/svg/ic_clock_mono.svg"
-                {...methods.register("openingHours")}
-              />
-              <InputWithLabel
-                type="link"
-                placeholder="주소를 남겨주세요"
-                iconSrc="/svg/ic_pin_location_mono.svg"
-                {...methods.register("address")}
-              />
-              <InputWithLabel
-                type="link"
-                placeholder="전화번호를 남겨주세요"
-                iconSrc="/svg/ic_call_mono.svg"
-                {...methods.register("phoneNumber")}
-              />
-            </div>
-            <div className="flex flex-col items-start justify-center gap-y-[12px]">
-              <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
-                메모
-              </p>
-              <InputWithLabel
-                type="link"
-                placeholder="일행에게 메모를 남겨주세요"
-                iconSrc="/svg/ic_memo_mono.svg"
-                {...methods.register("memo")}
-              />
-            </div>
-          </div>
-          {/* <CardWithAutoCompleteData
-                placeInfo={placeInfo}
-                updatePlaceInfo={updatePlaceInfo}
-              /> */}
-          <div className="flex rounded-[28px] mx-auto flex-row items-center justify-center w-[113px] h-[41px] bg-[#FEF1F2] text-[#FF5B5B] jutsity-center mt-[40px] mb-[32px]">
-            <button
-              className="flex flex-row gap-x-[8px] items-center justify-center"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <Image
-                src={"/png/ic_bin_20.png"}
-                alt="bin"
-                width={20}
-                height={20}
-              />
-              <p className="text-[14px] font-semibold">삭제하기</p>
-            </button>
           </div>
         </div>
+
         {isModalOpen && selectedPlaceInfo && (
           <ModalWithCategory
             modalText={

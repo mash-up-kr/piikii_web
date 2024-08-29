@@ -10,6 +10,7 @@ export interface PlaceResponseDto {
   placeImageUrls: {
     contents: string[];
   };
+  category: string | null;
   address?: string;
   phoneNumber?: string;
   starGrade?: number;
@@ -59,6 +60,7 @@ export interface CreatePlacePayloadDto {
 
 export interface ModifyPlaceRequestDto {
   scheduleId: number;
+  category: string | null;
   name: string;
   url?: string;
   deleteTargetUrls: string[];
@@ -72,4 +74,9 @@ export interface ModifyPlaceRequestDto {
   voteDislikeCount?: number;
   longitude?: number;
   latitude?: number;
+}
+
+export interface UpdatePlacePayloadDto {
+  modifyPlaceRequest: ModifyPlaceRequestDto;
+  newPlaceImages?: File[];
 }
