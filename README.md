@@ -72,7 +72,7 @@ https://www.piikii.co.kr
 
 | 구분 | 내용
 | -- | -- |
-| 프레임워크 | Next.js(v14) | 
+| Framework | Next.js(v14) | 
 | Network | Axios, TanStack-Query(v5) |
 | Package Manager | pnpm |
 | Style | TailwindCSS, shadcn/ui |
