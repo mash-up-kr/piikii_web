@@ -12,18 +12,18 @@
 <table style="font-weight : bold">
       <tr>
          <td align="center">
-              <a href="https://github.com/sooziini">                 
-                  <img alt="sooziini" src="https://avatars.githubusercontent.com/u/15336672?v=4" width="100" />            
+              <a href="https://github.com/yungjurick">                 
+                  <img alt="yungjurick" src="https://avatars.githubusercontent.com/u/15336672?v=4" width="100" />            
               </a>
           </td>
           <td align="center">
-              <a href="https://github.com/SEO-J17">                 
-                  <img alt="SEO-J17" src="https://avatars.githubusercontent.com/u/93534188?v=4" width="100" />            
+              <a href="https://github.com/yihyun-kim1">                 
+                  <img alt="yihun-kim1" src="https://avatars.githubusercontent.com/u/93534188?v=4" width="100" />            
               </a>
           </td>
           <td align="center">
-              <a href="https://github.com/oreocube">                 
-                  <img alt="oreocube" src="https://avatars.githubusercontent.com/u/51194127?v=4" width="100" />            
+              <a href="https://github.com/brightbong92">                 
+                  <img alt="brightbong92" src="https://avatars.githubusercontent.com/u/51194127?v=4" width="100" />            
               </a>
           </td> 
       </tr>
