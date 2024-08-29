@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-
+import React, { useCallback, useState } from "react";
+import Image from "next/image";
 interface InputWithEditImageProps {
   id: string;
   type: string;
@@ -17,34 +17,33 @@ const InputWithEditImage: React.FC<InputWithEditImageProps> = ({
   multiple = false,
   initialImages = [],
 }) => {
-  const [images, setImages] = useState<string[]>(initialImages);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [deleteImageUrls, setDeleteImageUrls] = useState<string[]>([]);
+  const [images, setImages] = useState<string[]>(initialImages);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const newImages = Array.from(files).map((file) =>
-        URL.createObjectURL(file)
-      );
-      console.log(newImages);
-      setImages([...images, ...newImages]);
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (files) {
+        const newFiles = Array.from(files).slice(0, 3 - uploadedFiles.length); // 최대 3개의 파일
+        const updatedFiles = [...uploadedFiles, ...newFiles];
+        setUploadedFiles(updatedFiles);
 
-      const formData = new FormData();
-      Array.from(files).forEach((file) => formData.append(id, file));
-      onFilesChange(formData);
-    }
-  };
+        // FormData 생성 및 파일 추가
+        const formData = new FormData();
+        updatedFiles.forEach((file) => formData.append("newPlaceImages", file));
 
+        if (onFilesChange) {
+          onFilesChange(formData);
+        }
+      }
+    },
+    [uploadedFiles, onFilesChange]
+  );
   const handleRemoveImage = (index: number) => {
+    //WIP
     const imageToRemove = images[index];
-
     setImages(images.filter((_, i) => i !== index));
-
-    if (initialImages.includes(imageToRemove)) {
-      const updatedDeleteImageUrls = [...deleteImageUrls, imageToRemove];
-      setDeleteImageUrls(updatedDeleteImageUrls);
-      onDeleteImageUrlsChange(updatedDeleteImageUrls);
-    }
   };
 
   return (
@@ -52,7 +51,7 @@ const InputWithEditImage: React.FC<InputWithEditImageProps> = ({
       <input
         id={id}
         type={type}
-        onChange={handleImageChange}
+        onChange={handleFileChange}
         multiple={multiple}
         className="hidden"
       />
@@ -64,11 +63,13 @@ const InputWithEditImage: React.FC<InputWithEditImageProps> = ({
         </label>
       )}
       <div className="flex flex-row items-center justify-center gap-2">
-        {images.map((image, index) => (
-          <div key={index} className="relative">
-            <img
-              src={image}
-              alt={`upload-${index}`}
+        {uploadedFiles.map((file, index) => (
+          <div key={index} className="relative w-[80px] h-[80px]">
+            <Image
+              src={URL.createObjectURL(file)}
+              width={80}
+              height={80}
+              alt={`uploaded-image-${index}`}
               className="rounded-lg w-[80px] h-[80px] object-cover"
             />
             <button

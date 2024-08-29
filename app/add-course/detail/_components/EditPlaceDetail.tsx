@@ -17,6 +17,7 @@ import { useAddPlaceDetailForm } from "../../_hooks/useAddPlaceDetailForm";
 import { useDeletePlace, useUpdatePlace } from "@/apis/place/PlaceApi.mutation";
 import { ModalWithCategory } from "@/components/common/Modal/ModalWithCategory";
 import InputWithEditImage from "../../_components/InputWithEditImage";
+import { createFileFromImagePath } from "@/lib/utils";
 
 const EditPlaceDetail: React.FC = () => {
   const router = useRouter();
@@ -40,7 +41,7 @@ const EditPlaceDetail: React.FC = () => {
   const { mutate: updatePlaceMutate } = useUpdatePlace({
     options: {
       onSuccess: () => {
-        router.back();
+        router.replace(`/add-course?roomUid=${roomUid}`);
       },
       onError: (error) => {
         console.error("장소 수정 실패:", error);
@@ -51,7 +52,7 @@ const EditPlaceDetail: React.FC = () => {
   const { mutate: DeletePlaceMutate } = useDeletePlace({
     options: {
       onSuccess: () => {
-        router.back();
+        router.replace(`/add-course?roomUid=${roomUid}`);
       },
       onError: (error) => {
         console.error("장소 삭제 실패:", error);
@@ -101,20 +102,34 @@ const EditPlaceDetail: React.FC = () => {
 
   const onCompleteButtonClick = async () => {
     const values = methods.getValues();
-    console.log("values", values);
     if (!values.name || !selectedChip || !selectedPlaceInfo) {
       return;
     }
 
     const deleteTargetUrls = methods.getValues("deletedPictures");
 
-    const newPlaceImages =
+    const formImages =
       values.pictures && Array.isArray(values.pictures)
         ? values.pictures.filter((file): file is File => file instanceof File)
         : [];
 
-    const payload: ModifyPlaceRequestDto = {
+    // const newPlaceImages =
+    //   values.pictures && Array.isArray(values.pictures)
+    //     ? await Promise.all(
+    //         values.pictures.map(async (file) => {
+    //           if (file instanceof File) {
+    //             return file;
+    //           } else {
+    //             const fileName = `image-${Date.now()}`;
+    //             return await createFileFromImagePath(file as string, fileName);
+    //           }
+    //         })
+    //       )
+    //     : [];
+
+    const ModifyPlaceReq: ModifyPlaceRequestDto = {
       scheduleId: selectedPlaceInfo.scheduleId as number,
+      category: selectedPlaceInfo.category || null,
       name: values.name ? values.name : selectedPlaceInfo.name,
       url: values.url ? values.url : "-",
       address: values.address ? values.address : "-",
@@ -130,13 +145,15 @@ const EditPlaceDetail: React.FC = () => {
       deleteTargetUrls: deleteTargetUrls ?? [],
     };
 
+    const payload = {
+      modifyPlaceRequest: ModifyPlaceReq,
+      formImages,
+    };
+
     updatePlaceMutate({
       roomUid,
       placeId: selectedPlaceInfo.id as number,
-      payload: {
-        modifyPlaceRequest: payload,
-        newPlaceImages,
-      },
+      payload: payload,
     });
   };
 
@@ -215,7 +232,7 @@ const EditPlaceDetail: React.FC = () => {
               </div>
             ) : (
               <div className="gap-y-[32px] flex flex-col">
-                <div className="flex flex-col gap-y-[12px]">
+                <div className="flex flex-col w-full gap-y-[12px]">
                   <div className="flex flex-row items-center w-full h-[24px] gap-x-[6px]">
                     <p className="w-[65px] font-bold text-[#292E31] text-[16px]">
                       장소 이름
@@ -227,6 +244,9 @@ const EditPlaceDetail: React.FC = () => {
                   <div className="flex flex-col items-start justify-center">
                     <InputWithLabel
                       type="text"
+                      disabled={
+                        selectedPlaceInfo?.origin == "MANUAL" ? false : true
+                      }
                       placeholder="상호명을 적어주세요"
                       {...methods.register("name")}
                     />

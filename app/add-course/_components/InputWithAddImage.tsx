@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useState, useCallback } from "react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
 
 export interface InputWithAddImageProps
   extends React.InputHTMLAttributes<HTMLInputElement> {

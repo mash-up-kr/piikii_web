@@ -46,3 +46,12 @@ export const categoryImageMap: { [key: string]: string } = {
   ALCOHOL: "/png/default_alcohol.png",
   ARCADE: "/png/default_arcade.png",
 };
+
+export const createFileFromImagePath = async (
+  imagePath: string,
+  fileName: string
+): Promise<File> => {
+  const response = await fetch(imagePath);
+  const blob = await response.blob();
+  return new File([blob], fileName, { type: blob.type });
+};
