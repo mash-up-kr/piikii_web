@@ -1,8 +1,9 @@
-# 함께 즐기는 모임의 시작 Piki
+# 함께 즐기는 모임의 시작, Piki 🧡
 
-**손쉽게 모임을 정하고 즐길수 있어요.**
+**빠르고 쉽게 단체 모임을 계획해요.**
 
 - 함께 후보지를 모아오는 방
+- 복사/붙여넣기를 통한 장소 등록
 - O/X 장소 투표 게임
 - N차 코스 추천하기
 
@@ -52,6 +53,16 @@ https://www.piikii.co.kr
         alt="image"
         src="https://github.com/user-attachments/assets/f5349ce9-bb2d-4fc9-ab89-699b1bcb1c10"
     />
+     <img
+        width="50%"
+        alt="image"
+        src="https://github.com/user-attachments/assets/1dd6d922-620b-4e16-8b5d-f7ea4af1c939"
+    />
+           <img
+        width="50%"
+        alt="image"
+        src="https://github.com/user-attachments/assets/308f71a0-5ce2-4694-aff6-eafbfcced08d"
+    />
     <img
         width="50%"
         alt="image"
@@ -72,12 +83,12 @@ https://www.piikii.co.kr
 
 | 구분 | 내용
 | -- | -- |
-| Framework | Next.js(v14) | 
+| Framework | Next.js(v14) App router | 
 | Network | Axios, TanStack-Query(v5) |
 | Package Manager | pnpm |
 | Style | TailwindCSS, shadcn/ui |
 | State Management | ContextAPI, Web-Storage |
-| Library | React-Hook-Form, Zod, DnD |
+| Library | React-Hook-Form, Zod, react-beautiful-dnd |
 | CI/CD | github, vercel |
 
 # Tech Feature
