@@ -224,7 +224,11 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
         <Button
           className="flex border-2 border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white gap-[4px]"
-          onClick={!isReadyToVote ? () => setIsModalOpen(true) : undefined}
+          onClick={() => {
+            !isReadyToVote
+              ? setIsModalOpen(true)
+              : router.push(`/vote-start/?roomUid=${roomUid}`);
+          }}
         >
           <p className="font-semibold text-neutral-700 text-[12px]">투표시작</p>
           <Image
