@@ -97,7 +97,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
       onSuccess: (res) => {
         if (res) {
           setAutoData(res);
-          console.log(res, "auto?");
         }
       },
       onError: (error) => {
