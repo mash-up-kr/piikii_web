@@ -24,7 +24,7 @@ const LabelWithValue = React.forwardRef<HTMLInputElement, LabelWithValueProps>(
         <input
           type={type}
           className={cn(
-            "flex-1 bg-transparent text-[#8B95A1] text-[16px] outline-none",
+            "flex-1 bg-transparent inline-block whitespace-nowrap overflow-hidden text-ellipsis text-[#8B95A1] text-[16px] outline-none",
             className
           )}
           value={value}

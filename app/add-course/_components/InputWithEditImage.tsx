@@ -1,4 +1,5 @@
-import React, { useCallback, useState } from "react";
+"use client";
+import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 interface InputWithEditImageProps {
   id: string;
@@ -21,6 +22,12 @@ const InputWithEditImage: React.FC<InputWithEditImageProps> = ({
   const [deleteImageUrls, setDeleteImageUrls] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>(initialImages);
 
+  useEffect(() => {
+    if (initialImages.length) {
+      setImages(initialImages);
+    }
+  }, [initialImages]);
+
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
@@ -32,6 +39,7 @@ const InputWithEditImage: React.FC<InputWithEditImageProps> = ({
         // FormData 생성 및 파일 추가
         const formData = new FormData();
         updatedFiles.forEach((file) => formData.append("newPlaceImages", file));
+        console.log(formData);
 
         if (onFilesChange) {
           onFilesChange(formData);
@@ -40,10 +48,23 @@ const InputWithEditImage: React.FC<InputWithEditImageProps> = ({
     },
     [uploadedFiles, onFilesChange]
   );
-  const handleRemoveImage = (index: number) => {
-    //WIP
-    const imageToRemove = images[index];
-    setImages(images.filter((_, i) => i !== index));
+
+  const handleRemoveImage = (index: number, isInitialImage: boolean) => {
+    if (isInitialImage) {
+      const imageToRemove = images[index];
+      setImages((prevImages) => {
+        const updatedImages = prevImages.filter((_, i) => i !== index);
+        const updatedDeleteUrls = [...deleteImageUrls, imageToRemove];
+        setDeleteImageUrls(updatedDeleteUrls);
+        onDeleteImageUrlsChange(updatedDeleteUrls);
+        return updatedImages;
+      });
+    } else {
+      setUploadedFiles((prevFiles) => {
+        const updatedFiles = prevFiles.filter((_, i) => i !== index);
+        return updatedFiles;
+      });
+    }
   };
 
   return (
@@ -63,8 +84,26 @@ const InputWithEditImage: React.FC<InputWithEditImageProps> = ({
         </label>
       )}
       <div className="flex flex-row items-center justify-center gap-2">
-        {uploadedFiles.map((file, index) => (
+        {images.map((image, index) => (
           <div key={index} className="relative w-[80px] h-[80px]">
+            <Image
+              src={image}
+              width={80}
+              height={80}
+              alt={`uploaded-image-${index}`}
+              className="rounded-lg w-[80px] h-[80px] object-cover"
+            />
+            <button
+              type="button"
+              onClick={() => handleRemoveImage(index, true)}
+              className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-[20px] h-[20px] flex items-center justify-center"
+            >
+              &times;
+            </button>
+          </div>
+        ))}
+        {uploadedFiles.map((file, index) => (
+          <div key={`uploaded-${index}`} className="relative w-[80px] h-[80px]">
             <Image
               src={URL.createObjectURL(file)}
               width={80}
@@ -74,7 +113,7 @@ const InputWithEditImage: React.FC<InputWithEditImageProps> = ({
             />
             <button
               type="button"
-              onClick={() => handleRemoveImage(index)}
+              onClick={() => handleRemoveImage(index, false)}
               className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-[20px] h-[20px] flex items-center justify-center"
             >
               &times;

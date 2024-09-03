@@ -87,7 +87,7 @@ class PlaceApi {
       "modifyPlaceRequest",
       JSON.stringify(payload.modifyPlaceRequest)
     );
-    if (!payload.newPlaceImages || payload.newPlaceImages.length === 0) {
+    if (payload.newPlaceImages) {
       payload.newPlaceImages?.forEach((image) => {
         formData.append("newPlaceImages", image);
       });

@@ -6,20 +6,23 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { useCourseContext } from "@/providers/course-provider";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
 import { UseFormRegister } from "react-hook-form";
+
+type AutoDataType = Omit<PlaceResponseDto, "id" | "roomUid" | "scheduleId">;
 
 export interface CardWithAutoCompleteDataProps {
   register: UseFormRegister<CommonPlaceDetailFormType>;
+  autoData: AutoDataType | null;
 }
 
 export const CardWithAutoCompleteData = ({
   register,
+  autoData,
 }: CardWithAutoCompleteDataProps) => {
-  const { isClipboardText, autoData } = useCourseContext();
-  const formattedStarGrade = autoData?.data?.starGrade?.toFixed(2);
+  const { isClipboardText } = useCourseContext();
+  const formattedStarGrade = autoData?.starGrade?.toFixed(2);
   const router = useRouter();
-  const placeUrl = autoData?.data?.url ?? "";
+  const placeUrl = autoData?.url ?? "";
 
   return (
     <div className="flex flex-col w-full gap-y-[8px] mt-[32px]">
@@ -27,17 +30,17 @@ export const CardWithAutoCompleteData = ({
         <div className="flex flex-col w-full">
           <div className="flex gap-x-[8px]">
             <CardHeader className="w-full">
-              {autoData?.data.category && (
+              {autoData?.category && (
                 <div className="text-[16px] font-semibold  mb-[8px]">
-                  {autoData?.data.category}
+                  {autoData?.category}
                 </div>
               )}
               <div className="flex w-full whitespace-nowrap gap-x-[8px] items-center h-[31px] text-semibold-22">
-                <div className="w-full max-w-[235px] inline-block whitespace-nowrap overflow-hidden text-ellipsis items-center">
-                  {autoData?.data.name}
+                <div className="max-w-[235px] inline-block whitespace-nowrap overflow-hidden text-ellipsis items-center">
+                  {autoData?.name}
                 </div>
 
-                <div className="flex w-full  max-w-[100px]  gap-x-[4px] items-center">
+                <div className="flex max-w-[100px] gap-x-[4px] items-center">
                   <div className="flex w-[16px] h-[16px]">
                     <Image
                       src="/svg/naver-icon.svg"
@@ -48,12 +51,10 @@ export const CardWithAutoCompleteData = ({
                       unoptimized
                     />
                   </div>
-                  <div className="flex flex-row items-center gap-x-[8px] w-full text-[14px]">
-                    {autoData?.data?.starGrade !== 0 && (
-                      <p>{formattedStarGrade}</p>
-                    )}
-                    {autoData?.data?.reviewCount !== 0 && (
-                      <p>({autoData?.data?.reviewCount})</p>
+                  <div className="flex flex-row items-center gap-x-[4px] w-full text-[14px]">
+                    {autoData?.starGrade !== 0 && <p>{formattedStarGrade}</p>}
+                    {autoData?.reviewCount !== 0 && (
+                      <p>({autoData?.reviewCount})</p>
                     )}
                   </div>
                 </div>
@@ -61,7 +62,7 @@ export const CardWithAutoCompleteData = ({
             </CardHeader>
           </div>
           <div className="flex flex-row w-full h-[100px] gap-x-[9px] my-[16px]">
-            {autoData?.data?.placeImageUrls.contents.map((src, index) => (
+            {autoData?.placeImageUrls.contents.map((src, index) => (
               <Image
                 key={index}
                 src={src}
