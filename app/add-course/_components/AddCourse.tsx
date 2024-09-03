@@ -271,7 +271,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
             <Input
               className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
               placeholder="네이버, 카카오 링크를 넣어주세요"
-              value={placeUrl}
+              value={clipboardText || placeUrl}
               onChange={(e) => setPlaceUrl(e.target.value)}
             />
             <Image
@@ -280,7 +280,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
               width={32}
               height={32}
               onClick={() => {
-                if (placeUrl) {
+                if (isValidClipboardText || isValidPlaceUrl) {
                   router.push(
                     `add-course/detail?roomUid=${
                       roomUidStorage?.get()?.roomUid

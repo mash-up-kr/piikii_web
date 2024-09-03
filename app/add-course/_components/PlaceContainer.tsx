@@ -22,7 +22,8 @@ export const PlaceContainer: React.FC<PlacesContainerProps> = ({
   const { places } = placesData;
 
   const router = useRouter();
-  const { selectedPlaceInfo, setSelectedPlaceInfo } = useCourseContext();
+  const { selectedPlaceInfo, setSelectedPlaceInfo, setAutoData } =
+    useCourseContext();
   const handleCardClick = (place: PlaceResponseDto) => {
     setSelectedPlaceInfo(place);
     router.push(

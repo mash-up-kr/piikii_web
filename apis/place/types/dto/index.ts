@@ -10,13 +10,13 @@ export interface PlaceResponseDto {
   placeImageUrls: {
     contents: string[];
   };
-  category: string | null;
+  category?: string | null;
   address?: string;
   phoneNumber?: string;
   starGrade?: number;
   origin: "AVOCADO" | "LEMON" | "MANUAL";
   memo?: string;
-  openingHours?: string;
+  openingHours?: string | null;
   reviewCount?: number;
   confirmed?: boolean;
 }

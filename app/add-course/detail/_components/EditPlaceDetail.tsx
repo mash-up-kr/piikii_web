@@ -27,8 +27,13 @@ const EditPlaceDetail: React.FC = () => {
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { categoryList, selectedPlaceInfo, setSelectedPlaceInfo } =
-    useCourseContext();
+  const {
+    categoryList,
+    selectedPlaceInfo,
+    autoData,
+    setAutoData,
+    setSelectedPlaceInfo,
+  } = useCourseContext();
 
   const handleLeftButtonClick = () => {
     setIsModalOpen(false);
@@ -41,6 +46,8 @@ const EditPlaceDetail: React.FC = () => {
   const { mutate: updatePlaceMutate } = useUpdatePlace({
     options: {
       onSuccess: () => {
+        setAutoData(null);
+        setSelectedPlaceInfo(null);
         router.replace(`/add-course?roomUid=${roomUid}`);
       },
       onError: (error) => {
@@ -52,6 +59,7 @@ const EditPlaceDetail: React.FC = () => {
   const { mutate: DeletePlaceMutate } = useDeletePlace({
     options: {
       onSuccess: () => {
+        setAutoData(null);
         router.replace(`/add-course?roomUid=${roomUid}`);
       },
       onError: (error) => {
@@ -72,11 +80,12 @@ const EditPlaceDetail: React.FC = () => {
       });
     }
   };
-
+  const [placeImages, setPlaceImages] = useState<string[]>([]);
   useEffect(() => {
     if (selectedPlaceInfo !== null) {
       setSelectedChip(selectedPlaceInfo.scheduleId);
       updatePlaceInfo(selectedPlaceInfo);
+      console.log(selectedPlaceInfo, autoData, "???????");
     }
   }, [selectedPlaceInfo]);
 
@@ -91,6 +100,7 @@ const EditPlaceDetail: React.FC = () => {
         selectedPlaceInfo || {};
       const initialImages = selectedPlaceInfo.placeImageUrls.contents || [];
       methods.setValue("pictures", initialImages);
+      setPlaceImages(initialImages);
       methods.setValue("name", name);
       methods.setValue("url", url);
       methods.setValue("address", address);
@@ -106,26 +116,30 @@ const EditPlaceDetail: React.FC = () => {
       return;
     }
 
-    const deleteTargetUrls = methods.getValues("deletedPictures");
+    const existingImageUrls = new Set(
+      selectedPlaceInfo.placeImageUrls.contents || []
+    );
+    const deleteTargetUrls = methods.getValues("deleteImageUrls");
 
-    const formImages =
-      values.pictures && Array.isArray(values.pictures)
-        ? values.pictures.filter((file): file is File => file instanceof File)
-        : [];
+    const newImages = values.pictures
+      ? values.pictures.filter((file) => {
+          if (typeof file === "string") {
+            return !existingImageUrls.has(file);
+          }
+          return true;
+        })
+      : [];
 
-    // const newPlaceImages =
-    //   values.pictures && Array.isArray(values.pictures)
-    //     ? await Promise.all(
-    //         values.pictures.map(async (file) => {
-    //           if (file instanceof File) {
-    //             return file;
-    //           } else {
-    //             const fileName = `image-${Date.now()}`;
-    //             return await createFileFromImagePath(file as string, fileName);
-    //           }
-    //         })
-    //       )
-    //     : [];
+    const newPlaceImages = await Promise.all(
+      newImages.map(async (file) => {
+        if (file instanceof File) {
+          return file;
+        } else {
+          const fileName = `image-${Date.now()}`;
+          return await createFileFromImagePath(file as string, fileName);
+        }
+      })
+    );
 
     const ModifyPlaceReq: ModifyPlaceRequestDto = {
       scheduleId: selectedPlaceInfo.scheduleId as number,
@@ -147,13 +161,14 @@ const EditPlaceDetail: React.FC = () => {
 
     const payload = {
       modifyPlaceRequest: ModifyPlaceReq,
-      formImages,
+      newPlaceImages,
     };
 
+    console.log(payload);
     updatePlaceMutate({
       roomUid,
       placeId: selectedPlaceInfo.id as number,
-      payload: payload,
+      payload,
     });
   };
 
@@ -228,7 +243,10 @@ const EditPlaceDetail: React.FC = () => {
                   iconSrc="/svg/ic_memo_mono.svg"
                   {...methods.register("memo")}
                 />
-                <CardWithAutoCompleteData register={methods.register} />
+                <CardWithAutoCompleteData
+                  autoData={selectedPlaceInfo}
+                  register={methods.register}
+                />
               </div>
             ) : (
               <div className="gap-y-[32px] flex flex-col">
@@ -257,7 +275,7 @@ const EditPlaceDetail: React.FC = () => {
                       type="file"
                       onFilesChange={(formData) => {
                         const files = Array.from(
-                          formData.getAll("placeImageUrls")
+                          formData.getAll("newPlaceImages")
                         );
                         methods.setValue(
                           "pictures",
@@ -267,7 +285,7 @@ const EditPlaceDetail: React.FC = () => {
                         );
                       }}
                       onDeleteImageUrlsChange={(deleteImageUrls) => {
-                        methods.setValue("deletedPictures", deleteImageUrls);
+                        methods.setValue("deleteImageUrls", deleteImageUrls);
                       }}
                       multiple
                       initialImages={selectedPlaceInfo?.placeImageUrls.contents}

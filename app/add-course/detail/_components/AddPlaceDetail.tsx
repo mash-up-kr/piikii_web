@@ -87,6 +87,8 @@ const AddPlaceDetail: React.FC = () => {
     isClipboardText,
     setIsClipboardText,
     autoData,
+    setAutoData,
+    setSelectedPlaceInfo,
     addPlaceInfo,
   } = useCourseContext();
 
@@ -105,9 +107,9 @@ const AddPlaceDetail: React.FC = () => {
       onSuccess: (res) => {
         const placeResponse: PlaceResponseDto = res.data;
         setIsClipboardText(false);
-
         addPlaceInfo(placeResponse);
-
+        setSelectedPlaceInfo(null);
+        setAutoData(null);
         router.replace(`/add-course?roomUid=${roomUid}`);
       },
       onError: (error) => {
@@ -137,6 +139,7 @@ const AddPlaceDetail: React.FC = () => {
   useEffect(() => {
     if (autoData) {
       setIsClipboardText(true);
+      setAutoData(autoData);
 
       const { name, url, address, phoneNumber, openingHours } =
         autoData.data || {};
@@ -273,7 +276,7 @@ const AddPlaceDetail: React.FC = () => {
             </div>
           </div>
           <div className="flex flex-col w-full h-[184px] gap-y-[32px]">
-            {isClipboardText === true ? (
+            {isClipboardText === true && autoData ? (
               <div className="flex flex-col items-start justify-center gap-y-[12px]">
                 <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
                   메모
@@ -284,7 +287,10 @@ const AddPlaceDetail: React.FC = () => {
                   iconSrc="/svg/ic_memo_mono.svg"
                   {...methods.register("memo")}
                 />
-                <CardWithAutoCompleteData register={methods.register} />
+                <CardWithAutoCompleteData
+                  autoData={autoData.data}
+                  register={methods.register}
+                />
               </div>
             ) : (
               <div className="gap-y-[32px] flex flex-col">

@@ -72,16 +72,16 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
                     unoptimized
                   />
                 </div>
-                {starGrade !== 0 && (
+                {starGrade ? (
                   <span className="w-[24px] h-[18px] text-[12px] text-[#363A3C] font-semibold">
                     {formattedStarGrade}
                   </span>
-                )}
-                {reviewCount !== 0 && (
+                ) : null}
+                {reviewCount ? (
                   <span className="w-[31px] h-[18px] text-[12px] text-[#363A3C] opacity-50">
                     ({reviewCount})
                   </span>
-                )}
+                ) : null}
               </div>
             </div>
             <button
