@@ -1,7 +1,7 @@
 import {
   ColumnsType,
   ValueType,
-} from "@/app/edit-course/_components/DragAndDropArea";
+} from "@/app/edit-category/_components/DragAndDropArea";
 import { Size } from "@/model";
 import {
   BadgeInfoType,
