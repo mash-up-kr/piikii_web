@@ -15,6 +15,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { RegisterSchedulesRequest } from "@/apis/schedule/types/dto";
 import { iconInfo } from "@/lib/utils";
 import { ModalWithCategory } from "@/components/common/Modal/ModalWithCategory";
+import { update } from "lodash-es";
 
 export type OrderType = "food" | "dessert" | "beer" | "play";
 export type OrderType2 = "DISH" | "DESSERT" | "ALCOHOL" | "ARCADE";
@@ -91,7 +92,11 @@ const reorder = (
   const [removed] = result.splice(startIndex, 1);
 
   result.splice(endIndex, 0, removed);
-  return result;
+  // return result;
+  return result.map((item, index) => ({
+    ...item,
+    sequence: index + 1,
+  }));
 };
 
 const DragAndDropArea: React.FC = () => {
@@ -129,7 +134,6 @@ const DragAndDropArea: React.FC = () => {
 
   const handleClickDisabledButton = () => {
     if (isDisabled) {
-      console.log(isDisabled);
       toast.toast({
         title: "카테고리를 1개 이상 추가해주세요",
         duration: 500,
@@ -205,12 +209,14 @@ const DragAndDropArea: React.FC = () => {
     setSelectedSequence(item.sequence);
     setSelectedItemText(item.name);
 
-    const matchedSchedule = roomPlacesInfo?.filter(
+    const matchedSchedule = roomPlacesInfo?.find(
       (place) => place.scheduleId === item.scheduleId
     );
 
     if (matchedSchedule) {
-      setSelectedPlaceNumber(matchedSchedule[0].places.length);
+      setSelectedPlaceNumber(matchedSchedule.places.length);
+    } else {
+      setSelectedPlaceNumber(0);
     }
 
     setIsModalOpen(true);
@@ -257,6 +263,7 @@ const DragAndDropArea: React.FC = () => {
     const updatedList = generateUniqueTitles([...copyColumns, newItem]);
 
     setCopyColumns(updatedList);
+    setItemCount(updatedList.length);
   };
   const handleItemDelete = (sequence: number, type: OrderType2) => {
     // 삭제할 항목을 제외한 리스트를 생성
@@ -280,6 +287,7 @@ const DragAndDropArea: React.FC = () => {
     });
 
     setCopyColumns(updatedList);
+    setItemCount(updatedList.length);
   };
 
   return (
