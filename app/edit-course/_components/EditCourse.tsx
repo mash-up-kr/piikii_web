@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import NavigationBar from "@/components/common/Navigation/NavigationBar";
-import DragAndDropArea from "./DragAndDropArea";
+import DragAndDropArea from "../../edit-category/_components/DragAndDropArea";
 import { useState } from "react";
 import { ModalWithCategory } from "@/components/common/Modal/ModalWithCategory";
 

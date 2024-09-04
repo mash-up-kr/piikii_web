@@ -3,7 +3,7 @@ import { VoteResultByScheduleResponseDto } from "@/apis/vote/types/dto";
 import {
   ColumnsType,
   OrderType,
-} from "@/app/edit-course/_components/DragAndDropArea";
+} from "@/app/edit-category/_components/DragAndDropArea";
 
 export enum Size {
   small = "small",

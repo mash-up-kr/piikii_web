@@ -1,11 +1,10 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DragDropContext, DropResult, Draggable } from "react-beautiful-dnd";
 import Image from "next/image";
 import CardWithCourse from "@/components/common/Cards/CardWithCourse";
 import { SheetWithCourse } from "@/components/common/BottomSheet/SheetWithCourse";
-
-import { StrictModeDroppable } from "./Droppable";
+import { StrictModeDroppable } from "../../edit-course/_components/Droppable";
 import { Button } from "@/components/common/Button/Button";
 import { useToast } from "@/components/common/Toast/use-toast";
 import { useCourseContext } from "@/providers/course-provider";
@@ -15,6 +14,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { RegisterSchedulesRequest } from "@/apis/schedule/types/dto";
 import { iconInfo } from "@/lib/utils";
 import { ModalWithCategory } from "@/components/common/Modal/ModalWithCategory";
+import {
+  generateTempKey,
+  generateUniqueTitles,
+  isTempKey,
+  removeOrderSuffix,
+  reorder,
+} from "../_utils";
 
 export type OrderType = "food" | "dessert" | "beer" | "play";
 export type OrderType2 = "DISH" | "DESSERT" | "ALCOHOL" | "ARCADE";
@@ -31,67 +37,6 @@ export type ColumnsType = {
     id: "course";
     list: Record<OrderType, ValueType[]>;
   };
-};
-
-const extractNumberFromTitle = (title: string) => {
-  const match = title.match(/(\d+)차$/);
-  return match ? parseInt(match[1], 10) : null;
-};
-
-const generateUniqueTitles = (
-  columns: ScheduleResponse[],
-  updateTitles: boolean = true
-): ScheduleResponse[] => {
-  if (!updateTitles) return columns;
-
-  const groupedByType = columns.reduce((acc, item) => {
-    if (!acc[item.type]) {
-      acc[item.type] = [];
-    }
-    acc[item.type].push(item);
-    return acc;
-  }, {} as Record<OrderType2, ScheduleResponse[]>);
-
-  return columns.map((item) => {
-    const itemsOfType = groupedByType[item.type];
-
-    const sortedItems = itemsOfType
-      .map((i) => ({
-        ...i,
-        number: extractNumberFromTitle(i.name) || 0,
-      }))
-      .sort((a, b) => a.number - b.number);
-
-    const newNumber =
-      sortedItems.length > 1
-        ? sortedItems.findIndex((i) => i.scheduleId === item.scheduleId) + 1
-        : 0;
-
-    const existingItem = columns.find((i) => i.scheduleId === item.scheduleId);
-    const shouldUpdateTitle =
-      existingItem && existingItem.sequence !== item.sequence;
-
-    return {
-      ...item,
-      name: shouldUpdateTitle
-        ? newNumber > 0
-          ? `${item.name.split(" ")[0]}${newNumber}차`
-          : item.name.split(" ")[0]
-        : item.name,
-    };
-  });
-};
-
-const reorder = (
-  list: ScheduleResponse[],
-  startIndex: number,
-  endIndex: number
-): ScheduleResponse[] => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-
-  result.splice(endIndex, 0, removed);
-  return result;
 };
 
 const DragAndDropArea: React.FC = () => {
@@ -129,23 +74,12 @@ const DragAndDropArea: React.FC = () => {
 
   const handleClickDisabledButton = () => {
     if (isDisabled) {
-      console.log(isDisabled);
       toast.toast({
         title: "카테고리를 1개 이상 추가해주세요",
-        duration: 500,
+        duration: 1000,
       });
     }
     return;
-  };
-
-  const generateTempKey = () => {
-    // 1,000,000 ~ 9,999,999 범위의 값을 생성
-    return Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000;
-  };
-
-  const isTempKey = (id: number) => {
-    //  1,000,000 ~ 9,999,999 범위의 값을 가진 `scheduleId`는 임시 키로 간주
-    return id >= 1000000 && id <= 9999999;
   };
 
   const prepareSchedulesForApi = (
@@ -205,12 +139,14 @@ const DragAndDropArea: React.FC = () => {
     setSelectedSequence(item.sequence);
     setSelectedItemText(item.name);
 
-    const matchedSchedule = roomPlacesInfo?.filter(
+    const matchedSchedule = roomPlacesInfo?.find(
       (place) => place.scheduleId === item.scheduleId
     );
 
     if (matchedSchedule) {
-      setSelectedPlaceNumber(matchedSchedule[0].places.length);
+      setSelectedPlaceNumber(matchedSchedule.places.length);
+    } else {
+      setSelectedPlaceNumber(0);
     }
 
     setIsModalOpen(true);
@@ -226,17 +162,16 @@ const DragAndDropArea: React.FC = () => {
     }
     setIsModalOpen(false);
   };
+
   const onCancelDelete = () => {
     setIsModalOpen(false);
   };
-  useEffect(() => {
-    console.log(categoryList);
-  }, [categoryList]);
 
   const findLabelForType = (type: OrderType2): string => {
     const icon = iconInfo.find((icon) => icon.type === type);
     return icon ? icon.label : type;
   };
+
   const handleItemClick = (type: OrderType2) => {
     const label = findLabelForType(type);
 
@@ -249,37 +184,51 @@ const DragAndDropArea: React.FC = () => {
     const newItem: ScheduleResponse = {
       scheduleId: generateTempKey(),
       type,
-      name: newSequence > 1 ? `${label} ${newSequence}차` : `${label}`,
-      sequence: newSequence,
+      name: newSequence > 1 ? `${label}${newSequence}차` : `${label}`,
+      sequence: copyColumns.length + 1,
     };
+
+    if (itemsOfType.length === 1) {
+      itemsOfType[0].name = `${label}1차`;
+    }
 
     // 아이템 리스트에 새로운 아이템 추가 후 순서에 맞게 라벨링
     const updatedList = generateUniqueTitles([...copyColumns, newItem]);
 
     setCopyColumns(updatedList);
+    setItemCount(updatedList.length);
   };
+
   const handleItemDelete = (sequence: number, type: OrderType2) => {
     // 삭제할 항목을 제외한 리스트를 생성
     const filteredList = copyColumns.filter(
       (item) => !(item.sequence === sequence && item.type === type)
     );
 
-    // 삭제하고  -동일한 타입의 항목들의 sequence만 골라서 조정
+    const itemsOfType = filteredList.filter((item) => item.type === type);
+
+    // // 삭제하고  -동일한 타입의 항목들의 sequence만 골라서 조정
     const updatedList = filteredList.map((item) => {
-      if (item.type === type && item.sequence > sequence) {
-        return {
-          ...item,
-          sequence: item.sequence - 1,
-          name:
-            item.sequence > 2
-              ? `${item.name.split(" ")[0]}${item.sequence - 1}차`
-              : item.name.split(" ")[0],
-        };
+      if (item.type === type) {
+        if (itemsOfType.length === 1) {
+          return {
+            ...item,
+            sequence: 1,
+            name: removeOrderSuffix(item.name),
+          };
+        } else if (item.sequence > sequence) {
+          return {
+            ...item,
+            sequence: item.sequence - 1,
+            name: `${item.name.split(" ")[0]}${item.sequence - 1}차`,
+          };
+        }
       }
       return item;
     });
 
     setCopyColumns(updatedList);
+    setItemCount(updatedList.length);
   };
 
   return (

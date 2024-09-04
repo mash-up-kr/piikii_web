@@ -85,7 +85,6 @@ const EditPlaceDetail: React.FC = () => {
     if (selectedPlaceInfo !== null) {
       setSelectedChip(selectedPlaceInfo.scheduleId);
       updatePlaceInfo(selectedPlaceInfo);
-      console.log(selectedPlaceInfo, autoData, "???????");
     }
   }, [selectedPlaceInfo]);
 
@@ -164,7 +163,6 @@ const EditPlaceDetail: React.FC = () => {
       newPlaceImages,
     };
 
-    console.log(payload);
     updatePlaceMutate({
       roomUid,
       placeId: selectedPlaceInfo.id as number,
