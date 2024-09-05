@@ -43,8 +43,12 @@ export const CardWithAutoCompleteData = ({
                 <div className="flex max-w-[100px] gap-x-[4px] items-center">
                   <div className="flex w-[16px] h-[16px]">
                     <Image
-                      src="/svg/naver-icon.svg"
-                      alt="naver"
+                      src={
+                        autoData?.origin == "AVOCADO"
+                          ? "/svg/naver-icon.svg"
+                          : "/svg/kakao-icon.svg"
+                      }
+                      alt="icon"
                       width={16}
                       height={16}
                       priority
