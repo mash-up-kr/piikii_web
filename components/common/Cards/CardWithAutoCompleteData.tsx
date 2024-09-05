@@ -6,6 +6,7 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { useCourseContext } from "@/providers/course-provider";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { UseFormRegister } from "react-hook-form";
 
 type AutoDataType = Omit<PlaceResponseDto, "id" | "roomUid" | "scheduleId">;
@@ -23,6 +24,11 @@ export const CardWithAutoCompleteData = ({
   const formattedStarGrade = autoData?.starGrade?.toFixed(2);
   const router = useRouter();
   const placeUrl = autoData?.url ?? "";
+  const originLogoSrc = useMemo(
+    () =>
+      origin === "AVOCADO" ? "/svg/naver-icon.svg" : "/svg/kakao-icon.svg",
+    [origin]
+  );
 
   return (
     <div className="flex flex-col w-full gap-y-[8px] mt-[32px]">
@@ -43,11 +49,7 @@ export const CardWithAutoCompleteData = ({
                 <div className="flex max-w-[100px] gap-x-[4px] items-center">
                   <div className="flex w-[16px] h-[16px]">
                     <Image
-                      src={
-                        autoData?.origin == "AVOCADO"
-                          ? "/svg/naver-icon.svg"
-                          : "/svg/kakao-icon.svg"
-                      }
+                      src={originLogoSrc}
                       alt="icon"
                       width={16}
                       height={16}

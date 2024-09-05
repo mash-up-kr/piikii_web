@@ -4,6 +4,7 @@ import { useCourseContext } from "@/providers/course-provider";
 import { roomUidStorage } from "@/utils/web-storage/room-uid";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 
 export type PlaceAutoCompleteData = {
   name: string;
@@ -38,7 +39,11 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
   const onButtonClick = () => {
     router.push(`add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`);
   };
-
+  const originLogoSrc = useMemo(
+    () =>
+      origin === "AVOCADO" ? "/svg/naver-icon.svg" : "/svg/kakao-icon.svg",
+    [origin]
+  );
   return (
     <Card
       className={`shadow-none group flex flex-col w-[335px] h-[104px] items-start justify-center cursor-pointer p-[12px] rounded-[16px] bg-[#FFF7F2] hover:bg-[#FFF1EB] active:bg-[#FFEAE1]  text-[#FF601C] hover:text-[#DD4808] active:text-[#BF3900] border border-[#FFEAE1]`}
@@ -64,7 +69,7 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
               <div className="flex flex-row gap-x-[2px] w-full h-[18px] items-center justify-start">
                 <div className="flex flex-row w-[12px] h-[12px]">
                   <Image
-                    src="/svg/naver-icon.svg"
+                    src={originLogoSrc}
                     alt="naver"
                     width={12}
                     height={12}

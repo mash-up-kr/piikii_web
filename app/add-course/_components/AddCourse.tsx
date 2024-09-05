@@ -272,7 +272,9 @@ const AddCourse = ({ data }: AddCourseProps) => {
               className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
               placeholder="네이버, 카카오 링크를 넣어주세요"
               value={clipboardText || placeUrl}
-              onChange={(e) => setPlaceUrl(e.target.value)}
+              onChange={(e) => {
+                setPlaceUrl(e.target.value);
+              }}
             />
             <Image
               src={"/png/ic_arrow_left_circle_32.png"}
