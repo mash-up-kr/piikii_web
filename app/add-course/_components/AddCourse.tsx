@@ -64,6 +64,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const kakaoMapRegex = /https?:\/\/place\.map\.kakao\.com\/[0-9]+/;
 
   const validateText = (text: string) => {
+    console.log(text, "text?????????");
     if (isMobile) {
       const naverMatch = text.match(naverMapRegex);
       const kakaoMatch = text.match(kakaoMapRegex);
@@ -164,6 +165,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
         setIsClipboardText(true);
         createPlaceMutate({ url: clipboardText });
       } else if (placeUrl && isValidPlaceUrl) {
+        console.log(placeUrl, "?????");
         setShowInput(false);
         setIsClipboardText(true);
         createPlaceMutate({ url: placeUrl });
@@ -272,7 +274,9 @@ const AddCourse = ({ data }: AddCourseProps) => {
               className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
               placeholder="네이버, 카카오 링크를 넣어주세요"
               value={clipboardText || placeUrl}
-              onChange={(e) => setPlaceUrl(e.target.value)}
+              onChange={(e) => {
+                setPlaceUrl(e.target.value);
+              }}
             />
             <Image
               src={"/png/ic_arrow_left_circle_32.png"}
