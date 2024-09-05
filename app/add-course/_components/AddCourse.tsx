@@ -64,7 +64,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const kakaoMapRegex = /https?:\/\/place\.map\.kakao\.com\/[0-9]+/;
 
   const validateText = (text: string) => {
-    console.log(text, "text?????????");
     if (isMobile) {
       const naverMatch = text.match(naverMapRegex);
       const kakaoMatch = text.match(kakaoMapRegex);
@@ -165,7 +164,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
         setIsClipboardText(true);
         createPlaceMutate({ url: clipboardText });
       } else if (placeUrl && isValidPlaceUrl) {
-        console.log(placeUrl, "?????");
         setShowInput(false);
         setIsClipboardText(true);
         createPlaceMutate({ url: placeUrl });
