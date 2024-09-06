@@ -63,7 +63,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const naverMapRegex =
     /https?:\/\/(?:naver\.me\/[a-zA-Z0-9]+|map\.naver\.com\/p\/entry\/place\/\d+(?:\?[^\s]*)?)/;
   const kakaoMapRegex =
-    /https?:\/\/(?:place\.map\.kakao\.com\/[0-9]+|kko\.to\/[A-Za-z0-9]+)/;
+    /https?:\/\/(?:place\.map\.kakao\.com\/(?:m\/)?[0-9]+|kko\.to\/[A-Za-z0-9]+)/;
 
   const validateText = (text: string) => {
     if (isMobile) {
