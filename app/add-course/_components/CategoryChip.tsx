@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface ChipProps {
   title: string;
@@ -13,8 +14,10 @@ export const CategoryChip: React.FC<ChipProps> = ({
 }) => {
   return (
     <Badge
-      className="max-w-[87px] h-[37px] flex-shrink-0 text-[14px] cursor-pointer"
-      variant={selected ? "selected" : "default"}
+      className={cn(
+        "max-w-[87px] h-[37px] flex-shrink-0 text-medium-14 cursor-pointer",
+        selected ? "bg-secondary-700 text-neutral-0" : "text-neutral-700"
+      )}
       onClick={onClick}
     >
       {title}

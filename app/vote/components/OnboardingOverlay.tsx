@@ -11,7 +11,7 @@ export default function OnboardingOverlay({ onStartVote }: Props) {
   const router = useRouter();
   return (
     <div
-      className="fixed top-0 h-dvh w-[375px] backdrop-blur-2xl bg-black bg-opacity-50 z-[1000] flex flex-col justify-center items-center"
+      className="fixed top-0 h-dvh w-[375px] backdrop-blur-2xl bg-black bg-opacity-50 z-[2000] flex flex-col justify-center items-center"
       style={{
         WebkitBackdropFilter: "blur(40px)",
       }}

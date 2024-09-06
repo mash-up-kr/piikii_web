@@ -8,6 +8,7 @@ import CardWithImage from "@/components/common/Cards/CardWithImage";
 import { get } from "http";
 import { useMotionValue, useTransform, motion } from "framer-motion";
 import { PlaceResponseDto } from "@/apis/place/types/dto";
+import { cn } from "@/lib/utils";
 
 interface Props {
   index: number;
@@ -125,8 +126,8 @@ export default function MotionCard({
             { label: "메모", value: data.memo ?? "-" },
           ]}
           noShadow={hideShadow}
-          cardClassName="!bg-neutral-0"
-          cardButtonClassName="!bg-neutral-100"
+          cardClassName={cn("!bg-neutral-0")}
+          cardButtonClassName={cn("!bg-neutral-100")}
           customStyle={{
             position: "relative",
           }}

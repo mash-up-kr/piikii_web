@@ -28,6 +28,7 @@ export interface CardInfoProps {
   onButtonClick?: () => void;
   noShadow?: boolean;
   cardClassName?: string;
+  cardDividerClassName?: string;
   cardButtonClassName?: string;
   selected?: boolean;
   category?: number;

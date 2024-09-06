@@ -41,7 +41,14 @@ const ResultArea = ({
               )}
             >
               <div className="relative z-10 flex flex-row items-center justify-start gap-x-[8px]">
-                <span className="w-[20px] h-[20px] items-center bg-black text-semibold-12 text-white flex justify-center rounded-[64px]">
+                <span
+                  className={cn(
+                    "w-[20px] h-[20px] items-center text-semibold-12 flex justify-center rounded-[64px]",
+                    index === 0
+                      ? "text-neutral-0 bg-neutral-900"
+                      : "bg-neutral-500 text-neutral-0"
+                  )}
+                >
                   {index + 1}
                 </span>
                 <span className="text-bold-16 text-secondary-700">
@@ -61,7 +68,10 @@ const ResultArea = ({
                   width={16}
                   height={16}
                   alt="arrow"
-                  className="mr-[4px]"
+                  className={cn(
+                    "mr-[4px]",
+                    expandedCards.includes(index) && "rotate-180"
+                  )}
                 />
               </button>
 
@@ -91,7 +101,11 @@ const ResultArea = ({
                 link={placeInfo.url}
                 rating={Number(placeInfo.starGrade.toFixed(2)) ?? "0"}
                 images={placeInfo.thumbnailLinks.contents || []}
-                cardClassName="mt-[8px]"
+                cardClassName={cn("mt-[8px]", index !== 0 && "!bg-neutral-100")}
+                cardButtonClassName={cn(index !== 0 && "!bg-neutral-200")}
+                cardDividerClassName={cn(
+                  index === 0 ? "!border-primary-100" : "!border-neutral-100"
+                )}
               />
             )}
           </div>
