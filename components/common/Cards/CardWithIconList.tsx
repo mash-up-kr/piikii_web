@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { IconInfo } from "@/model";
 import { cva } from "class-variance-authority";
+import Image from "next/image";
 import React from "react";
 
 const cardWithIconListVariants = cva(
@@ -47,7 +48,7 @@ export const CardWithIconList = React.forwardRef<
             <div className="flex flex-col">
               <div className="flex flex-col gap-y-[7px] items-center">
                 <div className="flex w-[32px] h-[48px] items-center justify-center text-[34px]">
-                  {item.icon}
+                  {item.iconImage ? item.iconImage : item.icon}
                 </div>
                 <span className="flex w-full max-w-[42px] h-[24px] text-[16px] justify-center">
                   {item.label}
