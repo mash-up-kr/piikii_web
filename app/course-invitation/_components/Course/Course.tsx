@@ -8,12 +8,56 @@ import { IconInfo } from "@/model";
 import CourseBadge from "./_components/CourseBadge";
 import useCourse from "./_hooks/useCourse";
 import { StepType } from "../_hooks/useCourseInvitation";
+import Image from "next/image";
 
 const MENU_LIST: IconInfo[] = [
-  { icon: "🍔", label: "음식", type: "food" },
-  { icon: "🥨", label: "디저트", type: "dessert" },
-  { icon: "🍺", label: "술", type: "beer" },
-  { icon: "🕹️", label: "놀거리", type: "play" },
+  {
+    icon: "🍔",
+    label: "음식",
+    type: "food",
+    iconImage: (
+      <Image src="/png/food_34.png" width={34} height={34} alt="food_34.png" />
+    ),
+  },
+  {
+    icon: "🥨",
+    label: "디저트",
+    type: "dessert",
+    iconImage: (
+      <Image
+        src="/png/dessert_34.png"
+        width={34}
+        height={34}
+        alt="dessert_34.png"
+      />
+    ),
+  },
+  {
+    icon: "🍺",
+    label: "술",
+    type: "beer",
+    iconImage: (
+      <Image
+        src="/png/beer_34.png"
+        width={34}
+        height={34}
+        alt="beer_34.png"
+      />
+    ),
+  },
+  {
+    icon: "🕹️",
+    label: "놀거리",
+    type: "play",
+    iconImage: (
+      <Image
+        src="/png/play_34.png"
+        width={34}
+        height={34}
+        alt="play_34.png"
+      />
+    ),
+  },
 ];
 
 export interface CourseProps {
@@ -59,7 +103,7 @@ const Course = ({ handleStep }: CourseProps) => {
 
       <div className="w-full bottom-0 bg-white py-[10px] px-[20px] mt-[134px]">
         <Button
-          className="h-[56px]"
+          className="h-[56px] rounded-[14px]"
           variant={isAllCategoriesEmpty ? "disabled" : "default"}
           onClick={handleNext}
         >

@@ -43,6 +43,7 @@ export interface IconInfo {
   icon: string;
   label: string;
   type: OrderType;
+  iconImage?: React.ReactNode;
 }
 
 export interface CardIconProps {

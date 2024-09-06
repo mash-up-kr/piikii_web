@@ -44,8 +44,8 @@ const LandingPage = () => {
           {isExpanded === true && (
             <div className="flex flex-col gap-y-[12px]">
               <Button
-                className="w-[212px] h-[54px] bg-white text-black rounded-[31px] text-[16px] py-[10px] px-[28px]"
-                onClick={() => router.push("https://map.naver.com/p/")}
+                className="w-[212px] h-[47px] bg-white text-black rounded-[31px] text-[16px] py-[10px] px-[28px] hover:bg-neutral-400 active:neutral-500"
+                onClick={() => window.open('https://map.naver.com/p/')}
               >
                 <Image
                   src="/svg/naver-icon.svg"
@@ -57,8 +57,8 @@ const LandingPage = () => {
                 <span className="pl-[10px]">네이버지도 바로가기</span>
               </Button>
               <Button
-                className="w-[197px] h-[47px] bg-white text-black rounded-[31px] text-[16px] py-[10px] px-[28px]"
-                onClick={() => router.push("https://map.kakao.com/")}
+                className="w-[197px] h-[47px] bg-white text-black rounded-[31px] text-[16px] py-[10px] px-[28px] hover:bg-neutral-400 active:neutral-500"
+                onClick={() => window.open("https://map.kakao.com/")}
               >
                 <Image
                   src="/svg/kakao-icon.svg"

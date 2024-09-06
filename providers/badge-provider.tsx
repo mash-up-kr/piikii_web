@@ -9,6 +9,7 @@ import {
   useCallback,
 } from "react";
 import { cloneDeep } from "lodash-es";
+import Image from "next/image";
 
 export type BadgeInfoType = {
   icon?: string;
@@ -69,7 +70,7 @@ export const BadgeProvider = ({ children }: BadgeProviderProps) => {
         const name = itemLabel.split(/차|[0-9]/)[0];
         return {
           ...item,
-          label: `${name}${condition ? `${index + 1}차` : ""}`,
+          label: `${name}${condition ? ` ${index + 1}차` : ""}`,
         };
       });
       return updatedList;
@@ -79,12 +80,20 @@ export const BadgeProvider = ({ children }: BadgeProviderProps) => {
 
   const getBadgeData = useCallback(
     (id: number, item: BadgeType, count: number) => {
-      const { icon, label, type } = item;
+      const { icon, label, type, iconImage } = item;
       return {
         id,
         icon,
         type,
-        label: `${label}${count !== 0 ? `${count + 1}차` : ""}`,
+        label: `${label}${count !== 0 ? ` ${count + 1}차` : ""}`,
+        iconImage: (
+          <Image
+            src={`/png/${type}_16.png`}
+            width={16}
+            height={16}
+            alt={`${type}_16.png`}
+          />
+        ),
       };
     },
     []
