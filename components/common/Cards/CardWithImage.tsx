@@ -15,6 +15,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
   info,
   noShadow,
   cardClassName,
+  cardDividerClassName,
   cardButtonClassName,
   customStyle = {},
 }) => {
@@ -37,9 +38,9 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
         <div className="flex gap-x-[8px]">
           <CardHeader className="w-full">
             <div className="flex w-full gap-x-[8px] justify-between items-center h-[31px] text-semibold-22">
-              <div className="flex items-center">{place}</div>
+              <div className="truncate">{place}</div>
               {origin !== "MANUAL" && (
-                <div className="flex gap-x-[4px] items-center">
+                <div className="flex gap-x-[4px] items-center min-w-[80px]">
                   <div className="flex w-[16px] h-[16px]">
                     <Image
                       src={originLogoSrc}
@@ -58,7 +59,7 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
             </div>
           </CardHeader>
         </div>
-        <div className="flex flex-row w-[294px] h-[92px] gap-x-[9px] py-[15px]">
+        <div className="flex flex-row w-[294px] gap-x-[9px] py-[15px]">
           {images.map((src, index) => (
             <Image
               key={index}
@@ -72,15 +73,15 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
           ))}
         </div>
       </div>
-      <hr className="w-[295px] mt-[24px]" />
+      <hr className={cn("w-[295px] mt-[24px]", cardDividerClassName)} />
       <CardContent className="flex flex-col w-[295px] h-[161px] gap-y-[8px] my-[20px]">
         {info?.map((item, index) => (
           <div
             key={index}
             className="flex flex-row justify-between w-[295px] h-[21px] gap-x-[16px] text-[14px]"
           >
-            <span>{item.label}</span>
-            <span>{item.value}</span>
+            <span className="w-[60px]">{item.label}</span>
+            <span className="truncate">{item.value}</span>
           </div>
         ))}
         <button

@@ -22,7 +22,7 @@ const EditOptionArea = ({
           />
         ))}
       </div>
-      <div className="flex flex-col gap-y-[12px]">
+      <div className="flex flex-col gap-y-[14px]">
         {selectedSchedule.places.map((placeInfo, index) => (
           <CardWithSelectedOption
             key={index}
@@ -32,7 +32,7 @@ const EditOptionArea = ({
             origin={placeInfo.origin}
             place={placeInfo.name}
             link={placeInfo.url}
-            rating={Number(placeInfo.starGrade.toFixed(2)) ?? "0"}
+            rating={+(placeInfo?.starGrade ?? 0).toFixed(2)}
             images={placeInfo.thumbnailLinks.contents || []}
             voteCount={placeInfo.countOfAgree}
             onButtonClick={() =>
