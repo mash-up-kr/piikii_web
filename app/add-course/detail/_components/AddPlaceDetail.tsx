@@ -18,6 +18,7 @@ import { FormProvider } from "react-hook-form";
 import { useCreatePlace } from "@/apis/place/PlaceApi.mutation";
 import { PlaceAutoCompleteResponse } from "@/apis/origin-place/types/dto";
 import { createFileFromImagePath } from "@/lib/utils";
+import scheduleApi from "@/apis/schedule/ScheduleApi";
 
 export type DefaultImageType = {
   id: string;
@@ -163,7 +164,7 @@ const AddPlaceDetail: React.FC = () => {
       scheduleIds
     );
 
-    if (!values.name || !selectedChips || !selectedCategory) {
+    if (!values.name || scheduleIds.length === 0) {
       return;
     }
 
