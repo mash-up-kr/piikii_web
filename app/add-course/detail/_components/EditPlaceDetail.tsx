@@ -111,7 +111,7 @@ const EditPlaceDetail: React.FC = () => {
 
   const onCompleteButtonClick = async () => {
     const values = methods.getValues();
-    if (!values.name || !selectedChip || !selectedPlaceInfo) {
+    if (!values.name || selectedChip === null || !selectedPlaceInfo) {
       return;
     }
 
