@@ -85,7 +85,7 @@ export const CardWithAutoCompleteData = ({
       {placeUrl && (
         <button
           className="flex flex-row items-center justify-center w-full h-[42px] bg-[#F9FAFB] py-[12px] px-[111px] rounded-2xl gap-x-[4px]"
-          onClick={() => router.push(placeUrl)}
+          onClick={() => window.open(placeUrl)}
         >
           <div className="w-full h-[18px] opacity-80 text-[12px] font-semibold">
             링크 바로가기
