@@ -219,20 +219,20 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center justify-center gap-x-[17px] cursor-pointer px-[20px] py-[11px]">
+      <div className="flex items-center justify-center gap-x-[17px] px-[20px] py-[11px]">
         <p className="flex w-[232px] items-center text-semibold-15 text-neutral-700">
           {roomInfo?.name}
         </p>
 
         <Button
-          className="flex border-2 border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white gap-[4px]"
+          className="group flex border-2 border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white gap-[4px]"
           onClick={() => {
             !isReadyToVote
               ? setIsModalOpen(true)
               : router.push(`/vote-start/?roomUid=${roomUid}`);
           }}
         >
-          <p className="font-semibold text-neutral-700 text-[12px]">투표시작</p>
+          <p className="group-hover:text-white font-semibold text-neutral-700 text-[12px]">투표시작</p>
           <Image
             width={16}
             height={16}
