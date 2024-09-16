@@ -1,5 +1,5 @@
 import { RegisterScheduleRequest } from "@/apis/schedule/types/dto";
-import { BadgeInfoType, BadgeType } from "@/providers/badge-provider";
+import { BadgeInfoType, BadgeType } from "@/providers/contexts/badge/useBadgeState";
 
 export const transformBadge = (
   badge: BadgeInfoType,
