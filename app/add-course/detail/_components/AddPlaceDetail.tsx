@@ -19,6 +19,9 @@ import { useCreatePlace } from "@/apis/place/PlaceApi.mutation";
 import { PlaceAutoCompleteResponse } from "@/apis/origin-place/types/dto";
 import { createFileFromImagePath } from "@/lib/utils";
 import scheduleApi from "@/apis/schedule/ScheduleApi";
+import { useToast } from "@/components/common/Toast/use-toast";
+import { ReceiptRussianRuble } from "lucide-react";
+import { debounce } from "lodash-es";
 
 export type DefaultImageType = {
   id: string;
@@ -77,6 +80,7 @@ const getPayloadForRequest = (
 };
 
 const AddPlaceDetail: React.FC = () => {
+  const toast = useToast();
   const router = useRouter();
   const [selectedChips, setSelectedChips] = useState<number[]>([]);
   const methods = useAddPlaceDetailForm();
@@ -154,7 +158,7 @@ const AddPlaceDetail: React.FC = () => {
     }
   }, []);
 
-  const onCompleteButtonClick = async () => {
+  const onCompleteButtonClick = debounce(async () => {
     const values = methods.getValues();
     const scheduleIds = selectedChips;
 
@@ -164,7 +168,12 @@ const AddPlaceDetail: React.FC = () => {
       scheduleIds
     );
 
-    if (!values.name || scheduleIds.length === 0) {
+    if (scheduleIds.length === 0) {
+      toast.toast({ title: "카테고리를 선택해주세요." });
+      return;
+    }
+    if (!values.name) {
+      toast.toast({ title: "장소 이름을 입력해주세요." });
       return;
     }
 
@@ -172,47 +181,50 @@ const AddPlaceDetail: React.FC = () => {
       return categoryList?.find((category) => category.scheduleId === chipId);
     });
 
-    const defaultImages = (
-      await Promise.all(
-        selectedCategories.map(async (category) => {
-          const matchedImage = DEFAULT_IMAGES.find(
-            (image) => image.id === category!.type
-          );
-          if (matchedImage) {
-            const file = await createFileFromImagePath(
-              matchedImage.src,
-              matchedImage.src.split("/").pop() || "default.png"
+    try {
+      const defaultImages = (
+        await Promise.all(
+          selectedCategories.map(async (category) => {
+            const matchedImage = DEFAULT_IMAGES.find(
+              (image) => image.id === category!.type
             );
+            if (matchedImage) {
+              const file = await createFileFromImagePath(
+                matchedImage.src,
+                matchedImage.src.split("/").pop() || "default.png"
+              );
 
-            return file;
-          }
-          return null;
-        })
-      )
-    ).filter((file): file is File => file !== null);
+              return file;
+            }
+            return null;
+          })
+        )
+      ).filter((file): file is File => file !== null);
 
-    const formImages =
-      values.pictures && Array.isArray(values.pictures)
-        ? values.pictures.filter((file): file is File => file instanceof File)
-        : [];
+      const formImages =
+        values.pictures && Array.isArray(values.pictures)
+          ? values.pictures.filter((file): file is File => file instanceof File)
+          : [];
 
-    const placeImages =
-      autoData !== null
-        ? []
-        : formImages.length > 0
-        ? formImages
-        : defaultImages;
+      const placeImages =
+        autoData !== null
+          ? []
+          : formImages.length > 0
+          ? formImages
+          : defaultImages;
 
-    const payload = {
-      addPlaceRequest: updatedPayloadForRequest,
-      ...(autoData !== null ? {} : { placeImages }),
-    };
-
-    createPlaceMutate({
-      roomUid,
-      payload,
-    });
-  };
+      const payload = {
+        addPlaceRequest: updatedPayloadForRequest,
+        ...(autoData !== null ? {} : { placeImages }),
+      };
+      createPlaceMutate({
+        roomUid,
+        payload,
+      });
+    } catch (error) {
+      alert(`에러가 발생했습니다.\n${JSON.stringify(error)}`);
+    }
+  }, 300);
 
   useEffect(() => {
     return () => {

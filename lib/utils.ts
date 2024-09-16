@@ -3,11 +3,6 @@ import {
   ValueType,
 } from "@/app/edit-category/_components/DragAndDropArea";
 import { Size } from "@/model";
-import {
-  BadgeInfoType,
-  BadgeMapType,
-  BadgeType,
-} from "@/providers/badge-provider";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
