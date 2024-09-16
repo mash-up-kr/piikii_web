@@ -20,12 +20,14 @@ import { PlaceContainer } from "./PlaceContainer";
 import useShare from "@/hooks/useShare";
 import { RoomResponse } from "@/apis/room/types/model";
 import { ModalWithVote } from "@/components/common/Modal/ModalWithVote";
+import { useToast } from "@/components/common/Toast/use-toast";
 
 export interface AddCourseProps {
   data: RoomResponse;
 }
 
 const AddCourse = ({ data }: AddCourseProps) => {
+  const toast = useToast();
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
@@ -102,7 +104,11 @@ const AddCourse = ({ data }: AddCourseProps) => {
         }
       },
       onError: (error) => {
-        console.log(error);
+        setShowAlternateInput(true);
+        toast.toast({
+          style: { fontSize: 14 },
+          description: error.response?.data?.message,
+        });
       },
     },
   });
@@ -232,7 +238,9 @@ const AddCourse = ({ data }: AddCourseProps) => {
               : router.push(`/vote-start/?roomUid=${roomUid}`);
           }}
         >
-          <p className="group-hover:text-white font-semibold text-neutral-700 text-[12px]">투표시작</p>
+          <p className="group-hover:text-white font-semibold text-neutral-700 text-[12px]">
+            투표시작
+          </p>
           <Image
             width={16}
             height={16}

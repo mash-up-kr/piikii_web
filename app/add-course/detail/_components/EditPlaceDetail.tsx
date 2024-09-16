@@ -18,8 +18,10 @@ import { useDeletePlace, useUpdatePlace } from "@/apis/place/PlaceApi.mutation";
 import { ModalWithCategory } from "@/components/common/Modal/ModalWithCategory";
 import InputWithEditImage from "../../_components/InputWithEditImage";
 import { createFileFromImagePath } from "@/lib/utils";
+import { useToast } from "@/components/common/Toast/use-toast";
 
 const EditPlaceDetail: React.FC = () => {
+  const toast = useToast();
   const router = useRouter();
   const methods = useAddPlaceDetailForm();
   const [placeInfo, setPlaceInfo] = useState<PlaceResponseDto | null>(null);
@@ -51,7 +53,7 @@ const EditPlaceDetail: React.FC = () => {
         router.replace(`/add-course?roomUid=${roomUid}`);
       },
       onError: (error) => {
-        console.error("장소 수정 실패:", error);
+        toast.toast({ description: error.response?.data.message });
       },
     },
   });
@@ -63,7 +65,7 @@ const EditPlaceDetail: React.FC = () => {
         router.replace(`/add-course?roomUid=${roomUid}`);
       },
       onError: (error) => {
-        console.error("장소 삭제 실패:", error);
+        toast.toast({ description: error.response?.data.message });
       },
     },
   });
@@ -94,7 +96,6 @@ const EditPlaceDetail: React.FC = () => {
 
   useEffect(() => {
     if (selectedPlaceInfo) {
-      console.log(selectedPlaceInfo, "selectedPlaceInfo?");
       const { name, url, address, phoneNumber, memo, openingHours } =
         selectedPlaceInfo || {};
       const initialImages = selectedPlaceInfo.placeImageUrls.contents || [];

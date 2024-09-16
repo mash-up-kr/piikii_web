@@ -22,6 +22,7 @@ import scheduleApi from "@/apis/schedule/ScheduleApi";
 import { useToast } from "@/components/common/Toast/use-toast";
 import { ReceiptRussianRuble } from "lucide-react";
 import { debounce } from "lodash-es";
+import FullScreenLoader from "@/components/common/FullScreenLoader";
 
 export type DefaultImageType = {
   id: string;
@@ -82,6 +83,7 @@ const getPayloadForRequest = (
 const AddPlaceDetail: React.FC = () => {
   const toast = useToast();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedChips, setSelectedChips] = useState<number[]>([]);
   const methods = useAddPlaceDetailForm();
   const searchParams = useSearchParams();
@@ -102,6 +104,10 @@ const AddPlaceDetail: React.FC = () => {
     return getPayloadForRequest(autoData, values, selectedChips);
   });
 
+  const handleIsLoading = (b: boolean) => {
+    setIsLoading(b);
+  };
+
   useEffect(() => {
     const values = methods.getValues();
     setPayloadForRequest(getPayloadForRequest(autoData, values, selectedChips));
@@ -118,6 +124,7 @@ const AddPlaceDetail: React.FC = () => {
         router.replace(`/add-course?roomUid=${roomUid}`);
       },
       onError: (error) => {
+        handleIsLoading(false);
         console.error("장소 등록 실패:", error);
       },
     },
@@ -158,7 +165,7 @@ const AddPlaceDetail: React.FC = () => {
     }
   }, []);
 
-  const onCompleteButtonClick = debounce(async () => {
+  const onCompleteButtonClick = async () => {
     const values = methods.getValues();
     const scheduleIds = selectedChips;
 
@@ -217,14 +224,15 @@ const AddPlaceDetail: React.FC = () => {
         addPlaceRequest: updatedPayloadForRequest,
         ...(autoData !== null ? {} : { placeImages }),
       };
+      handleIsLoading(true);
       createPlaceMutate({
         roomUid,
         payload,
       });
-    } catch (error) {
-      alert(`에러가 발생했습니다.\n${JSON.stringify(error)}`);
+    } catch {
+      handleIsLoading(false);
     }
-  }, 300);
+  };
 
   useEffect(() => {
     return () => {
@@ -233,167 +241,177 @@ const AddPlaceDetail: React.FC = () => {
   }, []);
 
   return (
-    <FormProvider {...methods}>
-      <div className="flex flex-col gap-y-[56px]">
-        <NavigationBar
-          leftSlot={
-            <div
-              className="flex py-[16px] px-[12px] cursor-pointer"
-              onClick={() => router.back()}
-            >
-              <Image
-                src="/png/ic_arrow_left_24.png"
-                alt="ic_arrow_left_24.png"
-                width={24}
-                height={24}
-              />
-              <p className="text-semibold-15 text-neutral-700">장소 추가하기</p>
-            </div>
-          }
-          rightSlot={
-            <p
-              className="flex py-[16px] px-[12px] cursor-pointer text-semibold-15 text-[#FF601C]"
-              onClick={onCompleteButtonClick}
-            >
-              완료
-            </p>
-          }
-        />
-        <div className="flex flex-col w-[335px] mt-[88px] mx-[20px] gap-y-[32px]">
-          <div className="flex flex-col w-[252px] h-[98px]">
-            <div className="flex flex-row items-center w-[90px] h-[24px] gap-x-[6px]">
-              <p className="w-[59px] font-bold text-[#292E31] text-[16px]">
-                카테고리
-              </p>
-              <p className="w-[25px] font-bold text-[#FF601C] text-[14px]">
-                필수
-              </p>
-            </div>
-            <div className="w-full h-[21px] font-medium text-[14px] text-[#23272F] opacity-[0.5]">
-              여러 개 선택 가능해요
-            </div>
-            <div className="flex flex-row w-[252px] mt-[12px] gap-x-[8px]">
-              {categoryList?.map(
-                (item) =>
-                  item.scheduleId !== null &&
-                  item.scheduleId !== undefined &&
-                  item.name && (
-                    <CategoryChip
-                      key={item.scheduleId}
-                      title={item.name}
-                      selected={selectedChips.includes(item.scheduleId)}
-                      onClick={() => handleChipClick(item.scheduleId as number)}
-                    />
-                  )
-              )}
-            </div>
-          </div>
-          <div className="flex flex-col w-full h-[184px] gap-y-[32px]">
-            {isClipboardText === true && autoData ? (
-              <div className="flex flex-col items-start justify-center gap-y-[12px]">
-                <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
-                  메모
+    <>
+      {isLoading ? (
+        <FullScreenLoader />
+      ) : (
+        <FormProvider {...methods}>
+          <div className="flex flex-col gap-y-[56px]">
+            <NavigationBar
+              leftSlot={
+                <div
+                  className="flex py-[16px] px-[12px] cursor-pointer"
+                  onClick={() => router.back()}
+                >
+                  <Image
+                    src="/png/ic_arrow_left_24.png"
+                    alt="ic_arrow_left_24.png"
+                    width={24}
+                    height={24}
+                  />
+                  <p className="text-semibold-15 text-neutral-700">
+                    장소 추가하기
+                  </p>
+                </div>
+              }
+              rightSlot={
+                <p
+                  className="flex py-[16px] px-[12px] cursor-pointer text-semibold-15 text-[#FF601C]"
+                  onClick={onCompleteButtonClick}
+                >
+                  완료
                 </p>
-                <InputWithLabel
-                  type="link"
-                  placeholder="일행에게 메모를 남겨주세요"
-                  iconSrc="/svg/ic_memo_mono.svg"
-                  {...methods.register("memo")}
-                />
-                <CardWithAutoCompleteData
-                  autoData={autoData.data}
-                  register={methods.register}
-                />
+              }
+            />
+            <div className="flex flex-col w-[335px] mt-[88px] mx-[20px] gap-y-[32px]">
+              <div className="flex flex-col w-[252px] h-[98px]">
+                <div className="flex flex-row items-center w-[90px] h-[24px] gap-x-[6px]">
+                  <p className="w-[59px] font-bold text-[#292E31] text-[16px]">
+                    카테고리
+                  </p>
+                  <p className="w-[25px] font-bold text-[#FF601C] text-[14px]">
+                    필수
+                  </p>
+                </div>
+                <div className="w-full h-[21px] font-medium text-[14px] text-[#23272F] opacity-[0.5]">
+                  여러 개 선택 가능해요
+                </div>
+                <div className="flex flex-row w-[252px] mt-[12px] gap-x-[8px]">
+                  {categoryList?.map(
+                    (item) =>
+                      item.scheduleId !== null &&
+                      item.scheduleId !== undefined &&
+                      item.name && (
+                        <CategoryChip
+                          key={item.scheduleId}
+                          title={item.name}
+                          selected={selectedChips.includes(item.scheduleId)}
+                          onClick={() =>
+                            handleChipClick(item.scheduleId as number)
+                          }
+                        />
+                      )
+                  )}
+                </div>
               </div>
-            ) : (
-              <div className="gap-y-[32px] flex flex-col">
-                <div className="flex flex-col w-full gap-y-[12px]">
-                  <div className="flex flex-row items-center w-full h-[24px] gap-x-[6px]">
-                    <p className="w-[65px] font-bold text-[#292E31] text-[16px]">
-                      장소 이름
+              <div className="flex flex-col w-full h-[184px] gap-y-[32px]">
+                {isClipboardText === true && autoData ? (
+                  <div className="flex flex-col items-start justify-center gap-y-[12px]">
+                    <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                      메모
                     </p>
-                    <p className="w-[30px] font-bold text-[#FF601C] text-[14px]">
-                      필수
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-start justify-center">
                     <InputWithLabel
-                      type="text"
-                      placeholder="상호명을 적어주세요"
-                      {...methods.register("name", { required: true })}
+                      type="link"
+                      placeholder="일행에게 메모를 남겨주세요"
+                      iconSrc="/svg/ic_memo_mono.svg"
+                      {...methods.register("memo")}
+                    />
+                    <CardWithAutoCompleteData
+                      autoData={autoData.data}
+                      register={methods.register}
                     />
                   </div>
-                  <div className="flex flex-col items-start justify-center">
-                    <InputWithAddImage
-                      className="w-[80px] h-[80px]"
-                      id="picture"
-                      type="file"
-                      onFilesChange={(formData) => {
-                        const files = Array.from(
-                          formData.getAll("placeImages")
-                        );
-                        methods.setValue(
-                          "pictures",
-                          files.filter(
-                            (file): file is File => file instanceof File
-                          )
-                        );
-                      }}
-                      multiple
-                    />
+                ) : (
+                  <div className="gap-y-[32px] flex flex-col">
+                    <div className="flex flex-col w-full gap-y-[12px]">
+                      <div className="flex flex-row items-center w-full h-[24px] gap-x-[6px]">
+                        <p className="w-[65px] font-bold text-[#292E31] text-[16px]">
+                          장소 이름
+                        </p>
+                        <p className="w-[30px] font-bold text-[#FF601C] text-[14px]">
+                          필수
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-start justify-center">
+                        <InputWithLabel
+                          type="text"
+                          placeholder="상호명을 적어주세요"
+                          {...methods.register("name", { required: true })}
+                        />
+                      </div>
+                      <div className="flex flex-col items-start justify-center">
+                        <InputWithAddImage
+                          className="w-[80px] h-[80px]"
+                          id="picture"
+                          type="file"
+                          onFilesChange={(formData) => {
+                            const files = Array.from(
+                              formData.getAll("placeImages")
+                            );
+                            methods.setValue(
+                              "pictures",
+                              files.filter(
+                                (file): file is File => file instanceof File
+                              )
+                            );
+                          }}
+                          multiple
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-start justify-center gap-y-[12px]">
+                      <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                        링크
+                      </p>
+                      <InputWithLabel
+                        type="link"
+                        placeholder="링크를 붙여주세요"
+                        iconSrc="/svg/ic_link.svg"
+                        {...methods.register("url")}
+                      />
+                    </div>
+                    <div className="flex flex-col items-start justify-center gap-y-[12px]">
+                      <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                        영업정보
+                      </p>
+                      <InputWithLabel
+                        type="link"
+                        placeholder="영업 시간을 남겨주세요"
+                        iconSrc="/svg/ic_clock_mono.svg"
+                        {...methods.register("openingHours")}
+                      />
+                      <InputWithLabel
+                        type="link"
+                        placeholder="주소를 남겨주세요"
+                        iconSrc="/svg/ic_pin_location_mono.svg"
+                        {...methods.register("address")}
+                      />
+                      <InputWithLabel
+                        type="link"
+                        placeholder="전화번호를 남겨주세요"
+                        iconSrc="/svg/ic_call_mono.svg"
+                        {...methods.register("phoneNumber")}
+                      />
+                    </div>
+                    <div className="flex flex-col items-start justify-center gap-y-[12px]">
+                      <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
+                        메모
+                      </p>
+                      <InputWithLabel
+                        type="link"
+                        placeholder="일행에게 메모를 남겨주세요"
+                        iconSrc="/svg/ic_memo_mono.svg"
+                        {...methods.register("memo")}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex flex-col items-start justify-center gap-y-[12px]">
-                  <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
-                    링크
-                  </p>
-                  <InputWithLabel
-                    type="link"
-                    placeholder="링크를 붙여주세요"
-                    iconSrc="/svg/ic_link.svg"
-                    {...methods.register("url")}
-                  />
-                </div>
-                <div className="flex flex-col items-start justify-center gap-y-[12px]">
-                  <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
-                    영업정보
-                  </p>
-                  <InputWithLabel
-                    type="link"
-                    placeholder="영업 시간을 남겨주세요"
-                    iconSrc="/svg/ic_clock_mono.svg"
-                    {...methods.register("openingHours")}
-                  />
-                  <InputWithLabel
-                    type="link"
-                    placeholder="주소를 남겨주세요"
-                    iconSrc="/svg/ic_pin_location_mono.svg"
-                    {...methods.register("address")}
-                  />
-                  <InputWithLabel
-                    type="link"
-                    placeholder="전화번호를 남겨주세요"
-                    iconSrc="/svg/ic_call_mono.svg"
-                    {...methods.register("phoneNumber")}
-                  />
-                </div>
-                <div className="flex flex-col items-start justify-center gap-y-[12px]">
-                  <p className="w-[59px] font-bold text-[#747B89] text-[16px]">
-                    메모
-                  </p>
-                  <InputWithLabel
-                    type="link"
-                    placeholder="일행에게 메모를 남겨주세요"
-                    iconSrc="/svg/ic_memo_mono.svg"
-                    {...methods.register("memo")}
-                  />
-                </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      </div>
-    </FormProvider>
+        </FormProvider>
+      )}
+    </>
   );
 };
 
