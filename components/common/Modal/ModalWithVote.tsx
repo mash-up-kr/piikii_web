@@ -7,9 +7,9 @@ interface ModalWithCategoryProps {
 export const ModalWithVote = ({ onButtonClick }: ModalWithCategoryProps) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="flex flex-col rounded-[16px] items-center justify-center w-[335px] h-[168px] bg-white p-[12px]">
-        <div className="flex items-center justify-center w-full h-[104px]">
-          <p className="flex text-center items-center justify-center w-[311px] ">
+      <div className="flex flex-col rounded-[16px] items-center justify-center w-[335px] h-[192px] bg-white p-[12px]">
+        <div className="flex my-[40px] items-center justify-center w-full h-[48px]">
+          <p className="flex text-center items-center font-semibold justify-center w-[311px] ">
             후보지가 없는 카테고리가 있어요.
             <br />
             추가 후 다시 눌러주세요!
