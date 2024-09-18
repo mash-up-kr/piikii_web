@@ -20,7 +20,7 @@ const ResultArea = ({
   };
 
   return (
-    <div className="flex flex-col w-[335px] mx-[20px] gap-y-[26px] pb-[80px]">
+    <div className="flex flex-col w-full max-w-[430px] px-[20px] gap-y-[26px] pb-[80px]">
       <div className="flex flex-row w-[252px] h-[37px] gap-x-[8px]">
         {schedules.map((item) => (
           <CategoryChip
@@ -36,7 +36,7 @@ const ResultArea = ({
           <div key={index}>
             <div
               className={cn(
-                `relative flex flex-row rounded-[12px] w-[335px] h-[64px] items-center justify-between p-[20px]`,
+                `relative flex flex-row rounded-[12px] w-full max-w-[430px] h-[64px] items-center justify-between p-[20px]`,
                 index === 0 ? "bg-primary-50" : "bg-neutral-100"
               )}
             >
@@ -54,7 +54,7 @@ const ResultArea = ({
                 <span className="text-bold-16 text-secondary-700">
                   {placeInfo.name}
                 </span>{" "}
-                <span className="flex w-[21px] items-center h-[21px] text-[14px] opacity-[0.5] text-[#363A3C]">
+                <span className="flex min-w-[21px] items-center h-[21px] text-[14px] opacity-[0.5] text-[#363A3C]">
                   {placeInfo.countOfAgree}명
                 </span>
               </div>
@@ -78,7 +78,7 @@ const ResultArea = ({
               {/* Fill Rect based on vote count */}
               <div
                 className={cn(
-                  "absolute left-0 top-0 h-[64px] rounded-[12px] w-[20px] z-5",
+                  "absolute left-0 top-0 h-[64px] rounded-[12px] z-5",
                   index === 0 ? "bg-primary-200" : "bg-neutral-300"
                 )}
                 style={{
@@ -104,7 +104,7 @@ const ResultArea = ({
                 cardClassName={cn("mt-[8px]", index !== 0 && "!bg-neutral-100")}
                 cardButtonClassName={cn(index !== 0 && "!bg-neutral-200")}
                 cardDividerClassName={cn(
-                  index === 0 ? "!border-primary-100" : "!border-neutral-100"
+                  index === 0 ? "!border-primary-100" : "!border-neutral-200"
                 )}
               />
             )}

@@ -28,19 +28,20 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
   return (
     <Card
       className={cn(
-        "flex flex-col items-center w-[335px] max-h-[372px] py-[24px] rounded-xl border-0 bg-primary-50",
+        "flex flex-col items-center max-w-[430px] w-full max-h-[372px] py-[24px] rounded-xl border-0 bg-primary-50",
         noShadow && "shadow-none",
         cardClassName
       )}
       style={customStyle}
     >
-      <div className="flex flex-col w-[295px] h-[139px]">
+      <div className="flex flex-col w-full px-[20px] h-[139px]">
         <div className="flex gap-x-[8px]">
           <CardHeader className="w-full">
             <div className="flex w-full gap-x-[8px] justify-between items-center h-[31px] text-semibold-22">
               <div className="truncate">{place}</div>
+
               {origin !== "MANUAL" && (
-                <div className="flex gap-x-[4px] items-center min-w-[80px]">
+                <div className="flex gap-x-[4px] items-center justify-end min-w-[80px]">
                   <div className="flex w-[16px] h-[16px]">
                     <Image
                       src={originLogoSrc}
@@ -52,14 +53,15 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
                     />
                   </div>
                   <div className="text-[14px]">
-                    {rating} ({reviewCount})
+                    {rating}
+                    {reviewCount ? ` (${reviewCount})` : ""}
                   </div>
                 </div>
               )}
             </div>
           </CardHeader>
         </div>
-        <div className="flex flex-row w-[294px] gap-x-[9px] py-[15px]">
+        <div className="flex flex-row w-full gap-x-[9px] py-[15px]">
           {images.map((src, index) => (
             <Image
               key={index}
@@ -73,20 +75,25 @@ export const CardWithImage: React.FC<CardInfoProps> = ({
           ))}
         </div>
       </div>
-      <hr className={cn("w-[295px] mt-[24px]", cardDividerClassName)} />
-      <CardContent className="flex flex-col w-[295px] h-[161px] gap-y-[8px] my-[20px]">
+
+      <div className="px-[20px] w-full mt-[24px]">
+        <hr className={cn("w-full bg-primary-100", cardDividerClassName)} />
+      </div>
+
+      <CardContent className="flex flex-col w-full px-[20px] h-[161px] gap-y-[8px] my-[20px]">
         {info?.map((item, index) => (
           <div
             key={index}
-            className="flex flex-row justify-between w-[295px] h-[21px] gap-x-[16px] text-[14px]"
+            className="flex flex-row justify-between w-full h-[21px] gap-x-[16px] text-[14px]"
           >
             <span className="w-[60px]">{item.label}</span>
             <span className="truncate">{item.value}</span>
           </div>
         ))}
+
         <button
           className={cn(
-            "flex flex-row mt-[12px] items-center justify-center w-[295px] h-[42px] bg-primary-150 py-[12px] px-[111px] rounded-2xl gap-x-[4px]",
+            "flex flex-row mt-[12px] items-center justify-center w-full h-[42px] bg-primary-150 py-[12px] px-[111px] rounded-2xl gap-x-[4px]",
             cardButtonClassName
           )}
           onClick={() => (link ? window.open(link, "_blank") : null)}

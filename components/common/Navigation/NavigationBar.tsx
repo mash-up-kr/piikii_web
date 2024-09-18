@@ -20,7 +20,7 @@ export default function NavigationBar({
   return (
     <nav
       className={cn(
-        "fixed w-[375px] flex items-center py-[16px] justify-between h-[56px] bg-neutral-0 z-100",
+        "fixed max-w-[430px] w-full flex items-center py-[16px] justify-between h-[56px] bg-neutral-0 z-100",
         className
       )}
     >
