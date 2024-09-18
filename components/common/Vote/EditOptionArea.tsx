@@ -11,7 +11,7 @@ const EditOptionArea = ({
   onClickPlaceCard,
 }: EditOptionAreaProps) => {
   return (
-    <div className="flex flex-col w-[335px] h-[631px] mx-[20px] gap-y-[26px]">
+    <div className="flex flex-col max-w-[430px] w-full h-[631px] px-[20px] gap-y-[26px]">
       <div className="flex flex-row w-[252px] h-[37px] gap-x-[8px]">
         {schedules.map((item) => (
           <CategoryChip

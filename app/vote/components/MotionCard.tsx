@@ -128,6 +128,7 @@ export default function MotionCard({
           noShadow={hideShadow}
           cardClassName={cn("!bg-neutral-0")}
           cardButtonClassName={cn("!bg-neutral-100")}
+          cardDividerClassName="border-neutral-100"
           customStyle={{
             position: "relative",
           }}

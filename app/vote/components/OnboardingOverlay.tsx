@@ -37,11 +37,11 @@ export default function OnboardingOverlay({ onStartVote }: Props) {
             />
           </button>
         }
-        className="top-0 bg-transparent pl-[12px] pr-[20px] z-[1102]"
+        className="top-0 bg-transparent pl-[12px] pr-[20px] z-[1110]"
       />
 
       <div
-        className="flex flex-col justify-center items-center flex-1 w-full px-[60px] cursor-pointer"
+        className="flex flex-col justify-center items-center flex-1 h-full w-full px-[60px] cursor-pointer z-[1102]"
         onClick={onStartVote}
       >
         <Image
