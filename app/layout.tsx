@@ -33,7 +33,7 @@ export default function RootLayout({
             <LandingPage />
           </div>
           <CourseProvider>
-            <div className="max-w-[375px] w-full bg-neutral-0 relative h-dvh overflow-y-auto overflow-x-hidden xl:mr-[218px] disable-scrollbar">
+            <div className="max-w-[430px] w-full bg-neutral-0 relative h-dvh overflow-y-auto overflow-x-hidden xl:mr-[218px] disable-scrollbar">
               {children}
             </div>
           </CourseProvider>
