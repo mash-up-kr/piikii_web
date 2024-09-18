@@ -231,7 +231,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
         </p>
 
         <Button
-          className="group flex border-2 border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white gap-[4px]"
+          className="group flex border-[1px] rounded-[10px] border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white gap-[4px]"
           onClick={() => {
             !isReadyToVote
               ? setIsModalOpen(true)
@@ -407,7 +407,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
               </p>
             </div>
             <Button
-              className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-2 gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]"
+              className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-[1px] gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]"
               onClick={async () =>
                 await onShare({
                   url: location.href,
