@@ -158,12 +158,18 @@ const AddCourse = ({ data }: AddCourseProps) => {
   }, [roomUid]);
 
   useEffect(() => {
-    if (filteredPlaces.length > 0) {
-      setIsReadyToVote(true);
-    } else {
-      setIsReadyToVote(false);
+    if (categoryList && currentPlacesData) {
+      const canVote = categoryList.every((category) => {
+        const places =
+          currentPlacesData.find(
+            (item) => item.scheduleId === category.scheduleId
+          )?.places || [];
+        return places.length > 0;
+      });
+
+      setIsReadyToVote(canVote);
     }
-  }, [filteredPlaces]);
+  }, [categoryList, currentPlacesData, filteredPlaces]);
 
   useEffect(() => {
     const fetchData = async () => {
