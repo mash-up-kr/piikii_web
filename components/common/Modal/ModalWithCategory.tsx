@@ -19,7 +19,7 @@ export const ModalWithCategory = ({
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="flex flex-col rounded-[16px] items-center justify-center w-[335px] h-[168px] bg-white p-[12px]">
         <div className="flex items-center justify-center w-full h-[104px]">
-          <p className="flex  text-center items-center justify-center w-[311px] ">
+          <p className="flex  text-center text-[16px] font-semibold items-center justify-center w-[311px] ">
             {modalText}
           </p>
         </div>

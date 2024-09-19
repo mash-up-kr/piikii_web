@@ -246,7 +246,7 @@ const AddPlaceDetail: React.FC = () => {
         <FullScreenLoader />
       ) : (
         <FormProvider {...methods}>
-          <div className="flex flex-col gap-y-[56px]">
+          <div className="flex flex-col w-full gap-y-[56px] pb-[90px]">
             <NavigationBar
               leftSlot={
                 <div
@@ -273,8 +273,8 @@ const AddPlaceDetail: React.FC = () => {
                 </p>
               }
             />
-            <div className="flex flex-col w-[335px] mt-[88px] mx-[20px] gap-y-[32px]">
-              <div className="flex flex-col w-[252px] h-[98px]">
+            <div className="flex flex-col max-w-[375px] mt-[88px] mx-[20px] gap-y-[32px]">
+              <div className="flex flex-col w-full h-[98px]">
                 <div className="flex flex-row items-center w-[90px] h-[24px] gap-x-[6px]">
                   <p className="w-[59px] font-bold text-[#292E31] text-[16px]">
                     카테고리
@@ -322,7 +322,7 @@ const AddPlaceDetail: React.FC = () => {
                     />
                   </div>
                 ) : (
-                  <div className="gap-y-[32px] flex flex-col">
+                  <div className="gap-y-[32px] flex flex-col pb-[90px]">
                     <div className="flex flex-col w-full gap-y-[12px]">
                       <div className="flex flex-row items-center w-full h-[24px] gap-x-[6px]">
                         <p className="w-[65px] font-bold text-[#292E31] text-[16px]">

@@ -14,10 +14,12 @@ const CardWithCourse = ({ item }: CardWithCourseProps) => {
   };
 
   return (
-    <Card className="flex flex-row items-center justify-between w-[303px] h-[56px] py-[16px] px-[24px] rounded-[12px]">
+    <Card className="flex flex-row border-[1px] items-center justify-between w-full max-w-[430px] h-[56px] py-[16px] px-[24px] rounded-[12px]">
       <div className="flex gap-x-[6px]">
         <label>{findIcon(item.type)}</label>
-        <label className="w-[120px] h-[24px]">{item.name}</label>
+        <label className="flex items-center w-[120px] h-[24px] text-[14px]">
+          {item.name}
+        </label>
       </div>
       <Image
         src="/svg/ic_arrow_up_down.svg"
