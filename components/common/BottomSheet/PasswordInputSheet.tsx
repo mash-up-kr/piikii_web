@@ -43,7 +43,7 @@ export function PasswordInputSheet({
       {trigger && <SheetTrigger asChild>{trigger}</SheetTrigger>}
 
       <SheetContent
-        className="rounded-tl-[16px] rounded-tr-[16px] max-w-[375px] lg:mr-[0] xl:mr-[218px] w-full"
+        className="rounded-tl-[16px] rounded-tr-[16px] max-w-[430px] lg:mr-[0] xl:mr-[218px] w-full"
         side={"bottom"}
         onInteractOutside={() => {
           onInteractOutside && onInteractOutside();

@@ -225,7 +225,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center justify-center gap-x-[17px] px-[20px] py-[11px]">
+      <div className="flex items-center justify-between gap-x-[17px] px-[20px] py-[11px]">
         <p className="flex w-[232px] items-center text-semibold-15 text-neutral-700">
           {roomInfo?.name}
         </p>
@@ -251,7 +251,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
         </Button>
       </div>
       <div
-        className={`flex flex-col px-[20px] w-[335px] ${
+        className={`flex flex-col px-[20px] w-full max-w-[430px] ${
           isValidPlaceUrl || isValidClipboardText ? "h-[148px]" : "h-[103px]"
         } mt-[16px]`}
       >
@@ -277,7 +277,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
             />
           </div>
         ) : showInput ? (
-          <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FFF7F2] border-2 border-[#FFF1EB] rounded-[32px] items-center">
+          <div className="flex w-full min-w-[335px] max-w-[400px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FFF7F2] border-2 border-[#FFF1EB] rounded-[32px] items-center">
             <Input
               className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
               placeholder="네이버, 카카오 링크를 넣어주세요"
@@ -343,7 +343,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
           </p>
         </div>
       </div>
-      <div className="flex w-[375px] h-[12px] bg-[#F9FAFB] my-[20px]" />
+      <div className="flex w-full max-w-[430px] h-[12px] bg-[#F9FAFB] my-[20px]" />
 
       <div className="flex flex-row justify-between items-center">
         <div

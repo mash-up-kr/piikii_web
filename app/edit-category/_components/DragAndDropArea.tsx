@@ -44,6 +44,7 @@ const DragAndDropArea: React.FC = () => {
   const [selectedItemText, setSelectedItemText] = useState<string | null>("");
   const [selectedPlaceNumber, setSelectedPlaceNumber] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { roomPlacesInfo, categoryList, setCategoryList } = useCourseContext();
   const [columns, setColumns] = useState<ScheduleResponse[]>([]);
   const [itemCount, setItemCount] = useState(
@@ -76,7 +77,11 @@ const DragAndDropArea: React.FC = () => {
     if (isDisabled) {
       toast.toast({
         title: "카테고리를 1개 이상 추가해주세요",
-        duration: 1000,
+        duration: 1500,
+        style: {
+          position: "fixed",
+          bottom: "86px",
+        },
       });
     }
     return;
@@ -197,6 +202,7 @@ const DragAndDropArea: React.FC = () => {
 
     setCopyColumns(updatedList);
     setItemCount(updatedList.length);
+    setIsSheetOpen(false);
   };
 
   const handleItemDelete = (sequence: number, type: OrderType2) => {
@@ -239,7 +245,7 @@ const DragAndDropArea: React.FC = () => {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="flex flex-col gap-y-[16px]"
+              className="flex flex-col gap-y-[16px] max-w-[430px] w-full"
             >
               {copyColumns.map((item: ScheduleResponse, index: number) => (
                 <Draggable
@@ -249,7 +255,7 @@ const DragAndDropArea: React.FC = () => {
                 >
                   {(provided) => (
                     <div
-                      className="flex flex-row items-center justify-center w-[335px] h-[56px] gap-x-[16px]"
+                      className="flex flex-row items-center justify-start max-w-[430px] w-full h-[56px] gap-x-[16px]"
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
@@ -282,10 +288,16 @@ const DragAndDropArea: React.FC = () => {
           onRightButtonClick={onConfirmDelete}
         />
       )}
-      {itemCount < 5 && <SheetWithCourse handleItemClick={handleItemClick} />}
-      <div className="flex mt-auto justify-center w-[375px] h-[86px]">
+      {itemCount < 5 && (
+        <SheetWithCourse
+          handleItemClick={handleItemClick}
+          isSheetOpen={isSheetOpen}
+          setIsSheetOpen={setIsSheetOpen}
+        />
+      )}
+      <div className="flex mt-auto justify-center max-w-[430px] w-full h-[86px]">
         <Button
-          className={`w-[335px] h-[56px] rounded-[14px] ${
+          className={`w-full h-[56px] rounded-[14px] ${
             isDisabled ? "opacity-40" : ""
           }`}
           onClick={() => {
