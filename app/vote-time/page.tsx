@@ -1,8 +1,12 @@
-import React from "react";
+import React, { Suspense } from "react";
 import VoteTime from "./_components/VoteTime";
 
 const VoteTimePage = () => {
-  return <VoteTime />;
+  return (
+    <Suspense>
+      <VoteTime />
+    </Suspense>
+  );
 };
 
 export default VoteTimePage;
