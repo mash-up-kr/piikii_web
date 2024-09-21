@@ -62,19 +62,9 @@ const AddCourse = ({ data }: AddCourseProps) => {
     variables: { roomUid },
   });
 
-  const naverMapRegex =
-    /https?:\/\/(?:naver\.me\/[a-zA-Z0-9]+|map\.naver\.com\/p\/entry\/place\/\d+(?:\?[^\s]*)?)/;
-  const kakaoMapRegex =
-    /https?:\/\/(?:place\.map\.kakao\.com\/(?:m\/)?[0-9]+|kko\.to\/[A-Za-z0-9]+)/;
-
   const validateText = (text: string) => {
-    if (isMobile) {
-      const naverMatch = text.match(naverMapRegex);
-      const kakaoMatch = text.match(kakaoMapRegex);
-      return naverMatch ? naverMatch[0] : kakaoMatch ? kakaoMatch[0] : null;
-    } else {
-      return naverMapRegex.test(text) || kakaoMapRegex.test(text);
-    }
+    const urlMatch = text.match(/https?:\/\/[^\s]+/);
+    return urlMatch ? urlMatch[0] : null;
   };
 
   const isValidClipboardText = validateText(clipboardText);
