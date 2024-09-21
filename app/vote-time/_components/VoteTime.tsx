@@ -16,6 +16,7 @@ const VoteTime = () => {
     selectedTime,
     passwordConfirmSheet,
     passwordSheet,
+    handleBack,
     onSubmit,
     handlePassword,
     handleDateClick,
@@ -29,7 +30,7 @@ const VoteTime = () => {
         leftSlot={
           <div
             className="flex py-[16px] px-[12px] cursor-pointer"
-            onClick={() => null}
+            onClick={handleBack}
           >
             <Image
               src="/png/ic_arrow_left_24.png"
@@ -48,13 +49,14 @@ const VoteTime = () => {
         <div className={selectedDate ? "visible" : "invisible"}>
           <span className="text-semibold-16 text-primary-700">
             {selectedDate?.format("DD")}일 {selectedDate?.format("dddd")}{" "}
-            {selectedTime?.ampm} {selectedTime?.hour}시 {selectedTime?.minute}분
+            {selectedTime?.ampm === "am" ? "오전" : "오후"} {selectedTime?.hour}
+            시 {selectedTime?.minute}분
           </span>
           &nbsp;
           <span className="text-neutral-800 text-semibold-16">에 마감</span>
         </div>
 
-        <div className="mt-[56px] flex gap-[9px]">
+        <div className="mt-[56px] flex gap-[9px] items-center justify-center">
           {Children.toArray(
             dates.map((item) => {
               const isSelected =
@@ -94,8 +96,8 @@ const VoteTime = () => {
 
         <div className="w-full bottom-0 bg-white mt-[100px] mb-[10px]">
           <PasswordInputSheet
-            title="모임 비밀번호 생성"
-            subTitle="투표를 시작하거나 마감할 때 필요해요"
+            title="투표 시작하기 비밀번호 입력"
+            subTitle="비밀번호는 모임을 만든 사람이 알고있어요"
             isOpen={passwordSheet.isOpen}
             onInteractOutside={passwordSheet.onClose}
             onPasswordComplete={(result) => {

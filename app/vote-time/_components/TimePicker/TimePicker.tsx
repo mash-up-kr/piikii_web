@@ -17,7 +17,7 @@ interface TimePickerProps {
 }
 
 const selections: Selections = {
-  ampm: ["오전", "오후"],
+  ampm: ["am", "pm"],
   hour: Array.from({ length: 12 }, (_, i) => String(i + 1)),
   minute: Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0")),
 };
@@ -42,7 +42,7 @@ const TimePicker = ({ value, onChange }: TimePickerProps) => {
                 <div
                   className={selected ? "text-neutral-900" : "text-neutral-300"}
                 >
-                  {option}
+                  {option === "am" ? "오전" : option === "pm" ? "오후" : option}
                 </div>
               )}
             </Picker.Item>
