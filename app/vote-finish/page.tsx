@@ -80,7 +80,7 @@ const VoteFinishPage = () => {
               id="course"
               key={index}
               index={index}
-              type="food"
+              type={place.scheduleType}
               placeTitle={place.name}
               placeContact={place.phoneNumber}
               placeAddress={place.address}

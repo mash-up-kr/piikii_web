@@ -1,5 +1,6 @@
 "use client";
 
+import { ScheduleType } from "@/apis/schedule/types/model";
 import { useToast } from "@/components/common/Toast/use-toast";
 import { cn } from "@/lib/utils";
 import { distance, motion } from "framer-motion";
@@ -10,7 +11,7 @@ import { useMemo } from "react";
 interface Props {
   id: string;
   index: number;
-  type: "dessert" | "food" | "play";
+  type: ScheduleType;
   placeTitle: string;
   placeContact: string;
   placeAddress: string;
@@ -31,12 +32,14 @@ export default function CourseItem({
 
   const typeLabel = useMemo(() => {
     switch (type) {
-      case "dessert":
+      case "DESSERT":
         return "카페";
-      case "food":
-        return "음식점";
-      case "play":
+      case "DISH":
+        return "음식";
+      case "ARCADE":
         return "놀거리";
+      case "ALCOHOL":
+        return "술";
       default:
         return "";
     }
