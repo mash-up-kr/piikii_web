@@ -1,17 +1,35 @@
-import { useState } from "react";
-import dayjs from "dayjs";
 import "dayjs/locale/ko";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import { useState } from "react";
+import timezone from "dayjs/plugin/timezone";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/components/common/Toast/use-toast";
-dayjs.locale("ko");
+import { useUpdateVoteDeadline } from "@/apis/vote/VoteApi.mutation";
 
-interface DateInfo {
+dayjs.locale("ko");
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+const KOREA_TIMEZONE = "Asia/Seoul";
+
+interface IDateInfo {
   date: dayjs.Dayjs;
   dayOfWeek: string;
 }
+interface ITimeObj {
+  hour: string; // hh
+  minute: string; // mm
+  ampm: string; // am/pm
+}
 
-const getNextSixDays = (): DateInfo[] => {
+interface ITimeObjParam extends ITimeObj {
+  date: string; // YYYY-MM-DD
+}
+
+const getNextSixDays = (): IDateInfo[] => {
   const today = dayjs();
-  const dates: DateInfo[] = [];
+  const dates: IDateInfo[] = [];
 
   for (let i = 0; i < 6; i++) {
     const nextDay = today.add(i, "day");
@@ -23,10 +41,28 @@ const getNextSixDays = (): DateInfo[] => {
 
   return dates;
 };
+
+function convertToKoreanTime(obj: ITimeObjParam): string {
+  const { date, hour, minute, ampm } = obj;
+  let convertedHour = parseInt(hour, 10);
+  if (ampm.toLowerCase() === "pm" && convertedHour !== 12) {
+    convertedHour += 12;
+  } else if (ampm.toLowerCase() === "am" && convertedHour === 12) {
+    convertedHour = 0;
+  }
+  const dateTime = dayjs(`${date} ${convertedHour}:${minute}`).format(
+    "YYYY-MM-DDTHH:mm:ss"
+  );
+  return dateTime;
+}
+
 const useVoteTime = () => {
+  const router = useRouter();
   const toast = useToast();
   const dates = getNextSixDays();
-  const [selectedDate, setSelectedDate] = useState<DateInfo["date"] | null>(
+  const searchParams = useSearchParams();
+  const roomUid = searchParams.get("roomUid") || "";
+  const [selectedDate, setSelectedDate] = useState<IDateInfo["date"] | null>(
     null
   );
   const [password, setPassword] = useState("");
@@ -34,10 +70,23 @@ const useVoteTime = () => {
   const [isPasswordConfirmSheetOpen, setIsPasswordConfirmSheetOpen] =
     useState(false);
 
-  const [selectedTime, setSelectedTime] = useState({
+  const [selectedTime, setSelectedTime] = useState<ITimeObj>({
     hour: "1",
     minute: "00",
-    ampm: "오전",
+    ampm: "am",
+  });
+
+  const { mutate: updateVoteDeadlineMutate } = useUpdateVoteDeadline({
+    options: {
+      onSuccess: () => {
+        router.push(`/vote-start/?roomUid=${roomUid}`);
+      },
+      onError: (error) => {
+        toast.toast({
+          description: error.response?.data?.message,
+        });
+      },
+    },
   });
 
   const onPasswordSheetOpen = () => {
@@ -56,7 +105,7 @@ const useVoteTime = () => {
     setIsPasswordConfirmSheetOpen(false);
   };
 
-  const handleDateClick = (date: DateInfo["date"]) => {
+  const handleDateClick = (date: IDateInfo["date"]) => {
     setSelectedDate(date);
   };
 
@@ -71,10 +120,29 @@ const useVoteTime = () => {
   const handlePasswordConfirm = (_password: string[]) => {
     if (isPasswordCorrect(_password)) {
       onPasswordConfirmSheetClose();
-      alert(JSON.stringify(_password));
+      const { ampm, hour, minute } = selectedTime || {};
+      if (selectedDate) {
+        const voteDeadline = convertToKoreanTime({
+          date: dayjs(selectedDate).format("YYYY-MM-DD"),
+          hour,
+          minute,
+          ampm,
+        });
+        updateVoteDeadlineMutate({
+          roomUid,
+          payload: {
+            password: _password.join(""),
+            voteDeadline,
+          },
+        });
+      }
     } else {
       toast.toast({ title: "비밀번호가 일치하지 않아요", duration: 500 });
     }
+  };
+
+  const handleBack = () => {
+    router.back();
   };
 
   const onSubmit = () => {
@@ -103,6 +171,7 @@ const useVoteTime = () => {
       onClose: onPasswordConfirmSheetClose,
       onOpen: onPasswordConfirmSheetOpen,
     },
+    handleBack,
     onSubmit,
     handleTimeChange,
     handlePassword,

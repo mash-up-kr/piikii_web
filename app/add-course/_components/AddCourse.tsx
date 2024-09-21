@@ -231,7 +231,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
           onClick={() => {
             !isReadyToVote
               ? setIsModalOpen(true)
-              : router.push(`/vote-start/?roomUid=${roomUid}`);
+              : router.push(`/vote-time/?roomUid=${roomUid}`);
           }}
         >
           <p className="group-hover:text-white font-semibold text-neutral-700 text-[12px]">
