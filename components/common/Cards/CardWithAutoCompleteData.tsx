@@ -26,10 +26,11 @@ export const CardWithAutoCompleteData = ({
   const placeUrl = autoData?.url ?? "";
   const originLogoSrc = useMemo(
     () =>
-      origin === "AVOCADO" ? "/svg/naver-icon.svg" : "/svg/kakao-icon.svg",
+      autoData?.origin === "AVOCADO"
+        ? "/svg/naver-icon.svg"
+        : "/svg/kakao-icon.svg",
     [origin]
   );
-
   return (
     <div className="flex flex-col w-full gap-y-[8px] mt-[32px]">
       <Card className=" border-none shadow-none">
