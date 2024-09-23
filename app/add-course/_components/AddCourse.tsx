@@ -363,7 +363,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
               )
           )}
         </div>
-        <div className="relative flex items-center justify-center w-[64px] h-[37px] mr-[20px] cursor-pointer">
+        <div className="relative flex items-center justify-center h-[37px] cursor-pointer w-fit pr-[20px]">
           <div className="absolute left-[-16px] w-[16px] h-full">
             <Image
               src={"/svg/gradient.svg"}

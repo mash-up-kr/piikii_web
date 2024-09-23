@@ -108,7 +108,7 @@ const Invitation = ({ handleStep }: InvitationProps) => {
                   return (
                     <Image
                       src={`/png/${item.src}`}
-                      width={334}
+                      width={390}
                       height={167}
                       alt={item.src}
                       className={`rounded-[16px] ${
