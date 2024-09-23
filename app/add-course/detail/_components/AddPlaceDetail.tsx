@@ -130,6 +130,15 @@ const AddPlaceDetail: React.FC = () => {
     },
   });
 
+  useEffect(() => {
+    if (categoryList && categoryList.length > 0) {
+      const scheduleId = categoryList[0].scheduleId;
+      if (scheduleId !== null && scheduleId !== undefined) {
+        setSelectedChips([scheduleId]);
+      }
+    }
+  }, [categoryList]);
+
   const handleChipClick = (index: number) => {
     setSelectedChips((prevChips) => {
       if (prevChips.includes(index)) {
@@ -139,14 +148,6 @@ const AddPlaceDetail: React.FC = () => {
       }
     });
   };
-
-  const selectedCategory = useMemo(() => {
-    const result = selectedChips.map((chipId) =>
-      categoryList?.find((category) => category.scheduleId === chipId)
-    );
-
-    return result;
-  }, [selectedChips, categoryList]);
 
   useEffect(() => {
     if (autoData) {
