@@ -9,9 +9,7 @@ import { useMemo } from "react";
 export type PlaceAutoCompleteData = {
   name: string;
   url?: string;
-  placeImageUrls: {
-    contents: string[];
-  };
+  placeImageUrls: string;
   address?: string;
   phoneNumber?: string;
   starGrade?: number;
@@ -51,8 +49,12 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
       <CardContent className="flex flex-col w-[295px] h-[80px]">
         <div className="flex flex-row w-full h-full">
           <Image
-            src={placeImageUrls.contents[0]}
-            alt="food"
+            src={
+              placeImageUrls == "null"
+                ? "/png/img_place_default.png"
+                : placeImageUrls
+            }
+            alt="default"
             className="rounded-lg"
             width={80}
             height={80}
