@@ -219,6 +219,12 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
   const { onShare } = useShare();
 
+  const placeImage = () => {
+    if (autoData?.data.placeImageUrls.contents[0])
+      return autoData?.data.placeImageUrls.contents[0];
+    else return "null";
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex items-center justify-between gap-x-[17px] px-[20px] py-[11px]">
@@ -303,7 +309,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
             <CardForCopiedContent
               name={autoData.data.name}
               url={autoData.data.url}
-              placeImageUrls={autoData.data.placeImageUrls}
+              placeImageUrls={placeImage()}
               starGrade={autoData.data.starGrade}
               reviewCount={autoData.data.reviewCount}
               origin={autoData.data.origin}
