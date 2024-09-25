@@ -24,6 +24,7 @@ const EditPlaceDetail: React.FC = () => {
   const toast = useToast();
   const router = useRouter();
   const methods = useAddPlaceDetailForm();
+  const { watch } = methods;
   const [placeInfo, setPlaceInfo] = useState<PlaceResponseDto | null>(null);
   const [selectedChip, setSelectedChip] = useState<number | null>(null);
   const searchParams = useSearchParams();
@@ -36,6 +37,12 @@ const EditPlaceDetail: React.FC = () => {
     setAutoData,
     setSelectedPlaceInfo,
   } = useCourseContext();
+  const inputValue = watch("name", "");
+  const urlValue = watch("url", "");
+  const addressValue = watch("address", "");
+  const phoneNumberValue = watch("phoneNumber", "");
+  const memoValue = watch("memo", "");
+  const openingHoursValue = watch("openingHours", "");
 
   const handleLeftButtonClick = () => {
     setIsModalOpen(false);
@@ -106,7 +113,7 @@ const EditPlaceDetail: React.FC = () => {
       methods.setValue("address", address);
       methods.setValue("phoneNumber", phoneNumber);
       methods.setValue("memo", memo);
-      methods.setValue("openingHours", openingHours);
+      methods.setValue("openingHours", openingHours || "");
     }
   }, [selectedPlaceInfo]);
 
@@ -264,6 +271,7 @@ const EditPlaceDetail: React.FC = () => {
                       disabled={
                         selectedPlaceInfo?.origin == "MANUAL" ? false : true
                       }
+                      value={inputValue}
                       placeholder="상호명을 적어주세요"
                       {...methods.register("name")}
                     />
@@ -299,6 +307,7 @@ const EditPlaceDetail: React.FC = () => {
                   <InputWithLabel
                     type="link"
                     placeholder="링크를 붙여주세요"
+                    value={urlValue}
                     iconSrc="/svg/ic_link.svg"
                     {...methods.register("url")}
                   />
@@ -310,18 +319,21 @@ const EditPlaceDetail: React.FC = () => {
                   <InputWithLabel
                     type="link"
                     placeholder="영업 시간을 남겨주세요"
+                    value={openingHoursValue}
                     iconSrc="/svg/ic_clock_mono.svg"
                     {...methods.register("openingHours")}
                   />
                   <InputWithLabel
                     type="link"
                     placeholder="주소를 남겨주세요"
+                    value={addressValue}
                     iconSrc="/svg/ic_pin_location_mono.svg"
                     {...methods.register("address")}
                   />
                   <InputWithLabel
                     type="link"
                     placeholder="전화번호를 남겨주세요"
+                    value={phoneNumberValue}
                     iconSrc="/svg/ic_call_mono.svg"
                     {...methods.register("phoneNumber")}
                   />
@@ -333,6 +345,7 @@ const EditPlaceDetail: React.FC = () => {
                   <InputWithLabel
                     type="link"
                     placeholder="일행에게 메모를 남겨주세요"
+                    value={memoValue}
                     iconSrc="/svg/ic_memo_mono.svg"
                     {...methods.register("memo")}
                   />
