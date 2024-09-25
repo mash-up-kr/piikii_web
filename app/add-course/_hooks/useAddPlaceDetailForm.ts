@@ -10,7 +10,7 @@ export type CommonPlaceDetailFormType = {
   url?: string;
   reviewCount?: number;
   starGrade?: number;
-  openingHours?: string | null;
+  openingHours?: string;
   phoneNumber?: string;
   address?: string;
   memo?: string;
