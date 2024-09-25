@@ -263,7 +263,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
         </div>
 
         {showAlternateInput ? (
-          <div className="flex w-[335px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FEF1F2] border-2 border-[#FFD6D9] rounded-[32px] items-center">
+          <div className="flex w-full min-w-[335px] max-w-[390px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FEF1F2] border-2 border-[#FFD6D9] rounded-[32px] items-center">
             <Input
               className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
               placeholder="올바른 링크를 넣어주세요"

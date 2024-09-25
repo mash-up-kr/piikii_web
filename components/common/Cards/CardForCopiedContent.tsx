@@ -44,9 +44,9 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
   );
   return (
     <Card
-      className={`shadow-none group flex flex-col w-[335px] h-[104px] items-start justify-center cursor-pointer p-[12px] rounded-[16px] bg-[#FFF7F2] hover:bg-[#FFF1EB] active:bg-[#FFEAE1]  text-[#FF601C] hover:text-[#DD4808] active:text-[#BF3900] border border-[#FFEAE1]`}
+      className={`shadow-none group flex flex-col w-full h-[104px] items-start justify-center cursor-pointer p-[12px] rounded-[16px] bg-[#FFF7F2] hover:bg-[#FFF1EB] active:bg-[#FFEAE1]  text-[#FF601C] hover:text-[#DD4808] active:text-[#BF3900] border border-[#FFEAE1]`}
     >
-      <CardContent className="flex flex-col w-[295px] h-[80px]">
+      <CardContent className="flex flex-col w-full h-[80px]">
         <div className="flex flex-row w-full h-full">
           <Image
             src={
@@ -60,8 +60,8 @@ export const CardForCopiedContent: React.FC<CardForCopiedContentProps> = ({
             height={80}
             priority
           />
-          <div className="flex flex-row pl-[12px] items-center justify-center gap-y-[4px]">
-            <div className="flex flex-col w-[170px] h-[65px] items-start justify-center pr-[9px]">
+          <div className="flex flex-row w-full pl-[12px] items-center justify-between gap-y-[4px]">
+            <div className="flex flex-col w-full max-w-[170px] h-[65px] items-start justify-center pr-[9px]">
               <span className="flex w-full h-[18px] text-[12px] font-bold">
                 복사한 장소 추가하기
               </span>
