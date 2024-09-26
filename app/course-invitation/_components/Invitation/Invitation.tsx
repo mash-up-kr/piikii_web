@@ -65,9 +65,9 @@ const Invitation = ({ handleStep }: InvitationProps) => {
               일행을 초대하고 함께 장소를 찾아보세요
             </p>
 
-            <div className="flex mt-[32px] mb-[12px]">
+            <div className="flex mt-[32px] mb-[12px] items-end">
               <p className="text-bold-18 mr-[6px]">모임 이름</p>
-              <p className="text-bold-14 text-primary-700">필수</p>
+              <p className="text-bold-14 text-primary-700 mb-[1px]">필수</p>
             </div>
 
             <Input
@@ -123,7 +123,7 @@ const Invitation = ({ handleStep }: InvitationProps) => {
             <div className="mt-[32px]">
               <p className="text-bold-16">하고 싶은 메시지</p>
               <Textarea
-                className="mt-[12px]"
+                className="mt-[12px] resize-none"
                 value={message}
                 onChange={handleMessage}
               />
