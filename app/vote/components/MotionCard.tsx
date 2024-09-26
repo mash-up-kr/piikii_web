@@ -9,6 +9,7 @@ import { get } from "http";
 import { useMotionValue, useTransform, motion } from "framer-motion";
 import { PlaceResponseDto } from "@/apis/place/types/dto";
 import { cn } from "@/lib/utils";
+import { ImgBgType, VoteImagePolicy } from "../policy/VoteImagePolicy";
 
 interface Props {
   index: number;
@@ -72,6 +73,18 @@ export default function MotionCard({
     }
   };
 
+  const cardImages = useMemo(() => {
+    const originalImages = data?.placeImageUrls.contents ?? [];
+
+    return originalImages.map((url) => {
+      if (VoteImagePolicy.isDefaultImageUrl(url)) {
+        return VoteImagePolicy.getPublicDefaultImgUrl(url, ImgBgType.GRAY);
+      }
+
+      return url;
+    });
+  }, [data?.placeImageUrls.contents]);
+
   if (!data) return <></>;
 
   return (
@@ -119,7 +132,7 @@ export default function MotionCard({
           place={data.name}
           rating={formattedStarGrade ?? "-"}
           reviewCount={data.reviewCount ?? 0}
-          images={data.placeImageUrls.contents ?? []}
+          images={cardImages.slice(0, 3)}
           info={[
             { label: "주소", value: data.address ?? "-" },
             { label: "영업시간", value: "-" },

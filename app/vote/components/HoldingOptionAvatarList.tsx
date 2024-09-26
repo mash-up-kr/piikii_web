@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { CategoryChoiceState, PlaceOption, VoteType } from "../model";
+import { ImgBgType, VoteImagePolicy } from "../policy/VoteImagePolicy";
 
 interface Props {
   list: PlaceOption[];
@@ -8,12 +9,22 @@ interface Props {
 }
 
 export default function HoldingOptionAvatarList({ list, voteState }: Props) {
-  console.log(voteState);
   return (
     <div className="flex gap-x-[24px] w-full">
       <AnimatePresence mode="popLayout">
         {list.map((item, index) => {
           if (item.state !== CategoryChoiceState.HOLD) return null;
+
+          const cardImages = item.placeImageUrls.contents.map((url) => {
+            if (VoteImagePolicy.isDefaultImageUrl(url)) {
+              return VoteImagePolicy.getPublicDefaultImgUrl(
+                url,
+                ImgBgType.COLOR
+              );
+            }
+
+            return url;
+          });
 
           return (
             <motion.div
@@ -38,7 +49,7 @@ export default function HoldingOptionAvatarList({ list, voteState }: Props) {
                 }}
               >
                 <Image
-                  src={item.placeImageUrls.contents[0] ?? "/png/food.png"}
+                  src={cardImages[0] ?? "/png/food.png"}
                   width={52}
                   height={52}
                   alt="option-image"

@@ -27,6 +27,7 @@ import { ScheduleType } from "@/apis/schedule/types/model";
 import VoteStep from "./components/VoteStep";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { VoteImagePolicy } from "./policy/VoteImagePolicy";
 
 export default function Page() {
   const router = useRouter();
@@ -42,8 +43,12 @@ export default function Page() {
     variables: {
       roomUid: roomUid ?? "",
     },
-    options: { enabled: !!roomUid },
+    options: {
+      enabled: !!roomUid,
+    },
   });
+
+  console.log(placeData);
 
   const { data: scheduleData, isLoading: isScheduleLoading } =
     useGetSchedulesQuery({
