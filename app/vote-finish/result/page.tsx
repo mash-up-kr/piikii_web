@@ -49,6 +49,11 @@ const VoteResult = () => {
     [voteData?.data.result]
   );
 
+  const countOfTotalVote =
+    selectedSchedule?.places.reduce((acc, cur) => {
+      return Math.max(acc, cur.countOfVote);
+    }, 0) ?? 0;
+
   useEffect(() => {
     if (votedSchedules) {
       setSelectedSchedule(votedSchedules[0]);
@@ -108,11 +113,7 @@ const VoteResult = () => {
         <div className="pt-[33px] px-[20px]">
           <Title
             title={<span>투표 결과를 공개할께요</span>}
-            subtitle={
-              <span>
-                {selectedSchedule.places[0].countOfVote}명이 참여했어요
-              </span>
-            }
+            subtitle={<span>{countOfTotalVote}명이 참여했어요</span>}
             subtitleClassName="text-neutral-600"
           />
         </div>
