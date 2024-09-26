@@ -35,10 +35,10 @@ export default function RootLayout({
           <CourseProvider>
             <div className="max-w-[430px] w-full bg-neutral-0 relative h-dvh overflow-y-auto overflow-x-hidden xl:mr-[218px] disable-scrollbar">
               {children}
+              <Toaster />
             </div>
           </CourseProvider>
         </ClientProvider>
-        <Toaster />
       </body>
     </html>
   );

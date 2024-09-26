@@ -26,7 +26,7 @@ export function Toaster() {
       }) {
         return (
           <Toast
-            className="max-w-[335px] h-[52px] rounded-[28px] bg-neutral-800 opacity-[0.6] mb-[24px]"
+            className="max-w-[430px] h-[52px] rounded-[28px] bg-neutral-800 opacity-[0.6] mb-[24px]"
             key={id}
             {...props}
           >

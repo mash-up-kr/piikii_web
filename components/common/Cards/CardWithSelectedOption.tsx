@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { CardInfoProps } from "@/model";
 import Image from "next/image";
 import { useMemo } from "react";
+import { useToast } from "../Toast/use-toast";
 
 export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
   origin,
@@ -14,12 +15,24 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
   images,
   onButtonClick,
   selected,
+  link,
 }) => {
+  const toast = useToast();
   const originLogoSrc = useMemo(
     () =>
       origin === "AVOCADO" ? "/svg/naver-icon.svg" : "/svg/kakao-icon.svg",
     [origin]
   );
+
+  const handleClickDetails = (e: React.MouseEvent<HTMLSpanElement>) => {
+    e.stopPropagation();
+
+    if (link && link.includes("http")) {
+      window.open(link, "_blank");
+    } else {
+      toast.toast({ description: "존재하지 않는 링크 입니다." });
+    }
+  };
 
   return (
     <Card
@@ -27,6 +40,7 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
         `flex flex-col items-start justify-center cursor-pointer p-[12px] rounded-[16px] shadow-none border-none outline outline-1 outline-neutral-300`,
         selected && "outline-primary-700 outline-[2px]"
       )}
+      onClick={onButtonClick}
     >
       <CardContent className="w-full">
         <div className="flex gap-[16px] w-full h-full">
@@ -70,7 +84,10 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
               </div>
 
               <div className="flex py-[4px] pr-[8px] mt-[8px] gap-x-[2px] items-center">
-                <span className="w-[46px] h-[15px] text-semibold-10 text-neutral-600">
+                <span
+                  className="w-[46px] h-[15px] text-semibold-10 text-neutral-600"
+                  onClick={handleClickDetails}
+                >
                   자세히 보기
                 </span>
                 <Image
@@ -90,7 +107,6 @@ export const CardWithSelectedOption: React.FC<CardInfoProps> = ({
                   ? "border-none"
                   : "border-2 border-[#E7E8EB] hover:border-[#FFD6D9]"
               }  mr-[8px]`}
-              onClick={onButtonClick}
             >
               {selected && (
                 <Image
