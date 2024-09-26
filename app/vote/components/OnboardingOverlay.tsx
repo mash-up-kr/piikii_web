@@ -11,21 +11,11 @@ export default function OnboardingOverlay({ onStartVote }: Props) {
   const router = useRouter();
   return (
     <div
-      className="fixed overflow-hidden top-0 h-dvh max-w-[430px] w-full backdrop-blur-2xl z-[1100] flex flex-col justify-center items-center"
+      className="fixed overflow-hidden top-0 h-dvh bg-black bg-opacity-50 max-w-[430px] w-full backdrop-blur-2xl z-[1100] flex flex-col justify-center items-center"
       style={{
-        background:
-          "linear-gradient(270deg, rgba(100, 41, 200, 0.80) 40%, rgba(229, 47, 47, 0.80) 60%)",
         WebkitBackdropFilter: "blur(40px)",
       }}
     >
-      <div
-        className="fixed blur-[60px] h-dvh max-w-[430px] w-full z-[1101] left-0"
-        style={{
-          background:
-            "linear-gradient(270deg, rgba(100, 41, 200, 0.80) 40%, rgba(229, 47, 47, 0.80) 60%)",
-        }}
-      />
-
       <NavigationBar
         leftSlot={
           <button onClick={() => router.back()}>
@@ -40,27 +30,24 @@ export default function OnboardingOverlay({ onStartVote }: Props) {
         className="top-0 bg-transparent pl-[12px] pr-[20px] z-[1110]"
       />
 
-      <div
-        className="flex flex-col justify-center items-center flex-1 h-full w-full px-[60px] cursor-pointer z-[1102]"
-        onClick={onStartVote}
-      >
+      <div className="flex flex-col justify-center items-center flex-1 h-full w-full px-[60px] cursor-pointer z-[1102]">
         <Image
-          src="/svg/vote-onboarding-center.svg"
-          width={297}
-          height={193}
+          src="/png/vote-overlay-img.png"
+          width={296}
+          height={424}
           alt="vote-onboarding-center"
           unoptimized
           className="z-[1102]"
         />
+      </div>
 
-        <Image
-          src="/svg/vote-onboarding-bottom.svg"
-          width={146}
-          height={109}
-          alt="vote-onboarding-bottom"
-          className="absolute bottom-0 z-[1102]"
-          unoptimized
-        />
+      <div className="fixed bottom-[20px] w-full px-[20px] pt-[10px] z-[1110]">
+        <button
+          className="w-full rounded-[14px] border border-primary-700 bg-primary-700 py-[16px] text-neutral-0 text-semibold-16"
+          onClick={onStartVote}
+        >
+          투표 시작
+        </button>
       </div>
     </div>
   );
