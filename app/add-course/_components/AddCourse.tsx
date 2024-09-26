@@ -32,15 +32,16 @@ const AddCourse = ({ data }: AddCourseProps) => {
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
   const { clipboardText, setClipboardText } = useCopyPasted();
-
   const [placeUrl, setPlaceUrl] = useState("");
   const [showInput, setShowInput] = useState(true);
   const [showAlternateInput, setShowAlternateInput] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReadyToVote, setIsReadyToVote] = useState(false);
   const searchParams = useSearchParams();
-
   const roomUid = searchParams.get("roomUid") || "";
+  const [isFirstEntry, setIsFirstEntry] = useState(false);
+  const [showSecondTooltip, setShowSecondTooltip] = useState(false);
+
   const {
     roomInfo,
     setRoomInfo,
@@ -75,6 +76,27 @@ const AddCourse = ({ data }: AddCourseProps) => {
       setSelectedChip(categoryList[0].scheduleId);
     }
   }, [categoryList]);
+
+  const handleFirstTooltipClose = () => {
+    setIsFirstEntry(false);
+    localStorage.setItem("isFirstEntry", "false");
+
+    setShowSecondTooltip(true);
+  };
+
+  const handleSecondTooltipClose = () => {
+    setShowSecondTooltip(false);
+  };
+
+  useEffect(() => {
+    const firstEntry = localStorage.getItem("isFirstEntry");
+
+    if (!firstEntry) {
+      setIsFirstEntry(true);
+      localStorage.setItem("isFirstEntry", "true");
+    }
+  }, []);
+  const { onShare } = useShare();
 
   useEffect(() => {
     if (currentPlacesData) {
@@ -217,8 +239,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
     setSelectedChip(index === selectedChip ? null : index);
   };
 
-  const { onShare } = useShare();
-
   const placeImage = () => {
     if (autoData?.data.placeImageUrls.contents[0])
       return autoData?.data.placeImageUrls.contents[0];
@@ -226,232 +246,264 @@ const AddCourse = ({ data }: AddCourseProps) => {
   };
 
   return (
-    <div className="flex flex-col max-w-[430px]">
-      <div className="flex items-center justify-between gap-x-[17px] px-[20px] py-[11px]">
-        <p className="flex w-[232px] items-center text-semibold-15 text-neutral-700">
-          {roomInfo?.name}
-        </p>
-
-        <Button
-          className="group flex border-[1px] rounded-[10px] border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white gap-[4px]"
-          onClick={() => {
-            !isReadyToVote
-              ? setIsModalOpen(true)
-              : router.push(`/vote-time/?roomUid=${roomUid}`);
-          }}
-        >
-          <p className="group-hover:text-white font-semibold text-neutral-700 text-[12px]">
-            투표시작
+    <div className="relative">
+      {(isFirstEntry === true || showSecondTooltip === true) && (
+        <div className="absolute inset-0 bg-black opacity-60 z-10"></div>
+      )}
+      <div className="flex flex-col h-screen max-w-[430px]">
+        <div className="flex items-center justify-between gap-x-[17px] px-[20px] py-[11px]">
+          <p className="flex w-[232px] items-center text-semibold-15 text-neutral-700">
+            {roomInfo?.name}
           </p>
-          <Image
-            width={16}
-            height={16}
-            src="/gif/vote_button.gif"
-            alt="vote_button.gif"
-            unoptimized
-          />
-        </Button>
-      </div>
-      <div
-        className={`flex flex-col mx-[20px] max-w-full ${
-          isValidPlaceUrl || isValidClipboardText ? "h-[148px]" : "h-[103px]"
-        } mt-[16px]`}
-      >
-        <div className="flex flex-row w-full font-extrabold h-[31px] text-[22px] mb-[16px]">
-          <p className="text-[#FF601C]">투표 후 코스</p>
-          <p>를 추천받아요</p>
-        </div>
 
-        {showAlternateInput ? (
-          <div className="flex w-full min-w-[335px] max-w-[390px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FEF1F2] border-2 border-[#FFD6D9] rounded-[32px] items-center">
-            <Input
-              className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
-              placeholder="올바른 링크를 넣어주세요"
-              value={"올바른 링크를 넣어주세요"}
-              disabled={true}
-            />
+          <Button
+            className={`${
+              showSecondTooltip ? "relative z-10" : ""
+            } group flex border-[1px] rounded-[10px] border-[#E7E8EB] w-[86px] h-[34px] py-[8px] px-[12px] bg-white gap-[4px]`}
+            onClick={() => {
+              !isReadyToVote
+                ? setIsModalOpen(true)
+                : router.push(`/vote-time/?roomUid=${roomUid}`);
+            }}
+          >
+            <p className="group-hover:text-white font-semibold text-neutral-700 text-[12px]">
+              투표시작
+            </p>
             <Image
-              src={"/svg/ic_exclamation_circle.svg"}
-              alt="arrow"
-              width={32}
-              height={32}
+              width={16}
+              height={16}
+              src="/gif/vote_button.gif"
+              alt="vote_button.gif"
               unoptimized
             />
-          </div>
-        ) : showInput ? (
-          <div className="flex min-w-[335px] max-w-full h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FFF7F2] border-2 border-[#FFF1EB] rounded-[32px] items-center">
-            <Input
-              className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
-              placeholder="네이버, 카카오 링크를 넣어주세요"
-              value={clipboardText || placeUrl}
-              onChange={(e) => {
-                setPlaceUrl(e.target.value);
-              }}
-            />
+          </Button>
+          {showSecondTooltip === true && (
             <Image
-              src={"/png/ic_arrow_left_circle_32.png"}
-              alt="arrow"
-              width={32}
-              height={32}
-              onClick={() => {
-                if (isValidClipboardText || isValidPlaceUrl) {
-                  router.push(
-                    `add-course/detail?roomUid=${
-                      roomUidStorage?.get()?.roomUid
-                    }`
-                  );
-                }
-              }}
+              width={160}
+              height={160}
+              src="/png/tooltip-2.png"
+              alt="tooltip"
+              className="right-20 mt-[100px] mr-[20px] transform translate-x-1/2 absolute z-20"
+              unoptimized
+              onClick={handleSecondTooltipClose}
             />
+          )}
+        </div>
+        <div
+          className={`flex flex-col mx-[20px] max-w-full ${
+            isValidPlaceUrl || isValidClipboardText ? "h-[148px]" : "h-[103px]"
+          } mt-[16px]`}
+        >
+          <div className="flex flex-row w-full font-extrabold h-[31px] text-[22px] mb-[16px]">
+            <p className="text-[#FF601C]">투표 후 코스</p>
+            <p>를 추천받아요</p>
+          </div>
+
+          {showAlternateInput ? (
+            <div className="flex w-full min-w-[335px] max-w-[390px] h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FEF1F2] border-2 border-[#FFD6D9] rounded-[32px] items-center">
+              <Input
+                className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
+                placeholder="올바른 링크를 넣어주세요"
+                value={"올바른 링크를 넣어주세요"}
+                disabled={true}
+              />
+              <Image
+                src={"/svg/ic_exclamation_circle.svg"}
+                alt="arrow"
+                width={32}
+                height={32}
+                unoptimized
+              />
+            </div>
+          ) : showInput ? (
+            <div
+              className={`flex ${
+                isFirstEntry ? "relative z-10" : ""
+              } min-w-[335px] max-w-full h-[56px] px-[20px] py-[12px] gap-x-[16px] bg-[#FFF7F2] border-2 border-[#FFF1EB] rounded-[32px] items-center`}
+            >
+              <Input
+                className="rounded-none p-0 shadow-none focus:bg-transparent w-[251px] h-[24px] bg-transparent border-none text-[#747B89]"
+                placeholder="네이버, 카카오 링크를 넣어주세요"
+                value={clipboardText || placeUrl}
+                onChange={(e) => {
+                  setPlaceUrl(e.target.value);
+                }}
+              />
+              <Image
+                src={"/png/ic_arrow_left_circle_32.png"}
+                alt="arrow"
+                width={32}
+                height={32}
+                onClick={() => {
+                  if (isValidClipboardText || isValidPlaceUrl) {
+                    router.push(
+                      `add-course/detail?roomUid=${
+                        roomUidStorage?.get()?.roomUid
+                      }`
+                    );
+                  }
+                }}
+              />
+            </div>
+          ) : (
+            autoData && (
+              <CardForCopiedContent
+                name={autoData.data.name}
+                url={autoData.data.url}
+                placeImageUrls={placeImage()}
+                starGrade={autoData.data.starGrade}
+                reviewCount={autoData.data.reviewCount}
+                origin={autoData.data.origin}
+              />
+            )
+          )}
+        </div>
+        <div
+          className={`flex ${
+            isFirstEntry ? "relative z-10" : ""
+          } flex-row mt-[8px] mx-[20px] w-[335px] h-[37px] items-center py-[8px] pr-[12px]`}
+        >
+          <div className="flex flex-row items-center justify-start gap-x-[6px] cursor-pointer">
+            <Image
+              src={"/png/ic_plus_circle_20.png"}
+              alt="plus"
+              width={20}
+              height={20}
+            />
+            <p
+              className="w-full text-[14px] font-semibold text-[#B5B9C6]"
+              onClick={() => {
+                setAutoData(null);
+                router.push(
+                  `add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`
+                );
+              }}
+            >
+              직접 추가
+            </p>
+          </div>
+          {isFirstEntry === true && (
+            <Image
+              width={160}
+              height={160}
+              src="/png/tooltip-1.png"
+              alt="tooltip"
+              className=" left-1/2 transform -translate-x-1/2 mt-6 absolute z-20"
+              unoptimized
+              onClick={handleFirstTooltipClose}
+            />
+          )}
+        </div>
+        <div className="flex w-full max-w-[430px] h-[12px] bg-[#F9FAFB] my-[20px]" />
+
+        <div className="flex flex-row justify-between items-center">
+          <div
+            className="flex flex-start pl-[20px] h-[37px] items-center gap-x-[8px] overflow-x-scroll scrollbar-hide"
+            ref={sliderRef}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {categoryList?.map(
+              (item) =>
+                item.scheduleId !== null &&
+                item.scheduleId !== undefined &&
+                item.name && (
+                  <CategoryChip
+                    key={item.scheduleId}
+                    title={item.name}
+                    selected={selectedChip === item.scheduleId}
+                    onClick={() => handleChipClick(item.scheduleId as number)}
+                  />
+                )
+            )}
+          </div>
+          <div className="relative flex items-center justify-center h-[37px] cursor-pointer w-fit pr-[20px]">
+            <div className="absolute left-[-16px] w-[16px] h-full">
+              <Image
+                src={"/svg/gradient.svg"}
+                width={16}
+                height={37}
+                alt="gradient"
+              />
+            </div>
+            <div className="flex items-center justify-center w-[32px] h-[32px] border-2 border-[#E7E8EB] rounded-[16px]">
+              <Image
+                src={"/png/ic_arrow_left_right_20.png"}
+                alt="plus"
+                width={16}
+                height={16}
+                onClick={() => router.push(`edit-course?roomUid=${roomUid}`)}
+              />
+            </div>
+          </div>
+        </div>
+        {!hasPlaces ? (
+          <div className="flex flex-col w-full h-full items-center justify-start mt-[56px]">
+            <div className="flex flex-col items-center justify-center w-full h-[197px] gap-y-[12px]">
+              <div className="flex w-[108px] h-[104px] items-center justify-center">
+                <Image
+                  src={"/png/img_sample.png"}
+                  alt="sample"
+                  width={108}
+                  height={104}
+                />
+              </div>
+              <div className="flex flex-col w-full items-center justify-center text-[14px] text-[#8B95A1]">
+                <p className="flex w-full items-center justify-center">
+                  일행을 초대하고
+                </p>
+                <p className="flex w-full items-center justify-center">
+                  함께 장소를 추가하세요
+                </p>
+              </div>
+              <Button
+                className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-[1px] gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]"
+                onClick={async () =>
+                  await onShare({
+                    url: location.href,
+                    title: data.name,
+                    text: data.message,
+                  })
+                }
+              >
+                <Image
+                  src={"/svg/ic_wrap.svg"}
+                  alt="wrap"
+                  width={16}
+                  height={16}
+                />
+                <p>일행 초대</p>
+              </Button>
+            </div>
           </div>
         ) : (
-          autoData && (
-            <CardForCopiedContent
-              name={autoData.data.name}
-              url={autoData.data.url}
-              placeImageUrls={placeImage()}
-              starGrade={autoData.data.starGrade}
-              reviewCount={autoData.data.reviewCount}
-              origin={autoData.data.origin}
+          categoryList && (
+            <PlaceContainer
+              placesData={{
+                scheduleId: selectedChip
+                  ? selectedChip
+                  : (categoryList[0]?.scheduleId as number),
+                scheduleName:
+                  categoryList?.find(
+                    (category) => category.scheduleId === selectedChip
+                  )?.name || categoryList[0]?.name,
+                places: filteredPlaces,
+              }}
+              scheduleInfo={
+                categoryList?.find(
+                  (category) => category.scheduleId === selectedChip
+                )?.type || categoryList[0].type
+              }
             />
           )
         )}
-      </div>
-      <div
-        className="flex flex-row mt-[8px] mx-[20px] w-[335px] h-[37px] items-center py-[8px] pr-[12px]"
-        onClick={() =>
-          router.push(
-            `add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`
-          )
-        }
-      >
-        <div className="flex flex-row items-center justify-start gap-x-[6px] cursor-pointer">
-          <Image
-            src={"/png/ic_plus_circle_20.png"}
-            alt="plus"
-            width={20}
-            height={20}
+        {isModalOpen && (
+          <ModalWithVote
+            onButtonClick={() => setIsModalOpen((prev) => !prev)}
           />
-          <p
-            className="w-full text-[14px] font-semibold text-[#B5B9C6]"
-            onClick={() => {
-              setAutoData(null);
-              router.push(
-                `add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`
-              );
-            }}
-          >
-            직접 추가
-          </p>
-        </div>
+        )}
       </div>
-      <div className="flex w-full max-w-[430px] h-[12px] bg-[#F9FAFB] my-[20px]" />
-
-      <div className="flex flex-row justify-between items-center">
-        <div
-          className="flex flex-start pl-[20px] h-[37px] items-center gap-x-[8px] overflow-x-scroll scrollbar-hide"
-          ref={sliderRef}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          {categoryList?.map(
-            (item) =>
-              item.scheduleId !== null &&
-              item.scheduleId !== undefined &&
-              item.name && (
-                <CategoryChip
-                  key={item.scheduleId}
-                  title={item.name}
-                  selected={selectedChip === item.scheduleId}
-                  onClick={() => handleChipClick(item.scheduleId as number)}
-                />
-              )
-          )}
-        </div>
-        <div className="relative flex items-center justify-center h-[37px] cursor-pointer w-fit pr-[20px]">
-          <div className="absolute left-[-16px] w-[16px] h-full">
-            <Image
-              src={"/svg/gradient.svg"}
-              width={16}
-              height={37}
-              alt="gradient"
-            />
-          </div>
-          <div className="flex items-center justify-center w-[32px] h-[32px] border-2 border-[#E7E8EB] rounded-[16px]">
-            <Image
-              src={"/png/ic_arrow_left_right_20.png"}
-              alt="plus"
-              width={16}
-              height={16}
-              onClick={() => router.push(`edit-course?roomUid=${roomUid}`)}
-            />
-          </div>
-        </div>
-      </div>
-      {!hasPlaces ? (
-        <div className="flex flex-col w-full h-full items-center justify-center mt-[56px]">
-          <div className="flex flex-col items-center justify-center w-full h-[197px] gap-y-[12px]">
-            <div className="flex w-[108px] h-[104px] items-center justify-center">
-              <Image
-                src={"/png/img_sample.png"}
-                alt="sample"
-                width={108}
-                height={104}
-              />
-            </div>
-            <div className="flex flex-col w-full items-center justify-center text-[14px] text-[#8B95A1]">
-              <p className="flex w-full items-center justify-center">
-                일행을 초대하고
-              </p>
-              <p className="flex w-full items-center justify-center">
-                함께 장소를 추가하세요
-              </p>
-            </div>
-            <Button
-              className="w-[112px] h-[41px] hover:bg-transparent bg-transparent border-[1px] gap-x-[4px] rounded-[28px] border-[#FF601C] text-[#FF601C]"
-              onClick={async () =>
-                await onShare({
-                  url: location.href,
-                  title: data.name,
-                  text: data.message,
-                })
-              }
-            >
-              <Image
-                src={"/svg/ic_wrap.svg"}
-                alt="wrap"
-                width={16}
-                height={16}
-              />
-              <p>일행 초대</p>
-            </Button>
-          </div>
-        </div>
-      ) : (
-        categoryList && (
-          <PlaceContainer
-            placesData={{
-              scheduleId: selectedChip
-                ? selectedChip
-                : (categoryList[0]?.scheduleId as number),
-              scheduleName:
-                categoryList?.find(
-                  (category) => category.scheduleId === selectedChip
-                )?.name || categoryList[0]?.name,
-              places: filteredPlaces,
-            }}
-            scheduleInfo={
-              categoryList?.find(
-                (category) => category.scheduleId === selectedChip
-              )?.type || categoryList[0].type
-            }
-          />
-        )
-      )}
-      {isModalOpen && (
-        <ModalWithVote onButtonClick={() => setIsModalOpen((prev) => !prev)} />
-      )}
     </div>
   );
 };
