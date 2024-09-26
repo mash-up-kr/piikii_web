@@ -349,7 +349,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
 
       <div className="flex flex-row justify-between items-center">
         <div
-          className="flex flex-start pl-[20px] w-full h-[37px] items-center gap-x-[8px] overflow-x-scroll scrollbar-hide"
+          className="flex flex-start pl-[20px] h-[37px] items-center gap-x-[8px] overflow-x-scroll scrollbar-hide"
           ref={sliderRef}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
