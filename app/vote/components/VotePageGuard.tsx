@@ -50,6 +50,10 @@ export default function VotePageGuard({
   useEffect(() => {
     if (isVoteStatusLoading || isUserVoteResultDataLoading) return;
 
+    if (!roomUid || !userUid) {
+      return router.replace("/vote-start");
+    }
+
     if (voteStatusData && voteStatusData.data.voteFinished) {
       return router.replace("/vote-finish");
     }
@@ -59,11 +63,10 @@ export default function VotePageGuard({
     }
   }, [
     isUserVoteResultDataLoading,
-    isUserVoteResultError,
-    isVoteStatusError,
     isVoteStatusLoading,
+    roomUid,
     router,
-    toast,
+    userUid,
     userVoteResultData,
     voteStatusData,
   ]);
@@ -73,14 +76,18 @@ export default function VotePageGuard({
     isUserVoteResultDataLoading ||
     isVoteStatusFetching ||
     isUserVoteResultDataFetching ||
-    isUserVoteResultError ||
-    (voteStatusData &&
-      voteStatusData.data.voteFinished &&
-      userVoteResultData &&
-      userVoteResultData.data.places.length > 0)
+    isUserVoteResultError
   ) {
     return <FullScreenLoader />;
   }
+
+  if (
+    !roomUid ||
+    !userUid ||
+    (voteStatusData && voteStatusData.data.voteFinished) ||
+    (userVoteResultData && userVoteResultData.data.places.length > 0)
+  )
+    return <FullScreenLoader />;
 
   return children;
 }

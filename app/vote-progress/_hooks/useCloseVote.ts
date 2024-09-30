@@ -1,14 +1,17 @@
 import { useUpdateVoteDeadline } from "@/apis/vote/VoteApi.mutation";
+import { VOTE_API_QUERY_KEY } from "@/apis/vote/VoteApi.query";
 import { useToast } from "@/components/common/Toast/use-toast";
 import useRoomUid from "@/hooks/useRoomUid";
+import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, use, useMemo, useState } from "react";
+import { useState } from "react";
 
 const useCloseVote = () => {
   const toast = useToast();
   const roomUid = useRoomUid();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [isPasswordSheetOpen, setIsPasswordSheetOpen] = useState(false);
   const [password, _] = useState("");
@@ -16,7 +19,12 @@ const useCloseVote = () => {
   const { mutate: updateVoteDeadline } = useUpdateVoteDeadline({
     options: {
       onSuccess: () => {
-        router.push(`/vote-finish`);
+        roomUid &&
+          queryClient.invalidateQueries({
+            queryKey: VOTE_API_QUERY_KEY.GET_VOTE_STATUS({ roomUid }),
+          });
+
+        router.replace(`/vote-finish`);
         toast.toast({ title: "투표가 종료되었어요", duration: 2000 });
       },
       onError: () => {
@@ -41,6 +49,7 @@ const useCloseVote = () => {
     });
 
     if (isPasswordCorrect(_password)) {
+      console.log("Correct Password");
       alert(JSON.stringify(_password));
     } else {
       toast.toast({ title: "비밀번호가 일치하지 않아요", duration: 500 });

@@ -28,12 +28,16 @@ import VoteStep from "./components/VoteStep";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { VoteImagePolicy } from "./policy/VoteImagePolicy";
+import { sendGAEvent } from "@next/third-parties/google";
+import { useQueryClient } from "@tanstack/react-query";
+import { VOTE_API_QUERY_KEY } from "@/apis/vote/VoteApi.query";
 
 export default function Page() {
   const router = useRouter();
   const isClient = useIsClient();
   const roomUid = useRoomUid();
   const userUid = useUserUid();
+  const queryClient = useQueryClient();
 
   const {
     data: placeData,
@@ -47,8 +51,6 @@ export default function Page() {
       enabled: !!roomUid,
     },
   });
-
-  console.log(placeData);
 
   const { data: scheduleData, isLoading: isScheduleLoading } =
     useGetSchedulesQuery({
@@ -191,6 +193,7 @@ export default function Page() {
   useEffect(() => {
     if (!userUid || !roomUid) {
       router.replace("/vote-start");
+      return;
     }
 
     router.prefetch("/vote-progress");
@@ -239,6 +242,14 @@ export default function Page() {
       });
 
       if (placeData.length - 1 === curScheduleIndex) {
+        sendGAEvent("event", "end_vote", {
+          event_name: "end_vote",
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: VOTE_API_QUERY_KEY.GET_VOTES({ roomUid }),
+        });
+
         router.push("/vote-progress");
       } else {
         setResultData({
@@ -256,6 +267,7 @@ export default function Page() {
     castVote,
     curScheduleIndex,
     placeData,
+    queryClient,
     resultData,
     roomUid,
     router,
@@ -368,7 +380,15 @@ export default function Page() {
 
       {/* Onboarding Overlay */}
       {isOverlayVisible && (
-        <OnboardingOverlay onStartVote={() => setIsOverlayVisible(false)} />
+        <OnboardingOverlay
+          onStartVote={() => {
+            sendGAEvent("event", "start_vote", {
+              event_name: "start_vote",
+            });
+
+            setIsOverlayVisible(false);
+          }}
+        />
       )}
     </div>
   );
