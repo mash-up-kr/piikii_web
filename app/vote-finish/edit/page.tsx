@@ -1,7 +1,11 @@
 "use client";
 
 import { useUpdateCoursePlace } from "@/apis/course/CourseApi.mutation";
-import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
+import { COURSE_API_QUERY_KEY } from "@/apis/course/CourseApi.query";
+import {
+  PLACE_API_QUERY_KEY,
+  useGetPlacesQuery,
+} from "@/apis/place/PlaceApi.query";
 import { VoteResultByScheduleResponseDto } from "@/apis/vote/types/dto";
 import { useGetVotesQuery } from "@/apis/vote/VoteApi.query";
 import FullScreenLoader from "@/components/common/FullScreenLoader";
@@ -10,8 +14,9 @@ import { useToast } from "@/components/common/Toast/use-toast";
 import EditOptionArea from "@/components/common/Vote/EditOptionArea";
 import useRoomUid from "@/hooks/useRoomUid";
 import useUserUid from "@/hooks/useUserUid";
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useIsClient } from "usehooks-ts";
 
@@ -20,6 +25,13 @@ export default function VoteEditPage() {
   const isClient = useIsClient();
   const roomUid = useRoomUid();
   const toast = useToast();
+  const queryClient = useQueryClient();
+
+  const searchParams = useSearchParams();
+  const searchParamsScheduleId = useMemo(
+    () => searchParams.get("scheduleId"),
+    [searchParams]
+  );
 
   const {
     data: voteData,
@@ -45,6 +57,12 @@ export default function VoteEditPage() {
 
   const { mutate: updateCourse } = useUpdateCoursePlace({
     options: {
+      onSuccess: () => {
+        roomUid &&
+          queryClient.invalidateQueries({
+            queryKey: COURSE_API_QUERY_KEY.GET_COURSE(roomUid),
+          });
+      },
       onError: () => {
         toast.toast({
           title: "코스 수정에 실패했습니다.",
@@ -89,7 +107,7 @@ export default function VoteEditPage() {
             toast.toast({
               title: "코스가 수정되었습니다.",
             });
-            router.back();
+            router.push("/vote-finish");
           },
         }
       );
@@ -98,7 +116,18 @@ export default function VoteEditPage() {
 
   useEffect(() => {
     if (votedSchedules) {
-      setSelectedSchedule(votedSchedules[0]);
+      setSelectedSchedule(() =>
+        searchParamsScheduleId
+          ? votedSchedules.find(
+              (v) => v.scheduleId === Number(searchParamsScheduleId)
+            )
+          : votedSchedules[0]
+      );
+    }
+  }, [searchParamsScheduleId, votedSchedules]);
+
+  useEffect(() => {
+    if (votedSchedules) {
       setSelectedPlaces(
         votedSchedules.reduce((acc, { scheduleId, places }) => {
           const selectedPlaceId =
@@ -111,7 +140,7 @@ export default function VoteEditPage() {
         }, {} as Record<number, number>)
       );
     }
-  }, [confirmedPlaces, votedSchedules]);
+  }, [confirmedPlaces, searchParamsScheduleId, votedSchedules]);
 
   if (
     !isClient ||
@@ -166,9 +195,7 @@ export default function VoteEditPage() {
             selectedSchedule={selectedSchedule}
             selectedPlaces={selectedPlaces}
             onClickSchedule={(scheduleId) => {
-              setSelectedSchedule(
-                votedSchedules?.find((v) => v.scheduleId === scheduleId)
-              );
+              router.push(`/vote-finish/edit?scheduleId=${scheduleId}`);
             }}
             onClickPlaceCard={(scheduleId, placeId) => {
               setSelectedPlaces((prev) => ({

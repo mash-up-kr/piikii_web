@@ -77,7 +77,7 @@ const VoteFinishPage = () => {
           {/* SAMPLE DATA */}
           {courseData.data.places.map((place, index) => (
             <CourseItem
-              id="course"
+              scheduleId={place.scheduleId}
               key={index}
               index={index}
               type={place.scheduleType}

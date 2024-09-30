@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 interface Props {
-  id: string;
+  scheduleId: number;
   index: number;
   type: ScheduleType;
   placeTitle: string;
@@ -19,7 +19,7 @@ interface Props {
 }
 
 export default function CourseItem({
-  id,
+  scheduleId,
   index,
   type,
   placeTitle,
@@ -74,7 +74,7 @@ export default function CourseItem({
   }, [distanceToNextLocation]);
 
   const handleClickSwitch = () => {
-    router.push(`/vote-finish/edit?id=${id}`);
+    router.push(`/vote-finish/edit?scheduleId=${scheduleId}`);
   };
 
   const handleClickCopy = async (type: "contact" | "address", text: string) => {
