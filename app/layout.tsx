@@ -5,6 +5,7 @@ import { ClientProvider } from "@/components/providers/ClientProvider";
 import { Toaster } from "@/components/common/Toast/toaster";
 import LandingPage from "./landing";
 import { CourseProvider } from "@/providers/course-provider";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 import localFont from "next/font/local";
 
@@ -39,6 +40,7 @@ export default function RootLayout({
             </div>
           </CourseProvider>
         </ClientProvider>
+        <GoogleAnalytics gaId="G-ZL192QP267" />
       </body>
     </html>
   );
