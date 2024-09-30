@@ -16,8 +16,8 @@ const useCloseVote = () => {
   const { mutate: updateVoteDeadline } = useUpdateVoteDeadline({
     options: {
       onSuccess: () => {
-        toast.toast({ title: "투표가 종료되었어요", duration: 500 });
         router.push(`/vote-finish`);
+        toast.toast({ title: "투표가 종료되었어요", duration: 2000 });
       },
       onError: () => {
         toast.toast({ title: "투표 종료에 실패했어요", duration: 500 });
