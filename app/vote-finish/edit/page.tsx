@@ -1,7 +1,10 @@
 "use client";
 
 import { useUpdateCoursePlace } from "@/apis/course/CourseApi.mutation";
-import { COURSE_API_QUERY_KEY } from "@/apis/course/CourseApi.query";
+import {
+  COURSE_API_QUERY_KEY,
+  useGetCourseQuery,
+} from "@/apis/course/CourseApi.query";
 import {
   PLACE_API_QUERY_KEY,
   useGetPlacesQuery,
@@ -55,6 +58,15 @@ export default function VoteEditPage() {
     options: { enabled: !!roomUid },
   });
 
+  const {
+    data: courseData,
+    isLoading: isCourseDataLoading,
+    isError: isCourseDataError,
+  } = useGetCourseQuery({
+    variables: roomUid ?? "",
+    options: { enabled: !!roomUid },
+  });
+
   const { mutate: updateCourse } = useUpdateCoursePlace({
     options: {
       onSuccess: () => {
@@ -84,15 +96,8 @@ export default function VoteEditPage() {
   );
 
   const confirmedPlaces = useMemo(
-    () =>
-      placeData
-        ?.map(({ places }) => {
-          return places
-            .filter((place) => place.confirmed)
-            .map((place) => place.id);
-        })
-        .flat() ?? [],
-    [placeData]
+    () => courseData?.data.places.map((place) => place.placeId) ?? [],
+    [courseData]
   );
 
   const handleClickConfirm = () => {
@@ -127,20 +132,15 @@ export default function VoteEditPage() {
   }, [searchParamsScheduleId, votedSchedules]);
 
   useEffect(() => {
-    if (votedSchedules) {
+    if (votedSchedules && courseData) {
       setSelectedPlaces(
-        votedSchedules.reduce((acc, { scheduleId, places }) => {
-          const selectedPlaceId =
-            places
-              .map((p) => p.placeId)
-              .filter((id) => id in confirmedPlaces)[0] ?? places[0].placeId;
-
-          acc[scheduleId] = selectedPlaceId;
+        courseData?.data.places.reduce((acc, { placeId, scheduleId }) => {
+          acc[scheduleId] = placeId;
           return acc;
         }, {} as Record<number, number>)
       );
     }
-  }, [confirmedPlaces, searchParamsScheduleId, votedSchedules]);
+  }, [courseData, votedSchedules]);
 
   if (
     !isClient ||
