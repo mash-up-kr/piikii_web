@@ -1,13 +1,16 @@
-import { RegisterSchedulesRequest } from "@/apis/schedule/types/dto";
-import { useToast } from "@/components/common/Toast/use-toast";
-import { useBadgeContext } from "@/providers/badge-provider";
 import { ChangeEvent, useMemo, useState } from "react";
-import { transformBadgesToSchedule } from "../_utils";
+import { useRouter } from "next/navigation";
+import { sendGAEvent } from "@next/third-parties/google";
+
+import { useBadgeContext } from "@/providers/badge-provider";
+import { roomUidStorage } from "@/utils/web-storage/room-uid";
+import { RegisterSchedulesRequest } from "@/apis/schedule/types/dto";
 import { useCreateRoom } from "@/apis/room/RoomApi.mutation";
 import { useCreateSchedules } from "@/apis/schedule/ScheduleApi.mutation";
 import { RoomSaveRequestForm } from "@/apis/room/types/dto";
-import { roomUidStorage } from "@/utils/web-storage/room-uid";
-import { useRouter } from "next/navigation";
+
+import { useToast } from "@/components/common/Toast/use-toast";
+import { transformBadgesToSchedule } from "../_utils";
 
 export type CardImageType = {
   id: number;
@@ -112,6 +115,10 @@ const useInvitation = () => {
   };
 
   const requestCreateRoom = () => {
+    sendGAEvent("event", "create_room", {
+      event_name: "create_room",
+    });
+
     createRoomMutate({
       ...getRoomCreateData(),
     });
