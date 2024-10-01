@@ -77,17 +77,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
     }
   }, [categoryList]);
 
-  const handleFirstTooltipClose = () => {
-    setIsFirstEntry(false);
-    localStorage.setItem("isFirstEntry", "false");
-
-    setShowSecondTooltip(true);
-  };
-
-  const handleSecondTooltipClose = () => {
-    setShowSecondTooltip(false);
-  };
-
   useEffect(() => {
     const firstEntry = localStorage.getItem("isFirstEntry");
 
@@ -96,6 +85,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
       localStorage.setItem("isFirstEntry", "true");
     }
   }, []);
+
   const { onShare } = useShare();
 
   useEffect(() => {
@@ -245,17 +235,38 @@ const AddCourse = ({ data }: AddCourseProps) => {
     else return "null";
   };
 
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleOutsideClose = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      if (tooltipRef.current !== null && !tooltipRef.current.contains(target)) {
+        if (isFirstEntry) {
+          setIsFirstEntry(false);
+          localStorage.setItem("isFirstEntry", "false");
+          setShowSecondTooltip(true);
+        } else {
+          setShowSecondTooltip(false);
+        }
+      }
+    };
+
+    document.addEventListener("click", handleOutsideClose);
+
+    return () => document.removeEventListener("click", handleOutsideClose);
+  }, [isFirstEntry]);
+
   return (
     <div className="relative">
       {(isFirstEntry === true || showSecondTooltip === true) && (
         <div className="absolute inset-0 bg-black opacity-60 z-10"></div>
       )}
-      <div className="flex flex-col h-screen max-w-[430px]">
+      <div className="flex flex-col h-screen max-w-[430px]" ref={tooltipRef}>
         <div className="flex items-center justify-between gap-x-[17px] px-[20px] py-[11px]">
           <p className="flex w-[232px] items-center text-semibold-15 text-neutral-700">
             {roomInfo?.name}
           </p>
-
           <Button
             className={`${
               showSecondTooltip ? "relative z-10" : ""
@@ -285,7 +296,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
               alt="tooltip"
               className="right-20 mt-[100px] mr-[20px] transform translate-x-1/2 absolute z-20"
               unoptimized
-              onClick={handleSecondTooltipClose}
             />
           )}
         </div>
@@ -344,6 +354,16 @@ const AddCourse = ({ data }: AddCourseProps) => {
                   }
                 }}
               />
+              {isFirstEntry === true && (
+                <Image
+                  width={160}
+                  height={160}
+                  src="/png/tooltip-1.png"
+                  alt="tooltip"
+                  className=" left-1/2 transform -translate-x-1/2 mt-[130px] absolute z-20"
+                  unoptimized
+                />
+              )}
             </div>
           ) : (
             autoData && (
@@ -382,17 +402,6 @@ const AddCourse = ({ data }: AddCourseProps) => {
               직접 추가
             </p>
           </div>
-          {isFirstEntry === true && (
-            <Image
-              width={160}
-              height={160}
-              src="/png/tooltip-1.png"
-              alt="tooltip"
-              className=" left-1/2 transform -translate-x-1/2 mt-6 absolute z-20"
-              unoptimized
-              onClick={handleFirstTooltipClose}
-            />
-          )}
         </div>
         <div className="flex w-full max-w-[430px] h-[12px] bg-[#F9FAFB] my-[20px]" />
 
