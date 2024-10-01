@@ -63,7 +63,7 @@ const useVoteTime = () => {
   const searchParams = useSearchParams();
   const roomUid = searchParams.get("roomUid") || "";
   const [selectedDate, setSelectedDate] = useState<IDateInfo["date"] | null>(
-    null
+    dayjs().add(2, "day")
   );
   const [password, setPassword] = useState("");
   const [isPasswordSheetOpen, setIsPasswordSheetOpen] = useState(false);
@@ -71,7 +71,7 @@ const useVoteTime = () => {
     useState(false);
 
   const [selectedTime, setSelectedTime] = useState<ITimeObj>({
-    hour: "1",
+    hour: "12",
     minute: "00",
     ampm: "am",
   });

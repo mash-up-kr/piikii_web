@@ -19,7 +19,8 @@ interface TimePickerProps {
 const selections: Selections = {
   ampm: ["am", "pm"],
   hour: Array.from({ length: 12 }, (_, i) => String(i + 1)),
-  minute: Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0")),
+  // minute: Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0")),
+  minute: ["00", "30"],
 };
 
 const TimePicker = ({ value, onChange }: TimePickerProps) => {
