@@ -3,10 +3,6 @@ import * as React from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { CardInfoProps } from "@/model";
-import { useCourseContext } from "@/providers/course-provider";
-import { useRouter } from "next/navigation";
-import { roomUidStorage } from "@/utils/web-storage/room-uid";
-import { categoryImageMap } from "@/lib/utils";
 
 export const CardWithImageSmall: React.FC<CardInfoProps> = ({
   origin,
@@ -18,6 +14,13 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
   category,
   onButtonClick,
 }) => {
+  const CategoryMap = {
+    DESSERT: "dessert",
+    DISH: "food",
+    ALCOHOL: "alcohol",
+    ARCADE: "arcade",
+  } as const;
+
   const formattedRating = rating?.toFixed(2);
 
   const originLogoSrc = React.useMemo(
@@ -30,6 +33,20 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
     [origin]
   );
 
+  const getThumbnail = (
+    category: keyof typeof CategoryMap,
+    images: string[]
+  ): string => {
+    const defaultImageIndex = images.findIndex((image) =>
+      image.includes(`default_${CategoryMap[category]}`)
+    );
+    return defaultImageIndex !== -1 ? images[defaultImageIndex] : images[0];
+  };
+
+  const thumbnail = React.useMemo(() => {
+    return getThumbnail(category as keyof typeof CategoryMap, images);
+  }, [category, images]);
+
   return (
     <Card
       className="flex flex-col items-start justify-center w-[160px] h-[157px] border-none shadow-none cursor-pointer"
@@ -38,7 +55,7 @@ export const CardWithImageSmall: React.FC<CardInfoProps> = ({
       <CardContent className="flex flex-col w-full gap-y-[8px]">
         <div className="relative w-[160px] h-[110px] overflow-hidden rounded-[12px] items-center justify-center">
           <Image
-            src={images[0]}
+            src={thumbnail}
             alt="like"
             width={160}
             height={110}

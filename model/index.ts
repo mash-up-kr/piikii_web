@@ -31,7 +31,7 @@ export interface CardInfoProps {
   cardDividerClassName?: string;
   cardButtonClassName?: string;
   selected?: boolean;
-  category?: number;
+  category?: number | string;
   customStyle?: Record<string, string>;
 }
 
