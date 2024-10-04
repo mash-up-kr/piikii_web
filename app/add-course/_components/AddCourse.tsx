@@ -13,7 +13,6 @@ import { CardForCopiedContent } from "@/components/common/Cards/CardForCopiedCon
 import scheduleApi from "@/apis/schedule/ScheduleApi";
 import roomApi from "@/apis/room/RoomApi";
 import { useCourseContext } from "@/providers/course-provider";
-import { roomUidStorage } from "@/utils/web-storage/room-uid";
 import { useGetPlacesQuery } from "@/apis/place/PlaceApi.query";
 import { useCreatePlace } from "@/apis/origin-place/OriginPlaceApi.mutation";
 import { PlaceContainer } from "./PlaceContainer";
@@ -346,11 +345,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
                 height={32}
                 onClick={() => {
                   if (isValidClipboardText || isValidPlaceUrl) {
-                    router.push(
-                      `add-course/detail?roomUid=${
-                        roomUidStorage?.get()?.roomUid
-                      }`
-                    );
+                    router.push(`add-course/detail?roomUid=${roomUid}`);
                   }
                 }}
               />
@@ -394,9 +389,7 @@ const AddCourse = ({ data }: AddCourseProps) => {
               className="w-full text-[14px] font-semibold text-[#B5B9C6]"
               onClick={() => {
                 setAutoData(null);
-                router.push(
-                  `add-course/detail?roomUid=${roomUidStorage?.get()?.roomUid}`
-                );
+                router.push(`add-course/detail?roomUid=${roomUid}`);
               }}
             >
               직접 추가
