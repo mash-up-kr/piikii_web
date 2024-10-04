@@ -53,6 +53,7 @@ const getPayloadForRequest = (
   values: CommonPlaceDetailFormType,
   selectedChips: number[]
 ) => {
+  const defaultAutoImage = "/png/auto_default_image.png";
   return {
     scheduleIds: selectedChips,
     category: autoData ? autoData?.data.category : null,
@@ -76,7 +77,10 @@ const getPayloadForRequest = (
     voteLikeCount: 0,
     longitude: 0,
     latitude: 0,
-    autoCompletedPlaceImageUrls: autoData?.data?.placeImageUrls?.contents || [],
+    autoCompletedPlaceImageUrls:
+      autoData?.data?.placeImageUrls?.contents[0] === "null"
+        ? [defaultAutoImage]
+        : autoData?.data?.placeImageUrls?.contents,
   };
 };
 

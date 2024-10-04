@@ -69,17 +69,29 @@ export const CardWithAutoCompleteData = ({
             </CardHeader>
           </div>
           <div className="flex flex-row w-full h-[100px] gap-x-[9px] my-[16px]">
-            {autoData?.placeImageUrls.contents.map((src, index) => (
+            {autoData?.placeImageUrls.contents &&
+            autoData.placeImageUrls.contents[0] !== "null" ? (
+              autoData?.placeImageUrls.contents.map((src, index) => (
+                <Image
+                  key={index}
+                  src={src}
+                  className="rounded-lg"
+                  alt={`default-${index + 1}`}
+                  width={100}
+                  height={100}
+                  priority
+                />
+              ))
+            ) : (
               <Image
-                key={index}
-                src={src}
+                src={"/png/auto_default_image.png"}
                 className="rounded-lg"
-                alt={`food${index + 1}`}
+                alt="default"
                 width={100}
                 height={100}
                 priority
               />
-            ))}
+            )}
           </div>
         </div>
       </Card>
