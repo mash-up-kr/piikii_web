@@ -12,6 +12,8 @@ export type PlaceAutoCompleteResponse = {
     reviewCount?: number;
     category?: string;
     origin: "AVOCADO" | "LEMON" | "MANUAL";
+    longitude?: number | null;
+    latitude?: number | null;
   };
   timestamp: number;
 };

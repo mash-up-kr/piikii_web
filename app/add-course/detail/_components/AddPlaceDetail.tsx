@@ -75,8 +75,8 @@ const getPayloadForRequest = (
     memo: values.memo || "-",
     origin: autoData?.data?.origin || "MANUAL",
     voteLikeCount: 0,
-    longitude: 0,
-    latitude: 0,
+    longitude: autoData ? autoData?.data?.longitude : null,
+    latitude: autoData ? autoData?.data?.latitude : null,
     autoCompletedPlaceImageUrls:
       autoData?.data?.placeImageUrls?.contents[0] === "null"
         ? [defaultAutoImage]
